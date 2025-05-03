@@ -1,0 +1,33 @@
+{
+  "kind": "collectionType",
+  "collectionName": "sportnews",
+  "info": {
+    "singularName": "sportnew",
+    "pluralName": "sportnews",
+    "displayName": "sportnew"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "imageSport": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": true
+    },
+    "titleSport": {
+      "type": "string"
+    },
+    "dateSport": {
+      "type": "date"
+    },
+    "contentSport": {
+      "type": "blocks"
+    }
+  }
+}

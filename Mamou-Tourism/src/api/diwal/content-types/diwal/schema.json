@@ -1,0 +1,30 @@
+{
+  "kind": "collectionType",
+  "collectionName": "diwals",
+  "info": {
+    "singularName": "diwal",
+    "pluralName": "diwals",
+    "displayName": "Diwal"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "diwalTitre": {
+      "type": "string"
+    },
+    "diwalText": {
+      "type": "blocks"
+    },
+    "diwalPhoto": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": true
+    }
+  }
+}
