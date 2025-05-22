@@ -6,10 +6,7 @@
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.0",
     "@reduxjs/toolkit": "^2.6.1",
-    "@strapi/strapi": "4.15.0",
-    "@strapi/plugin-users-permissions": "4.15.0",
-    "@strapi/plugin-upload": "4.15.0",
-    "@strapi/plugin-i18n": "4.15.0",
+    "@supabase/supabase-js": "^2.39.7",
     "@tailwindcss/vite": "^4.0.12",
     "framer-motion": "^12.7.4",
     "lucide-react": "^0.487.0",
