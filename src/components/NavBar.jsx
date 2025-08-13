@@ -1,21 +1,25 @@
 "use client"
 
-import { AnimatePresence, motion } from "framer-motion"
 import { useEffect, useState } from "react"
 import {
   FaBars,
   FaChevronDown,
-  FaCompass,
-  FaEnvelope,
-  FaGraduationCap,
+  FaMapMarkedAlt,
+  FaTimes,
   FaHome,
   FaInfoCircle,
-  FaMapMarkedAlt,
+  FaCompass,
   FaNewspaper,
+  FaEnvelope,
+  FaGraduationCap,
   FaSearch,
-  FaTimes,
+  FaBuilding,
+  FaFileAlt,
 } from "react-icons/fa"
 import { Link } from "react-router-dom"
+import { motion, AnimatePresence } from "framer-motion"
+//let's import the logo image
+import LogoImage from "../assets/images/logo.png"
 
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -102,12 +106,13 @@ const NavBar = () => {
     >
       <div className="container mx-auto px-4 flex justify-between items-center">
         {/* Logo */}
-        <Link to="/" className="flex items-center space-x-2">
-          <div className="h-10 w-10 rounded-full bg-yellow-400 flex items-center justify-center text-blue-900 font-bold text-xl">
-            M
-          </div>
-          <div className="text-white font-bold text-xl md:text-2xl tracking-wide">
-            <span className="text-yellow-400">Mamou</span> Ville
+        <Link to="/" className="flex items-center space-x-2" aria-label="Go to homepage">
+          <div className="h-10 w-10 flex items-center justify-center"> {/* Removed rounded-full, text-blue-900, font-bold, text-xl as image handles styling */}
+            <img
+              src={LogoImage}
+              alt="Mamou Ville Logo" // More descriptive alt text for better SEO and accessibility
+              className="h-full w-full object-contain rounded-full" // Use h-full w-full for image to fill parent, object-contain to prevent stretching
+            />
           </div>
         </Link>
 
@@ -157,7 +162,7 @@ const NavBar = () => {
                 >
                   <li>
                     <Link
-                      to="/nouriture"
+                      to="/nourriture"
                       className="block px-4 py-2 text-gray-800 hover:bg-blue-50 hover:text-blue-700 transition-colors"
                     >
                       Nourriture
@@ -217,7 +222,7 @@ const NavBar = () => {
                   </li>
                   <li>
                     <Link
-                      to="/culture"
+                      to="/cultures"
                       className="block px-4 py-2 text-gray-800 hover:bg-blue-50 hover:text-blue-700 transition-colors"
                     >
                       Cultures
@@ -261,14 +266,64 @@ const NavBar = () => {
               <span>Education</span>
             </Link>
           </li>
+          <li className="relative group">
+            <button
+              className="flex items-center px-3 py-2 rounded-lg hover:bg-blue-600 text-white group-hover:text-yellow-400 transition-all duration-300"
+              onMouseEnter={() => setActiveDropdown("mairie")}
+              onMouseLeave={() => setActiveDropdown(null)}
+            >
+              <FaBuilding className="mr-1" />
+              <span>Mairie</span>
+              <FaChevronDown className="ml-1 text-xs transition-transform group-hover:rotate-180 duration-300" />
+            </button>
+            <AnimatePresence>
+              {(activeDropdown === "mairie" ||
+                (typeof window !== "undefined" &&
+                  window.innerWidth >= 768 &&
+                  document.querySelector("li.group:nth-child(7):hover"))) && (
+                <motion.ul
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  variants={dropdownVariants}
+                  className="absolute top-full left-0 bg-white shadow-xl rounded-lg py-2 mt-1 min-w-[200px] z-50 border-t-2 border-yellow-400"
+                  onMouseEnter={() => setActiveDropdown("mairie")}
+                  onMouseLeave={() => setActiveDropdown(null)}
+                >
+                  <li>
+                    <Link
+                      to="/mairie"
+                      className="block px-4 py-2 text-gray-800 hover:bg-blue-50 hover:text-blue-700 transition-colors"
+                    >
+                      Les élus
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      to="/mairie"
+                      className="block px-4 py-2 text-gray-800 hover:bg-blue-50 hover:text-blue-700 transition-colors"
+                    >
+                      Les projets de la mairie
+                    </Link>
+                  </li>
+                </motion.ul>
+              )}
+            </AnimatePresence>
+          </li>
+          <li>
+            <Link
+              to="/administration"
+              className="flex items-center px-3 py-2 rounded-lg hover:bg-blue-600 text-white hover:text-yellow-400 transition-all duration-300"
+            >
+              <FaFileAlt className="mr-1" />
+              <span>Administration</span>
+            </Link>
+          </li>
         </ul>
 
         {/* Location and Search (Desktop) */}
         <div className="hidden md:flex items-center space-x-4">
-          {/* <div className="flex items-center space-x-2 text-white">
-            <FaMapMarkedAlt className="text-yellow-400" />
-            <span className="text-sm">Mamou, République de Guinée</span>
-          </div> */}
+         
 
           <div className="relative">
             <input
@@ -331,7 +386,7 @@ const NavBar = () => {
                   onClick={closeMenu}
                 >
                   <FaInfoCircle className="mr-3" />
-                  <span>A propos</span>
+                  <span>About Us</span>
                 </Link>
               </motion.div>
 
@@ -359,7 +414,7 @@ const NavBar = () => {
                     >
                       <div>
                         <Link
-                          to="/nouriture"
+                          to="#"
                           className="block py-2 text-blue-200 hover:text-yellow-400 transition-colors"
                           onClick={closeMenu}
                         >
@@ -368,7 +423,7 @@ const NavBar = () => {
                       </div>
                       <div>
                         <Link
-                          to="/hotel"
+                          to="#"
                           className="block py-2 text-blue-200 hover:text-yellow-400 transition-colors"
                           onClick={closeMenu}
                         >
@@ -377,7 +432,7 @@ const NavBar = () => {
                       </div>
                       <div>
                         <Link
-                          to="/place"
+                          to="#"
                           className="block py-2 text-blue-200 hover:text-yellow-400 transition-colors"
                           onClick={closeMenu}
                         >
@@ -413,7 +468,7 @@ const NavBar = () => {
                     >
                       <div>
                         <Link
-                          to="/sport"
+                          to="#"
                           className="block py-2 text-blue-200 hover:text-yellow-400 transition-colors"
                           onClick={closeMenu}
                         >
@@ -422,7 +477,7 @@ const NavBar = () => {
                       </div>
                       <div>
                         <Link
-                          to="/culture"
+                          to="#"
                           className="block py-2 text-blue-200 hover:text-yellow-400 transition-colors"
                           onClick={closeMenu}
                         >
@@ -471,6 +526,62 @@ const NavBar = () => {
                 >
                   <FaGraduationCap className="mr-3" />
                   <span>Education</span>
+                </Link>
+              </motion.div>
+
+              <motion.div variants={itemVariants} className="py-2 border-b border-blue-700">
+                <button
+                  className="flex items-center justify-between w-full py-2 px-3 text-white hover:text-yellow-400 transition-colors"
+                  onClick={() => handleDropdownToggle("mairie")}
+                >
+                  <div className="flex items-center">
+                    <FaBuilding className="mr-3" />
+                    <span>Mairie</span>
+                  </div>
+                  <FaChevronDown
+                    className={`transition-transform duration-300 ${activeDropdown === "mairie" ? "rotate-180" : ""}`}
+                  />
+                </button>
+                <AnimatePresence>
+                  {activeDropdown === "mairie" && (
+                    <motion.div
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      variants={dropdownVariants}
+                      className="pl-10 mt-2 space-y-2"
+                    >
+                      <div>
+                        <Link
+                          to="/les-elus"
+                          className="block py-2 text-blue-200 hover:text-yellow-400 transition-colors"
+                          onClick={closeMenu}
+                        >
+                          Les élus
+                        </Link>
+                      </div>
+                      <div>
+                        <Link
+                          to="/projets-mairie"
+                          className="block py-2 text-blue-200 hover:text-yellow-400 transition-colors"
+                          onClick={closeMenu}
+                        >
+                          Les projets de la mairie
+                        </Link>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+
+              <motion.div variants={itemVariants} className="py-2 border-b border-blue-700">
+                <Link
+                  to="/administration"
+                  className="flex items-center py-2 px-3 text-white hover:text-yellow-400 transition-colors"
+                  onClick={closeMenu}
+                >
+                  <FaFileAlt className="mr-3" />
+                  <span>Administration</span>
                 </Link>
               </motion.div>
 

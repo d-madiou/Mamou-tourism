@@ -272,7 +272,7 @@ const Education = ({ data = [], loading = false, error = null, schools = [] }) =
                       alt={item.Title}
                       className="w-full h-full object-cover transition duration-700 ease-in-out transform group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent flex flex-col justify-end p-5">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent flex flex-col justify-end p-5">
                       <div className="flex items-center gap-3 mb-2">
                         <span
                           className={`text-xs px-3 py-1 font-bold rounded-full ${
