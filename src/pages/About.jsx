@@ -666,7 +666,6 @@ const About = ({ loading, error, abouts, diwals }) => {
         </motion.div>
       </div>
 
-      {/* Scroll to Top Button */}
       <AnimatePresence>
         {showScrollTop && (
           <motion.button

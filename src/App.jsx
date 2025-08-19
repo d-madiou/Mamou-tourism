@@ -12,11 +12,9 @@ import Hotels from "./pages/Hotels";
 import Nouriture from "./pages/Nouriture";
 import PlaceVisite from "./pages/PlaceVisite";
 import Sport from "./pages/Sport";
-import Dashboard from "./pages/Dashboard"
 import Mairie from "./pages/Mairie";
 import Administration from "./pages/Administration";
-import DashboardOverview from "./components/dashboard/DashboardOverview";
-import Sidebar from "./components/common/SideBar";
+import ArticlesManager from "./components/managers/ArticlesManager";
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -29,19 +27,19 @@ function App() {
 
   // Fetch data (unchanged)
   const { loading: blogsLoading, data: blogsData, error: blogsError } =
-    useFetch('http://localhost:1337/api/blogs?populate=*&sort=publishedDate:desc');
+    useFetch('https://cozy-sparkle-24ced58ec1.strapiapp.com/api/blogs?populate=*&sort=publishedDate:desc');
   const { loading: schoolsLoading, data: schoolsData } =
-    useFetch('http://localhost:1337/api/schools?populate=*');
+    useFetch('https://cozy-sparkle-24ced58ec1.strapiapp.com/api/schools?populate=*');
   const { data: aboutData } =
-    useFetch('http://localhost:1337/api/abouts?populate=*');
+    useFetch('https://cozy-sparkle-24ced58ec1.strapiapp.com/api/abouts?populate=*');
   const { data: diweData } =
-    useFetch('http://localhost:1337/api/diwals?populate=*');
+    useFetch('https://cozy-sparkle-24ced58ec1.strapiapp.com/api/diwals?populate=*');
   const { data: eventData } =
-    useFetch('http://localhost:1337/api/events?populate=*');
+    useFetch('https://cozy-sparkle-24ced58ec1.strapiapp.com/api/events?populate=*');
   const { data: matchData } =
-    useFetch('http://localhost:1337/api/matches?populate=*');
+    useFetch('https://cozy-sparkle-24ced58ec1.strapiapp.com/api/matches?populate=*');
   const { data: newsData } =
-    useFetch('http://localhost:1337/api/sportnews?populate=*');
+    useFetch('https://cozy-sparkle-24ced58ec1.strapiapp.com/api/sportnews?populate=*');
 
   const educationData = blogsData?.data || [];
   const schools = schoolsData?.data || [];
@@ -56,7 +54,7 @@ function App() {
     <>
       <ScrollToTop />
       <div style={{ display: "flex" }}>
-        {isAdminRoute && <Sidebar />} {/* Only show sidebar in admin */}
+        {isAdminRoute }
         <div style={{ flex: 1 }}>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -67,9 +65,8 @@ function App() {
             <Route path="/sport" element={<Sport matchs={matchs} news={news} />} />
             <Route path="/hotel" element={<Hotels />} />
             <Route path="/place" element={<PlaceVisite />} />
-            <Route path="/admin" element={<Dashboard />} />
-            <Route path="/minda" element={<DashboardOverview />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/article" element={<ArticlesManager />} />
             <Route path="/culture" element={<Culture events={events} />} />
             <Route
               path="/education"
