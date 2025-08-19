@@ -560,6 +560,46 @@ export interface ApiSchoolSchool extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiSousPrefectureSousPrefecture
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'sous_prefectures';
+  info: {
+    description: '';
+    displayName: 'sous-prefecture';
+    pluralName: 'sous-prefectures';
+    singularName: 'sous-prefecture';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    chefLieu: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Blocks;
+    image: Schema.Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::sous-prefecture.sous-prefecture'
+    > &
+      Schema.Attribute.Private;
+    nom: Schema.Attribute.String & Schema.Attribute.Required;
+    nombreDistricts: Schema.Attribute.Integer;
+    population: Schema.Attribute.BigInteger;
+    publishedAt: Schema.Attribute.DateTime;
+    superficieKm2: Schema.Attribute.Decimal;
+    titre: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiSportnewSportnew extends Struct.CollectionTypeSchema {
   collectionName: 'sportnews';
   info: {
@@ -1109,6 +1149,7 @@ declare module '@strapi/strapi' {
       'api::event.event': ApiEventEvent;
       'api::match.match': ApiMatchMatch;
       'api::school.school': ApiSchoolSchool;
+      'api::sous-prefecture.sous-prefecture': ApiSousPrefectureSousPrefecture;
       'api::sportnew.sportnew': ApiSportnewSportnew;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;

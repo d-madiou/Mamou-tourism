@@ -1,0 +1,48 @@
+{
+  "kind": "collectionType",
+  "collectionName": "sous_prefectures",
+  "info": {
+    "singularName": "sous-prefecture",
+    "pluralName": "sous-prefectures",
+    "displayName": "sous-prefecture",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "nom": {
+      "type": "string",
+      "required": true
+    },
+    "titre": {
+      "type": "string"
+    },
+    "description": {
+      "type": "blocks"
+    },
+    "image": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "nombreDistricts": {
+      "type": "integer"
+    },
+    "population": {
+      "type": "biginteger"
+    },
+    "superficieKm2": {
+      "type": "decimal"
+    },
+    "chefLieu": {
+      "type": "string"
+    }
+  }
+}
