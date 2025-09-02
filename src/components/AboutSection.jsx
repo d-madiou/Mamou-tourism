@@ -8,10 +8,10 @@ import { Highlight, Logos } from "../assets/mockData"
 
 function AboutSection() {
   return (
-    <div className="relative">
+    <div className="relative ">
       <div
         id="about-content"
-        className="bg-white py-16 lg:py-24 px-4 sm:px-6 lg:px-8 text-black relative z-10 rounded-t-[40px] -mt-10"
+        className="bg-white py-16 lg:py-24 px-4 sm:px-6 lg:px-8 text-black relative rounded-t-[40px] -mt-10"
       >
         <div className="container mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16">
@@ -21,13 +21,13 @@ function AboutSection() {
               </span>
 
               <h2 className="text-4xl lg:text-5xl font-bold mb-6 text-blue-900">
-                Une Ville <span className="text-yellow-500">paradisiaque</span>
+                Une Ville <span className="text-yellow-500">carrefour</span>
               </h2>
 
               <p className="text-lg text-gray-700 mb-8 leading-relaxed">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-                dolore. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                consequat.
+                Située au cœur de la Guinée, Mamou est la porte d'entrée et le principal carrefour 
+                du Fouta-Djalon, reliant la Basse-Guinée à la Haute-Guinée, la Guinée forestière et même la Sierra Leone. 
+                Son emplacement stratégique en fait un centre névralgique pour le commerce et les échanges culturels.
               </p>
 
               <div className="grid grid-cols-2 gap-6 mb-8">
@@ -73,7 +73,8 @@ function AboutSection() {
               </button>
             </div>
 
-            <div className="relative h-[500px]">
+            {/* I want to display this behind the navbar */}
+            <div className="relative h-[500px] z-0">
               {/* Static image layout instead of animated positioning */}
               <div className="relative h-full">
                 <img
@@ -105,13 +106,16 @@ function AboutSection() {
           <div className="mt-24 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
             <div>
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-blue-900 leading-tight">
-                Une culture authentique où la beauté ne connaît pas de
-                <span className="text-yellow-500"> limite</span>
+                presentation de Mamou
+                <span className="text-yellow-500"> ville </span>
               </h2>
 
               <p className="text-lg text-gray-700 mb-8 leading-relaxed">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis,
-                pulvinar dapibus leo. Sed non mauris vitae erat consequat auctor eu in elit.
+                Mamou est une ville située dans la région de la Moyenne-Guinée. 
+                Elle est une ville historique du Fouta-Djalon, à environ 250 km au nord-est de la capitale Conakry. 
+                Mamou a été créée de toutes pièces en 1908 pour accueillir une gare sur la ligne du chemin de fer de Conakry-Niger, 
+                alors en construction. À l'intersection de plusieurs routes et influences culturelles, c'est une «ville-carrefour». 
+                Sur le plan administratif, elle est le chef-lieu de la préfecture de Mamou et de la région de Mamou.
               </p>
             </div>
 

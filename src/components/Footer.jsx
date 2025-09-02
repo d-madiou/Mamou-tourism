@@ -4,6 +4,7 @@ import { motion } from "framer-motion"
 import { ArrowRight, Facebook, Instagram, Mail, MapPin, Twitter } from "lucide-react"
 import { useState } from "react"
 import { Link } from "react-router-dom"
+import LogoImage from "../assets/images/logo.png"
 
 const  Footer = ()=>{
   const [email, setEmail] = useState("")
@@ -35,12 +36,13 @@ const  Footer = ()=>{
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* About Section - Simplified */}
           <div className="md:col-span-1">
-            <div className="flex items-center mb-4">
-              <div className="h-8 w-8 rounded-full bg-yellow-400 flex items-center justify-center text-blue-900 font-bold text-lg mr-2">
-                M
-              </div>
-              <span className="text-lg font-bold">MamouVille</span>
-            </div>
+            <div className="h-12 w-12 flex items-center justify-center">
+            <img
+              src={LogoImage}
+              alt="Mamou Ville Logo"
+              className="h-full w-full object-contain rounded-full"
+            />
+          </div>
             <p className="mb-4 text-blue-200 text-sm hidden md:block">
               Mamou est une ville et une préfecture de Guinée, située au centre du pays dans la région de Mamou.
             </p>
@@ -48,21 +50,21 @@ const  Footer = ()=>{
             {/* Social Media - Simplified */}
             <div className="flex space-x-3">
               <motion.a
-                href="#"
+                href="https://www.facebook.com/share/16XspHxKcv/?mibextid=wwXIfr"
                 whileHover={{ y: -3 }}
                 className="rounded-full bg-blue-800 p-2 text-white transition-colors hover:bg-blue-700"
               >
                 <Facebook className="h-4 w-4" />
               </motion.a>
               <motion.a
-                href="#"
+                href="https://www.facebook.com/share/16XspHxKcv/?mibextid=wwXIfr"
                 whileHover={{ y: -3 }}
                 className="rounded-full bg-blue-800 p-2 text-white transition-colors hover:bg-blue-700"
               >
                 <Twitter className="h-4 w-4" />
               </motion.a>
               <motion.a
-                href="#"
+                href="https://www.facebook.com/share/16XspHxKcv/?mibextid=wwXIfr"
                 whileHover={{ y: -3 }}
                 className="rounded-full bg-blue-800 p-2 text-white transition-colors hover:bg-blue-700"
               >
@@ -99,7 +101,7 @@ const  Footer = ()=>{
               </li>
               <li className="flex items-start">
                 <Mail className="mr-2 h-4 w-4 text-yellow-400 flex-shrink-0 mt-0.5" />
-                <span className="text-blue-200 text-sm">info@mamou-guinee.com</span>
+                <span className="text-blue-200 text-sm">contact@villedemamou.com</span>
               </li>
             </ul>
           </div>

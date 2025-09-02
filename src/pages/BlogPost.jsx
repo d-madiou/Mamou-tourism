@@ -13,42 +13,94 @@ import {
   User,
 } from "lucide-react"
 import { useEffect, useState } from "react"
-import { Mosaic } from "react-loading-indicators"
 import { Link, useParams } from "react-router-dom"
 import NavBar from "../components/NavBar"
 
-const BlogPost = ({  blogsData, schoolsData, newsData, data =[] ,contentTypes = ['blogs', 'schools', 'news'] }) => {
+const BlogPost = ({ blogsData, schoolsData, newsData, contentTypes = ['blogs', 'schools', 'news'] }) => {
   const [isBookmarked, setIsBookmarked] = useState(false)
   const [likes, setLikes] = useState(42)
   const [hasLiked, setHasLiked] = useState(false)
   const [currentPost, setCurrentPost] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [relatedPosts, setRelatedPosts] = useState([])
   const params = useParams()
 
-  const findPostById = (data) => data.find((item) => item.id == params.id)
+  // Helper function to extract text from blocks
+  const getTextFromBlocks = (blocks) => {
+    if (!blocks || !Array.isArray(blocks)) return "Contenu non disponible";
+    
+    let text = "";
+    blocks.forEach(block => {
+      if (block.children && Array.isArray(block.children)) {
+        block.children.forEach(child => {
+          if (child.text) {
+            text += child.text + " ";
+          }
+        });
+      }
+    });
+    return text.trim();
+  };
+
+  // Helper function to get image URL
+  const getImageUrl = (image) => {
+    if (!image) return "https://via.placeholder.com/1200x600?text=Image+non+disponible";
+    
+    // Handle array of images (schools)
+    if (Array.isArray(image) && image.length > 0) {
+      const firstImage = image[0];
+      return firstImage.url.startsWith('http') ? firstImage.url : `https://cozy-sparkle-24ced58ec1.strapiapp.com${firstImage.url}`;
+    }
+    
+    // Handle single image (blogs, news)
+    if (image.url) {
+      return image.url.startsWith('http') ? image.url : `https://cozy-sparkle-24ced58ec1.strapiapp.com${image.url}`;
+    }
+    
+    return "https://via.placeholder.com/1200x600?text=Image+non+disponible";
+  };
 
   useEffect(() => {
     setIsLoading(true)
-    const idToUse = params.id || localStorage.getItem("lastOpenedPostId")
     
-    if (!idToUse) {
+    if (!params.id) {
       setIsLoading(false)
       return
     }
 
-    // Search only in specified content types
-    const posts = []
-    if (contentTypes.includes('blogs')) posts.push(...(blogsData?.data || []))
-    if (contentTypes.includes('schools')) posts.push(...(schoolsData?.data || []))
-    if (contentTypes.includes('news')) posts.push(...(newsData?.data || []))
+    // Search in the appropriate data source based on contentTypes
+    let post = null;
+    let allPosts = [];
 
-    const post = posts.find((item) => item.id == params.id)
+    if (contentTypes.includes('blogs') && blogsData?.data) {
+      post = blogsData.data.find(item => item.id == params.id);
+      if (post) {
+        allPosts = blogsData.data;
+      }
+    }
+
+    if (!post && contentTypes.includes('schools') && schoolsData?.data) {
+      post = schoolsData.data.find(item => item.id == params.id);
+      if (post) {
+        allPosts = schoolsData.data;
+      }
+    }
+
+    if (!post && contentTypes.includes('news') && newsData?.data) {
+      post = newsData.data.find(item => item.id == params.id);
+      if (post) {
+        allPosts = newsData.data;
+      }
+    }
 
     if (post) {
-      setCurrentPost(post)
-      setLikes(post.likes || 0)
-      localStorage.setItem("lastOpenedPostId", post.id)
+      setCurrentPost(post);
+      // Set related posts (exclude current post)
+      const related = allPosts.filter(item => item.id !== post.id).slice(0, 3);
+      setRelatedPosts(related);
+      setLikes(Math.floor(Math.random() * 100) + 10); // Random likes for demo
     }
+    
     setIsLoading(false)
   }, [params.id, contentTypes, blogsData, schoolsData, newsData])
 
@@ -62,7 +114,7 @@ const BlogPost = ({  blogsData, schoolsData, newsData, data =[] ,contentTypes = 
   const handleShare = () => {
     if (navigator.share) {
       navigator.share({
-        title: currentPost?.titleSport || currentPost?.Title,
+        title: getPostTitle(),
         text: "Découvrez cet article intéressant",
         url: window.location.href,
       })
@@ -72,23 +124,48 @@ const BlogPost = ({  blogsData, schoolsData, newsData, data =[] ,contentTypes = 
     }
   }
 
-  const timeReading = () => {
-    const content = currentPost?.contentSport || currentPost?.Content
-    if (content) {
-      const wordCount = content.reduce((acc, item) => {
-        return acc + item.children?.reduce((childAcc, child) => childAcc + child.text.split(" ").length, 0) || 0
-      }, 0)
-      return Math.ceil(wordCount / 200)
-    }
-    return 5 // Default reading time
-  }
+  const getPostTitle = () => {
+    return currentPost?.Titre || currentPost?.nom || "Article sans titre";
+  };
 
-  const getImageUrl = () => {
-    if (currentPost?.imageSport?.[0]?.url) return `http://localhost:1337${currentPost.imageSport[0].url}`
-    if (currentPost?.Images?.url) return `http://localhost:1337${currentPost.Images.url}`
-    if (currentPost?.Image?.[0]?.url) return `http://localhost:1337${currentPost.Image[0].url}`
-    return "https://via.placeholder.com/1200x600?text=Image+non+disponible"
-  }
+  const getPostDescription = () => {
+    if (currentPost?.description) return getTextFromBlocks(currentPost.description);
+    if (currentPost?.contenu) return getTextFromBlocks(currentPost.contenu);
+    return "Description non disponible";
+  };
+
+  const getPostImage = () => {
+    if (currentPost?.Image) return getImageUrl(currentPost.Image);
+    if (currentPost?.image) return getImageUrl(currentPost.image);
+    return "https://via.placeholder.com/1200x600?text=Image+non+disponible";
+  };
+
+  const getPostDate = () => {
+    return currentPost?.datePublication || currentPost?.createdAt || new Date().toISOString();
+  };
+
+  const getPostCategory = () => {
+    if (currentPost?.categorie) {
+      return currentPost.categorie.replace("_", " ").toUpperCase();
+    }
+    if (currentPost?.typeEcole) {
+      return currentPost.typeEcole.toUpperCase();
+    }
+    return "ARTICLE";
+  };
+
+  const getAuthor = () => {
+    return currentPost?.auteur || currentPost?.nomDuDirecteur || "Équipe éditoriale";
+  };
+
+  const timeReading = () => {
+    const content = getPostDescription();
+    if (content && content !== "Description non disponible") {
+      const wordCount = content.split(" ").length;
+      return Math.ceil(wordCount / 200);
+    }
+    return 5; // Default reading time
+  };
 
   const formatDate = (dateString) => {
     try {
@@ -100,60 +177,41 @@ const BlogPost = ({  blogsData, schoolsData, newsData, data =[] ,contentTypes = 
     } catch (e) {
       return "Date non disponible"
     }
-  }
-
-  const getCategory = () => {
-    if (currentPost?.contentSport) return "Sport"
-    if (currentPost?.formationTitle) return "Formation"
-    return "Éducation"
-  }
-
-  const getPostDate = () => {
-    return currentPost?.dateSport || currentPost?.publishedDate || new Date().toISOString()
-  }
+  };
 
   const renderContent = () => {
-    if (currentPost?.contentSport) {
-      return currentPost.contentSport.map((item, idx) => (
-        <div key={idx} className="mb-4">
-          {item.children?.map((child, cIdx) => (
-            <span key={cIdx} className="w-full">
-              {child.text}
-            </span>
-          ))}
-        </div>
-      ))
+    const content = currentPost?.contenu || currentPost?.description;
+    if (!content || !Array.isArray(content)) {
+      return <p className="text-gray-700">Contenu non disponible.</p>;
     }
 
-    if (currentPost?.Content) {
-      return currentPost.Content.map((textItem, idx) => (
-        <div key={idx} className="mb-4">
-          {textItem.children.map((child, cIdx) => (
-            <span key={cIdx} className="w-full">
-              {child.text}
-            </span>
-          ))}
-        </div>
-      ))
-    }
-
-    return currentPost?.Description?.map((textItem, index) => (
-      <div key={index} className="mb-4">
-        {textItem.children.map((child, cIdx) => (
-          <span key={cIdx} className="w-full">
-            {child.text}
-          </span>
-        ))}
+    return content.map((block, idx) => (
+      <div key={idx} className="mb-6">
+        {block.children?.map((child, cIdx) => {
+          if (child.type === 'text') {
+            let className = "text-gray-700 leading-relaxed";
+            if (child.bold) className += " font-bold";
+            if (child.italic) className += " italic";
+            if (child.underline) className += " underline";
+            
+            return (
+              <span key={cIdx} className={className}>
+                {child.text}
+              </span>
+            );
+          }
+          return <span key={cIdx}>{child.text}</span>;
+        })}
       </div>
-    ))
-  }
+    ));
+  };
 
   if (isLoading) {
     return (
       <div className="font-sans bg-gray-50 min-h-screen">
         <NavBar />
         <div className="flex items-center justify-center min-h-[60vh]">
-          <Mosaic color="#3A59D1" size="medium" text="" textColor="" />
+          <div className="text-blue-600 text-lg">Chargement de l'article...</div>
         </div>
       </div>
     )
@@ -162,9 +220,7 @@ const BlogPost = ({  blogsData, schoolsData, newsData, data =[] ,contentTypes = 
   if (!currentPost) {
     return (
       <div className="font-sans bg-gray-50 min-h-screen">
-        <div className="text-center">
-          <NavBar />
-        </div>
+        <NavBar />
         <div className="flex flex-col items-center justify-center min-h-[60vh] px-4">
           <div className="bg-white p-8 rounded-xl shadow-sm text-center max-w-md">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">Article non trouvé</h2>
@@ -183,23 +239,21 @@ const BlogPost = ({  blogsData, schoolsData, newsData, data =[] ,contentTypes = 
 
   return (
     <div className="font-sans bg-gray-50 min-h-screen">
-      <div className="text-center">
-          <NavBar />
-        </div>
+      <NavBar />
 
-      <header className="bg-white border-b shadow-sm mt-15">
+      <header className="bg-white border-b shadow-sm">
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-4xl mx-auto">
             <div className="flex items-center space-x-2 text-sm text-gray-500 mb-4">
               <Link to="/education" className="hover:text-blue-600 transition-colors duration-200">
-                Éducation
+                Accueil
               </Link>
               <span>/</span>
               <span className="text-gray-700">Article</span>
             </div>
 
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-gray-800 leading-tight">
-              {currentPost.titleSport || currentPost.Title}
+              {getPostTitle()}
             </h1>
 
             <div className="flex flex-wrap items-center text-gray-600 gap-4 md:gap-6 mb-6">
@@ -215,12 +269,12 @@ const BlogPost = ({  blogsData, schoolsData, newsData, data =[] ,contentTypes = 
 
               <div className="flex items-center">
                 <MessageSquare className="h-4 w-4 mr-2 text-blue-600" />
-                <span className="text-sm">{currentPost.comments || 0} commentaires</span>
+                <span className="text-sm">0 commentaires</span>
               </div>
 
               <div className="flex items-center">
                 <span className="bg-blue-600 text-white text-xs px-3 py-1 rounded-full font-medium">
-                  {getCategory()}
+                  {getPostCategory()}
                 </span>
               </div>
             </div>
@@ -231,8 +285,10 @@ const BlogPost = ({  blogsData, schoolsData, newsData, data =[] ,contentTypes = 
                   <User className="h-6 w-6 text-gray-500" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-900">Auteur</p>
-                  <p className="text-xs text-gray-500">{currentPost.author || "Équipe éditoriale"}</p>
+                  <p className="text-sm font-medium text-gray-900">Par {getAuthor()}</p>
+                  <p className="text-xs text-gray-500">
+                    {currentPost?.localisation || "Mamou, Guinée"}
+                  </p>
                 </div>
               </div>
             </div>
@@ -244,8 +300,8 @@ const BlogPost = ({  blogsData, schoolsData, newsData, data =[] ,contentTypes = 
         <div className="max-w-4xl mx-auto">
           <div className="mb-8 rounded-xl overflow-hidden shadow-lg bg-white">
             <img
-              src={getImageUrl()}
-              alt={currentPost.titleSport || currentPost.Title}
+              src={getPostImage()}
+              alt={getPostTitle()}
               className="w-full h-auto object-cover max-h-[500px]"
               onError={(e) => {
                 e.target.src = "https://via.placeholder.com/1200x600?text=Image+non+disponible"
@@ -254,35 +310,11 @@ const BlogPost = ({  blogsData, schoolsData, newsData, data =[] ,contentTypes = 
           </div>
 
           <div className="flex justify-between items-center mb-8">
-            <div className="flex space-x-4">
-              <button
-                onClick={handleLike}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-full border transition-colors duration-200 ${
-                  hasLiked
-                    ? "bg-red-50 border-red-200 text-red-500"
-                    : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
-                }`}
-              >
-                <Heart className={`h-5 w-5 ${hasLiked ? "fill-red-500 text-red-500" : ""}`} />
-                <span>{likes}</span>
-              </button>
-
-              <button
-                onClick={handleBookmark}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-full border transition-colors duration-200 ${
-                  isBookmarked
-                    ? "bg-blue-50 border-blue-200 text-blue-600"
-                    : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
-                }`}
-              >
-                {isBookmarked ? <BookmarkCheck className="h-5 w-5" /> : <Bookmark className="h-5 w-5" />}
-                <span>{isBookmarked ? "Enregistré" : "Enregistrer"}</span>
-              </button>
-            </div>
+            
 
             <button
               onClick={handleShare}
-              className="flex items-center space-x-2 px-4 py-2 rounded-full border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 transition-colors duration-200"
+              className="flex items-center bg-blue-500 space-x-2 px-4 py-2 rounded-full border border-gray-200 text-white hover:bg-gray-50 transition-colors duration-200"
             >
               <Share2 className="h-5 w-5" />
               <span>Partager</span>
@@ -290,87 +322,82 @@ const BlogPost = ({  blogsData, schoolsData, newsData, data =[] ,contentTypes = 
           </div>
 
           <article className="prose prose-lg max-w-none mb-12 bg-white p-8 rounded-xl shadow-sm">
-            <div className="text-base mt-3 max-w-3xl text-gray-700 leading-relaxed">
+            <div className="text-lg leading-relaxed text-gray-700">
               {renderContent()}
             </div>
-          </article>
-
-          <div className="flex justify-between items-center border-t border-b py-6 mb-12">
-            <Link
-              to="#"
-              className="flex items-center text-blue-600 hover:text-blue-800 transition-colors duration-200 group"
-            >
-              <ChevronLeft className="h-5 w-5 mr-2" />
-              <span>Article précédent</span>
-            </Link>
-            <Link
-              to="#"
-              className="flex items-center text-blue-600 hover:text-blue-800 transition-colors duration-200 group"
-            >
-              <span>Article suivant</span>
-              <ChevronRight className="h-5 w-5 ml-2" />
-            </Link>
-          </div>
-
-          <div className="bg-white p-8 rounded-xl shadow-sm mb-12">
-            <h3 className="text-xl font-bold mb-6 text-gray-800">Commentaires ({currentPost.comments || 0})</h3>
-            {currentPost.comments && currentPost.comments > 0 ? (
-              <div>
-                <p className="text-gray-500">Chargement des commentaires...</p>
-              </div>
-            ) : (
-              <div className="text-center py-8">
-                <p className="text-gray-500 mb-4">Soyez le premier à commenter cet article</p>
-                <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors duration-200">
-                  Ajouter un commentaire
-                </button>
+            
+            {/* Additional Information for Schools */}
+            {currentPost?.typeEcole && (
+              <div className="mt-8 pt-6 border-t border-gray-200">
+                <h3 className="text-xl font-bold mb-4">Informations supplémentaires</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {currentPost.anneeFondation && (
+                    <div>
+                      <strong>Année de fondation:</strong> {currentPost.anneeFondation}
+                    </div>
+                  )}
+                  {currentPost.capaciteEleves && (
+                    <div>
+                      <strong>Capacité:</strong> {currentPost.capaciteEleves} élèves
+                    </div>
+                  )}
+                  {currentPost.telephone && (
+                    <div>
+                      <strong>Téléphone:</strong> {currentPost.telephone}
+                    </div>
+                  )}
+                  {currentPost.email && (
+                    <div>
+                      <strong>Email:</strong> {currentPost.email}
+                    </div>
+                  )}
+                </div>
               </div>
             )}
-          </div>
+          </article>
         </div>
       </main>
 
-      <footer className="bg-white border-t py-8">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <h3 className="text-xl font-bold mb-6 text-gray-800">Articles similaires</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {data.slice(0, 3).map((item, index) => (
-                <Link
-                  to={`/blog/${item.id || index}`}
-                  key={item?.id || index}
-                  className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200"
-                >
-                  <div className="h-40 bg-gray-200">
-                    <img
-                      src={
-                        item?.imageSport?.[0]?.url
-                          ? `http://localhost:1337${item.imageSport[0].url}`
-                          : item?.Images?.url
-                          ? `http://localhost:1337${item.Images.url}`
-                          : "/placeholder.svg?height=160&width=320"
-                      }
-                      alt={item?.titleSport || item?.Title || `Article ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="p-4">
-                    <p className="text-xs text-blue-600 mb-2">{item?.contentSport ? "Sport" : "Éducation"}</p>
-                    <h4 className="font-bold text-gray-800 mb-2 line-clamp-2">
-                      {item?.titleSport || item?.Title || `Article ${index + 1}`}
-                    </h4>
-                    <p className="text-sm text-gray-500 line-clamp-3">
-                      {item?.contentSport?.[0]?.children?.[0]?.text ||
-                        item?.Content?.[0]?.children?.[0]?.text ||
-                        "Description de l'article"}
-                    </p>
-                  </div>
-                </Link>
-              ))}
+      {relatedPosts.length > 0 && (
+        <footer className="bg-white border-t py-8">
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl mx-auto text-center">
+              <h3 className="text-xl font-bold mb-6 text-gray-800">Articles similaires</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {relatedPosts.map((item, index) => (
+                  <Link
+                    to={`/blog/education/${item.id}`}
+                    key={item.id || index}
+                    className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200"
+                  >
+                    <div className="h-40 bg-gray-200">
+                      <img
+                        src={getImageUrl(item.Image || item.image)}
+                        alt={item.Titre || item.nom || `Article ${index + 1}`}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.src = "/placeholder.svg?height=160&width=320";
+                        }}
+                      />
+                    </div>
+                    <div className="p-4">
+                      <p className="text-xs text-blue-600 mb-2">
+                        {item.categorie?.replace("_", " ").toUpperCase() || item.typeEcole || "ARTICLE"}
+                      </p>
+                      <h4 className="font-bold text-gray-800 mb-2 line-clamp-2">
+                        {item.Titre || item.nom || `Article ${index + 1}`}
+                      </h4>
+                      <p className="text-sm text-gray-500 line-clamp-3">
+                        {getTextFromBlocks(item.description).substring(0, 100)}...
+                      </p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      </footer>
+        </footer>
+      )}
     </div>
   )
 }

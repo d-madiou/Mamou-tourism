@@ -1,0 +1,49 @@
+{
+  "kind": "collectionType",
+  "collectionName": "activite_populaires",
+  "info": {
+    "singularName": "activite-populaire",
+    "pluralName": "activite-populaires",
+    "displayName": "activite-populaire"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "Titre": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "blocks"
+    },
+    "localisation": {
+      "type": "string"
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "sport",
+        "commerce",
+        "agriculture",
+        "tourisme",
+        "environment",
+        "artisanat",
+        "culture"
+      ]
+    },
+    "date": {
+      "type": "date"
+    },
+    "image": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": true
+    }
+  }
+}

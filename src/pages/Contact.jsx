@@ -3,7 +3,7 @@
 import { motion } from "framer-motion"
 import { CheckCircle, ChevronRight, Clock, Facebook, Instagram, Mail, MapPin, Phone, Send, Twitter } from "lucide-react"
 import { useState } from "react"
-import { FaHome } from "react-icons/fa"
+import { FaHome, FaWhatsapp } from "react-icons/fa"
 import NavBar from "../components/NavBar"
 
 function Contact() {
@@ -89,7 +89,7 @@ function Contact() {
                   </div>
                   <div>
                     <h3 className="font-medium text-gray-800">Téléphone</h3>
-                    <p className="text-gray-600">+224 12 345 6789</p>
+                    <p className="text-gray-600">+224 620 15 04 81</p>
                   </div>
                 </div>
 
@@ -99,7 +99,7 @@ function Contact() {
                   </div>
                   <div>
                     <h3 className="font-medium text-gray-800">Email</h3>
-                    <p className="text-gray-600">info@mamou-guinee.com</p>
+                    <p className="text-gray-600">contact@villedemamou.com</p>
                   </div>
                 </div>
 
@@ -122,25 +122,18 @@ function Contact() {
               <h2 className="text-xl font-bold text-gray-800 mb-6">Suivez-nous</h2>
               <div className="flex space-x-4">
                 <motion.a
-                  href="#"
+                  href="https://www.facebook.com/share/16XspHxKcv/?mibextid=wwXIfr"
                   whileHover={{ y: -5 }}
                   className="bg-blue-700 text-white p-3 rounded-full hover:bg-blue-800 transition-colors"
                 >
                   <Facebook className="h-5 w-5" />
                 </motion.a>
                 <motion.a
-                  href="#"
+                  href="https://wa.me/224620150481"
                   whileHover={{ y: -5 }}
                   className="bg-blue-400 text-white p-3 rounded-full hover:bg-blue-500 transition-colors"
                 >
-                  <Twitter className="h-5 w-5" />
-                </motion.a>
-                <motion.a
-                  href="#"
-                  whileHover={{ y: -5 }}
-                  className="bg-pink-600 text-white p-3 rounded-full hover:bg-pink-700 transition-colors"
-                >
-                  <Instagram className="h-5 w-5" />
+                  <FaWhatsapp className="h-5 w-5" />
                 </motion.a>
               </div>
             </div>
@@ -273,7 +266,7 @@ function Contact() {
             <div className="text-center">
               <MapPin className="h-12 w-12 text-blue-700 mx-auto mb-4" />
               <p className="text-gray-600">Carte interactive de Mamou</p>
-              <button className="mt-4 text-blue-700 font-medium hover:text-blue-800">Voir sur Google Maps</button>
+              <a href="https://maps.app.goo.gl/NmFfQYZvd7BK5CmU6" className="mt-4 text-blue-700 font-medium hover:text-blue-800">Voir sur Google Maps</a>
             </div>
           </div>
         </div>

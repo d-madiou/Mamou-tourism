@@ -1,0 +1,53 @@
+{
+  "kind": "collectionType",
+  "collectionName": "elus_officiels",
+  "info": {
+    "singularName": "elus-officiel",
+    "pluralName": "elus-officiels",
+    "displayName": "elus-officiel"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "nom": {
+      "type": "string",
+      "required": true
+    },
+    "titre": {
+      "type": "enumeration",
+      "enum": [
+        "maire",
+        "adjoint",
+        "conseiller",
+        "prefet",
+        "gouverneur"
+      ]
+    },
+    "image": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": true
+    },
+    "telephone": {
+      "type": "string"
+    },
+    "email": {
+      "type": "email"
+    },
+    "adresseBureau": {
+      "type": "string"
+    },
+    "biographie": {
+      "type": "blocks"
+    },
+    "dateDebut": {
+      "type": "date"
+    }
+  }
+}

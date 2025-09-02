@@ -1,0 +1,69 @@
+{
+  "kind": "collectionType",
+  "collectionName": "ecoles",
+  "info": {
+    "singularName": "ecole",
+    "pluralName": "ecoles",
+    "displayName": "ecole"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "nom": {
+      "type": "string",
+      "required": true
+    },
+    "localisation": {
+      "type": "string"
+    },
+    "image": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": true
+    },
+    "typeEcole": {
+      "type": "enumeration",
+      "enum": [
+        "Primaire",
+        "Collège",
+        "Lycée",
+        "Université",
+        "Formation"
+      ]
+    },
+    "description": {
+      "type": "blocks"
+    },
+    "nomDuDirecteur": {
+      "type": "string"
+    },
+    "imageDuDirecteur": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": true
+    },
+    "telephone": {
+      "type": "string"
+    },
+    "email": {
+      "type": "email"
+    },
+    "anneeFondation": {
+      "type": "string"
+    },
+    "capaciteEleves": {
+      "type": "integer"
+    }
+  }
+}

@@ -4,24 +4,21 @@
   "info": {
     "singularName": "blog",
     "pluralName": "blogs",
-    "displayName": "Blog",
+    "displayName": "articles-actualitee",
     "description": ""
   },
   "options": {
     "draftAndPublish": true
   },
   "attributes": {
-    "Title": {
+    "Titre": {
       "type": "string"
     },
-    "Content": {
+    "description": {
       "type": "blocks",
       "required": true
     },
-    "publishedDate": {
-      "type": "datetime"
-    },
-    "Images": {
+    "Image": {
       "type": "media",
       "multiple": false,
       "required": false,
@@ -31,6 +28,32 @@
         "videos",
         "audios"
       ]
+    },
+    "contenu": {
+      "type": "blocks"
+    },
+    "localisation": {
+      "type": "string"
+    },
+    "categorie": {
+      "type": "enumeration",
+      "enum": [
+        "education",
+        "sports_actualites",
+        "activites_populaires",
+        "sante",
+        "economie",
+        "culture"
+      ]
+    },
+    "datePublication": {
+      "type": "date"
+    },
+    "enVedette": {
+      "type": "boolean"
+    },
+    "auteur": {
+      "type": "string"
     }
   }
 }

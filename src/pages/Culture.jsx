@@ -143,19 +143,19 @@ const Culture = ({ events = [] }) => {
                   {/* Date Block */}
                   <div className="flex items-center space-x-4 mb-4 md:mb-0">
                     <div className="text-center border border-gray-300 rounded-lg w-16 flex flex-col overflow-hidden shadow-lg">
-                      <div className="text-xs text-gray-700 font-semibold pt-1 bg-gray-100 uppercase">{event.eventMonth}</div>
-                      <div className="text-2xl font-bold text-black leading-none py-1">{event.eventDay}</div>
-                      <div className="text-xs text-white bg-blue-700 font-semibold py-1">{event.eventDate.slice(0, 5)}</div>
+                      <div className="text-xs text-gray-700 font-semibold pt-1 bg-gray-100 uppercase">{event.Mois}</div>
+                      <div className="text-2xl font-bold text-black leading-none py-1">{event.Jour}</div>
+                      <div className="text-xs text-white bg-blue-700 font-semibold py-1">{event.Annee}</div>
                     </div>
 
                     {/* Content Block */}
                     <div>
                       <div className="text-xs uppercase text-blue-700 font-semibold tracking-wider">
-                        {event.eventTitle}
+                        {event.typeEvenement}
                       </div>
                       <h3 className="font-bold text-xl md:text-2xl text-gray-800 leading-tight mt-1">
-                        {event.eventContent &&
-                          event.eventContent.map((contentItem, contentIndex) => (
+                        {event.Titre &&
+                          event.Titre.map((contentItem, contentIndex) => (
                             <div key={contentIndex}>
                               {contentItem.children.map((child, childIndex) => (
                                 <span key={childIndex}>{child.text}</span>
@@ -165,11 +165,11 @@ const Culture = ({ events = [] }) => {
                       </h3>
                       <div className="flex items-center text-gray-600 mt-2">
                         <FaMapMarkerAlt className="text-blue-700 mr-2" />
-                        <span>{event.Location}</span>
+                        <span>{event.localisation}</span>
                       </div>
                       <div className="flex items-center text-gray-600 mt-1">
                         <FaClock className="text-blue-700 mr-2" />
-                        <span>{event.eventDate.slice(0,5)}</span>
+                        <span>{event.dateEvenement}</span>
                       </div>
                       <div className="mt-3 flex space-x-3">
                         <button className="bg-blue-700 text-white text-xs font-semibold px-4 py-1.5 rounded-full flex items-center">
@@ -177,7 +177,7 @@ const Culture = ({ events = [] }) => {
                           Réserver
                         </button>
                         <div className="flex items-center text-sm text-gray-700">
-                          <span className="font-semibold">{event.eventPrice} GNF</span>
+                          <span className="font-semibold">{event.prix} <span className="line-through text-gray-400"> GNF</span></span>
                         </div>
                       </div>
                     </div>
@@ -185,9 +185,9 @@ const Culture = ({ events = [] }) => {
 
                   {/* Event Image */}
                   <div className="md:w-40 h-52 md:h-44 rounded-lg overflow-hidden">
-                    {event.eventImage ? (
+                    {event.Image ? (
                       <img
-                        src={`http://localhost:1337${event.eventImage.url}`}
+                        src={`https://cozy-sparkle-24ced58ec1.strapiapp.com${event.Image.url}`}
                         alt={event.eventTitle}
                         className="w-full h-full object-cover"
                       />

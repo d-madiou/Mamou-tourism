@@ -1,0 +1,56 @@
+{
+  "kind": "collectionType",
+  "collectionName": "matchs_sportifs",
+  "info": {
+    "singularName": "matchs-sportif",
+    "pluralName": "matchs-sportifs",
+    "displayName": "matchs-sportif",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "typeSport": {
+      "type": "enumeration",
+      "enum": [
+        "football",
+        "volleyball",
+        "basketball"
+      ]
+    },
+    "titre": {
+      "type": "string"
+    },
+    "equipeDomicile": {
+      "type": "string"
+    },
+    "equipeVisiteuse": {
+      "type": "string"
+    },
+    "dateMatch": {
+      "type": "date"
+    },
+    "lieu": {
+      "type": "string"
+    },
+    "statut": {
+      "type": "enumeration",
+      "enum": [
+        "programme",
+        "en_cours",
+        "terminer",
+        "annuller"
+      ]
+    },
+    "scoreDomicile": {
+      "type": "integer"
+    },
+    "scoreVisiteur": {
+      "type": "integer"
+    },
+    "fraisEntree": {
+      "type": "decimal"
+    }
+  }
+}

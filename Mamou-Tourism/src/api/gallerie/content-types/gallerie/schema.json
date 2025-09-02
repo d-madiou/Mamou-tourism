@@ -1,0 +1,35 @@
+{
+  "kind": "collectionType",
+  "collectionName": "galleries",
+  "info": {
+    "singularName": "gallerie",
+    "pluralName": "galleries",
+    "displayName": "Gallerie"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "image": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": true
+    },
+    "typeDePhoto": {
+      "type": "enumeration",
+      "enum": [
+        "Activités associatives",
+        "Religieux",
+        "Citoyens",
+        "Culture",
+        "Sport",
+        "Tourisme"
+      ]
+    }
+  }
+}

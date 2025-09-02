@@ -1,0 +1,47 @@
+{
+  "kind": "collectionType",
+  "collectionName": "lieux_a_visiters",
+  "info": {
+    "singularName": "lieux-a-visiter",
+    "pluralName": "lieux-a-visiters",
+    "displayName": "lieux-a-visiter"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "titre": {
+      "type": "string",
+      "required": true
+    },
+    "localisation": {
+      "type": "string"
+    },
+    "image": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": true
+    },
+    "typeLieu": {
+      "type": "enumeration",
+      "enum": [
+        "naturel",
+        "culturel",
+        "historique",
+        "religieux",
+        "recreatif"
+      ]
+    },
+    "heuresOuverture": {
+      "type": "string"
+    },
+    "informationsContact": {
+      "type": "string"
+    }
+  }
+}

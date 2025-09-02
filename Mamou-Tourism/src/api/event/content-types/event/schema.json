@@ -4,23 +4,20 @@
   "info": {
     "singularName": "event",
     "pluralName": "events",
-    "displayName": "Event",
+    "displayName": "Evenement",
     "description": ""
   },
   "options": {
     "draftAndPublish": true
   },
   "attributes": {
-    "eventTitle": {
-      "type": "string"
-    },
-    "eventContent": {
+    "Titre": {
       "type": "blocks"
     },
-    "eventDate": {
+    "dateEvenement": {
       "type": "time"
     },
-    "eventImage": {
+    "Image": {
       "type": "media",
       "multiple": false,
       "required": false,
@@ -31,16 +28,31 @@
         "audios"
       ]
     },
-    "Location": {
+    "localisation": {
       "type": "string"
     },
-    "eventMonth": {
+    "Mois": {
       "type": "string"
     },
-    "eventDay": {
+    "Jour": {
       "type": "string"
     },
-    "eventPrice": {
+    "prix": {
+      "type": "string"
+    },
+    "typeEvenement": {
+      "type": "enumeration",
+      "enum": [
+        "concert",
+        "conference",
+        "formation",
+        "ceremonie",
+        "festival",
+        "atelier",
+        "exposition"
+      ]
+    },
+    "Annee": {
       "type": "string"
     }
   }

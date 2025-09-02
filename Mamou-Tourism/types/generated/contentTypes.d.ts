@@ -400,11 +400,58 @@ export interface ApiAboutAbout extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiActivitePopulaireActivitePopulaire
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'activite_populaires';
+  info: {
+    displayName: 'activite-populaire';
+    pluralName: 'activite-populaires';
+    singularName: 'activite-populaire';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    date: Schema.Attribute.Date;
+    description: Schema.Attribute.Blocks;
+    image: Schema.Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localisation: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::activite-populaire.activite-populaire'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    Titre: Schema.Attribute.String & Schema.Attribute.Required;
+    type: Schema.Attribute.Enumeration<
+      [
+        'sport',
+        'commerce',
+        'agriculture',
+        'tourisme',
+        'environment',
+        'artisanat',
+        'culture',
+      ]
+    >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiBlogBlog extends Struct.CollectionTypeSchema {
   collectionName: 'blogs';
   info: {
     description: '';
-    displayName: 'Blog';
+    displayName: 'articles-actualitee';
     pluralName: 'blogs';
     singularName: 'blog';
   };
@@ -412,17 +459,31 @@ export interface ApiBlogBlog extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
-    Content: Schema.Attribute.Blocks & Schema.Attribute.Required;
+    auteur: Schema.Attribute.String;
+    categorie: Schema.Attribute.Enumeration<
+      [
+        'education',
+        'sports_actualites',
+        'activites_populaires',
+        'sante',
+        'economie',
+        'culture',
+      ]
+    >;
+    contenu: Schema.Attribute.Blocks;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    Images: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    datePublication: Schema.Attribute.Date;
+    description: Schema.Attribute.Blocks & Schema.Attribute.Required;
+    enVedette: Schema.Attribute.Boolean;
+    Image: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localisation: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::blog.blog'> &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
-    publishedDate: Schema.Attribute.DateTime;
-    Title: Schema.Attribute.String;
+    Titre: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -459,13 +520,13 @@ export interface ApiDiwalDiwal extends Struct.CollectionTypeSchema {
   };
 }
 
-export interface ApiEventEvent extends Struct.CollectionTypeSchema {
-  collectionName: 'events';
+export interface ApiDocumentAdministratifDocumentAdministratif
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'document_administratifs';
   info: {
-    description: '';
-    displayName: 'Event';
-    pluralName: 'events';
-    singularName: 'event';
+    displayName: 'document-administratif';
+    pluralName: 'document-administratifs';
+    singularName: 'document-administratif';
   };
   options: {
     draftAndPublish: true;
@@ -474,20 +535,312 @@ export interface ApiEventEvent extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    eventContent: Schema.Attribute.Blocks;
-    eventDate: Schema.Attribute.Time;
-    eventDay: Schema.Attribute.String;
-    eventImage: Schema.Attribute.Media<
+    delai: Schema.Attribute.Integer;
+    description: Schema.Attribute.Blocks;
+    formulaireTelecharger: Schema.Attribute.Media<
       'images' | 'files' | 'videos' | 'audios'
     >;
-    eventMonth: Schema.Attribute.String;
-    eventPrice: Schema.Attribute.String;
-    eventTitle: Schema.Attribute.String;
+    lieu: Schema.Attribute.String;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::document-administratif.document-administratif'
+    > &
+      Schema.Attribute.Private;
+    prix: Schema.Attribute.Integer;
+    publishedAt: Schema.Attribute.DateTime;
+    titre: Schema.Attribute.String & Schema.Attribute.Required;
+    typeDocument: Schema.Attribute.Enumeration<
+      [
+        'Acte de naissance',
+        'Acte de mariage',
+        'Acte de d\u00E9c\u00E8s',
+        'Certificat de r\u00E9sidence',
+        'Licence commerciale',
+        'Permis de construire',
+        'Jugement suppl\u00E9tif',
+      ]
+    >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiEcoleEcole extends Struct.CollectionTypeSchema {
+  collectionName: 'ecoles';
+  info: {
+    displayName: 'ecole';
+    pluralName: 'ecoles';
+    singularName: 'ecole';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    anneeFondation: Schema.Attribute.String;
+    capaciteEleves: Schema.Attribute.Integer;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Blocks;
+    email: Schema.Attribute.Email;
+    image: Schema.Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
+    imageDuDirecteur: Schema.Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localisation: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::ecole.ecole'> &
+      Schema.Attribute.Private;
+    nom: Schema.Attribute.String & Schema.Attribute.Required;
+    nomDuDirecteur: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    telephone: Schema.Attribute.String;
+    typeEcole: Schema.Attribute.Enumeration<
+      ['Primaire', 'Coll\u00E8ge', 'Lyc\u00E9e', 'Universit\u00E9', 'Formation']
+    >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiEducationStatatistiqueEducationStatatistique
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'education_statatistiques';
+  info: {
+    displayName: 'education-statistique';
+    pluralName: 'education-statatistiques';
+    singularName: 'education-statatistique';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    anneeEnCours: Schema.Attribute.Integer & Schema.Attribute.Unique;
+    candidatsExamen: Schema.Attribute.Integer;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::education-statatistique.education-statatistique'
+    > &
+      Schema.Attribute.Private;
+    pourcentageReussite: Schema.Attribute.Integer;
+    publishedAt: Schema.Attribute.DateTime;
+    totalEcoles: Schema.Attribute.Integer;
+    totalEtudiantesFilles: Schema.Attribute.Integer;
+    totalEtudiantsGarcons: Schema.Attribute.Integer;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiElusOfficielElusOfficiel
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'elus_officiels';
+  info: {
+    displayName: 'elus-officiel';
+    pluralName: 'elus-officiels';
+    singularName: 'elus-officiel';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    adresseBureau: Schema.Attribute.String;
+    biographie: Schema.Attribute.Blocks;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    dateDebut: Schema.Attribute.Date;
+    email: Schema.Attribute.Email;
+    image: Schema.Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::elus-officiel.elus-officiel'
+    > &
+      Schema.Attribute.Private;
+    nom: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    telephone: Schema.Attribute.String;
+    titre: Schema.Attribute.Enumeration<
+      ['maire', 'adjoint', 'conseiller', 'prefet', 'gouverneur']
+    >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiEventEvent extends Struct.CollectionTypeSchema {
+  collectionName: 'events';
+  info: {
+    description: '';
+    displayName: 'Evenement';
+    pluralName: 'events';
+    singularName: 'event';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    Annee: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    dateEvenement: Schema.Attribute.Time;
+    Image: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    Jour: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localisation: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::event.event'> &
       Schema.Attribute.Private;
-    Location: Schema.Attribute.String;
+    Mois: Schema.Attribute.String;
+    prix: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
+    Titre: Schema.Attribute.Blocks;
+    typeEvenement: Schema.Attribute.Enumeration<
+      [
+        'concert',
+        'conference',
+        'formation',
+        'ceremonie',
+        'festival',
+        'atelier',
+        'exposition',
+      ]
+    >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiGallerieGallerie extends Struct.CollectionTypeSchema {
+  collectionName: 'galleries';
+  info: {
+    displayName: 'Gallerie';
+    pluralName: 'galleries';
+    singularName: 'gallerie';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    image: Schema.Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::gallerie.gallerie'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    typeDePhoto: Schema.Attribute.Enumeration<
+      [
+        'Activit\u00E9s associatives',
+        'Religieux',
+        'Citoyens',
+        'Culture',
+        'Sport',
+        'Tourisme',
+      ]
+    >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiHotelHotel extends Struct.CollectionTypeSchema {
+  collectionName: 'hotels';
+  info: {
+    displayName: 'hotel';
+    pluralName: 'hotels';
+    singularName: 'hotel';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Blocks;
+    emailContact: Schema.Attribute.Email;
+    image: Schema.Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localisation: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::hotel.hotel'> &
+      Schema.Attribute.Private;
+    nom: Schema.Attribute.String & Schema.Attribute.Required;
+    nombreChambres: Schema.Attribute.Integer;
+    prixParNuit: Schema.Attribute.Decimal;
+    publishedAt: Schema.Attribute.DateTime;
+    telephoneContact: Schema.Attribute.String;
+    typeHotel: Schema.Attribute.Enumeration<
+      ['hotel', 'motel', 'auberge', 'pension', 'lodge']
+    >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiLieuxAVisiterLieuxAVisiter
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'lieux_a_visiters';
+  info: {
+    displayName: 'lieux-a-visiter';
+    pluralName: 'lieux-a-visiters';
+    singularName: 'lieux-a-visiter';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    heuresOuverture: Schema.Attribute.String;
+    image: Schema.Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
+    informationsContact: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localisation: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::lieux-a-visiter.lieux-a-visiter'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    titre: Schema.Attribute.String & Schema.Attribute.Required;
+    typeLieu: Schema.Attribute.Enumeration<
+      ['naturel', 'culturel', 'historique', 'religieux', 'recreatif']
+    >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -521,6 +874,134 @@ export interface ApiMatchMatch extends Struct.CollectionTypeSchema {
     matchStatus: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     time: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiMatchsSportifMatchsSportif
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'matchs_sportifs';
+  info: {
+    description: '';
+    displayName: 'matchs-sportif';
+    pluralName: 'matchs-sportifs';
+    singularName: 'matchs-sportif';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    dateMatch: Schema.Attribute.Date;
+    equipeDomicile: Schema.Attribute.String;
+    equipeVisiteuse: Schema.Attribute.String;
+    fraisEntree: Schema.Attribute.Decimal;
+    lieu: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::matchs-sportif.matchs-sportif'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    scoreDomicile: Schema.Attribute.Integer;
+    scoreVisiteur: Schema.Attribute.Integer;
+    statut: Schema.Attribute.Enumeration<
+      ['programme', 'en_cours', 'terminer', 'annuller']
+    >;
+    titre: Schema.Attribute.String;
+    typeSport: Schema.Attribute.Enumeration<
+      ['football', 'volleyball', 'basketball']
+    >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiPostesPolicePostesPolice
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'postes_polices';
+  info: {
+    displayName: 'postes-police';
+    pluralName: 'postes-polices';
+    singularName: 'postes-police';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    contactUrgence: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    image: Schema.Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localisation: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::postes-police.postes-police'
+    > &
+      Schema.Attribute.Private;
+    nom: Schema.Attribute.String & Schema.Attribute.Required;
+    nomCommandant: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    typePoste: Schema.Attribute.Enumeration<
+      ['commissariat', 'brigade', 'poste', 'gendarmerie']
+    >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiRestaurantRestaurant extends Struct.CollectionTypeSchema {
+  collectionName: 'restaurants';
+  info: {
+    displayName: 'restaurant';
+    pluralName: 'restaurants';
+    singularName: 'restaurant';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Blocks;
+    heuresOuverture: Schema.Attribute.String;
+    image: Schema.Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localisation: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::restaurant.restaurant'
+    > &
+      Schema.Attribute.Private;
+    nom: Schema.Attribute.String & Schema.Attribute.Required;
+    prix: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    telephoneContact: Schema.Attribute.String;
+    typeCuisine: Schema.Attribute.Enumeration<
+      [
+        'locale',
+        'africaine',
+        'internationale',
+        'restauration_rapide',
+        'traditionnelle',
+      ]
+    >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1144,10 +1625,21 @@ declare module '@strapi/strapi' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
       'api::about.about': ApiAboutAbout;
+      'api::activite-populaire.activite-populaire': ApiActivitePopulaireActivitePopulaire;
       'api::blog.blog': ApiBlogBlog;
       'api::diwal.diwal': ApiDiwalDiwal;
+      'api::document-administratif.document-administratif': ApiDocumentAdministratifDocumentAdministratif;
+      'api::ecole.ecole': ApiEcoleEcole;
+      'api::education-statatistique.education-statatistique': ApiEducationStatatistiqueEducationStatatistique;
+      'api::elus-officiel.elus-officiel': ApiElusOfficielElusOfficiel;
       'api::event.event': ApiEventEvent;
+      'api::gallerie.gallerie': ApiGallerieGallerie;
+      'api::hotel.hotel': ApiHotelHotel;
+      'api::lieux-a-visiter.lieux-a-visiter': ApiLieuxAVisiterLieuxAVisiter;
       'api::match.match': ApiMatchMatch;
+      'api::matchs-sportif.matchs-sportif': ApiMatchsSportifMatchsSportif;
+      'api::postes-police.postes-police': ApiPostesPolicePostesPolice;
+      'api::restaurant.restaurant': ApiRestaurantRestaurant;
       'api::school.school': ApiSchoolSchool;
       'api::sous-prefecture.sous-prefecture': ApiSousPrefectureSousPrefecture;
       'api::sportnew.sportnew': ApiSportnewSportnew;

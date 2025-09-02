@@ -1,0 +1,33 @@
+{
+  "kind": "collectionType",
+  "collectionName": "education_statatistiques",
+  "info": {
+    "singularName": "education-statatistique",
+    "pluralName": "education-statatistiques",
+    "displayName": "education-statistique"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "anneeEnCours": {
+      "type": "integer",
+      "unique": true
+    },
+    "totalEcoles": {
+      "type": "integer"
+    },
+    "totalEtudiantesFilles": {
+      "type": "integer"
+    },
+    "totalEtudiantsGarcons": {
+      "type": "integer"
+    },
+    "candidatsExamen": {
+      "type": "integer"
+    },
+    "pourcentageReussite": {
+      "type": "integer"
+    }
+  }
+}

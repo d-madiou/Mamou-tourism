@@ -1,0 +1,46 @@
+{
+  "kind": "collectionType",
+  "collectionName": "postes_polices",
+  "info": {
+    "singularName": "postes-police",
+    "pluralName": "postes-polices",
+    "displayName": "postes-police"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "nom": {
+      "type": "string",
+      "required": true
+    },
+    "typePoste": {
+      "type": "enumeration",
+      "enum": [
+        "commissariat",
+        "brigade",
+        "poste",
+        "gendarmerie"
+      ]
+    },
+    "image": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": true
+    },
+    "localisation": {
+      "type": "string"
+    },
+    "contactUrgence": {
+      "type": "string"
+    },
+    "nomCommandant": {
+      "type": "string"
+    }
+  }
+}

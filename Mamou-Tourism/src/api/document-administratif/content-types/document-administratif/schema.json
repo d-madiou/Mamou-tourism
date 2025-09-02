@@ -1,0 +1,52 @@
+{
+  "kind": "collectionType",
+  "collectionName": "document_administratifs",
+  "info": {
+    "singularName": "document-administratif",
+    "pluralName": "document-administratifs",
+    "displayName": "document-administratif"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "typeDocument": {
+      "type": "enumeration",
+      "enum": [
+        "Acte de naissance",
+        "Acte de mariage",
+        "Acte de décès",
+        "Certificat de résidence",
+        "Licence commerciale",
+        "Permis de construire",
+        "Jugement supplétif"
+      ]
+    },
+    "titre": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "blocks"
+    },
+    "lieu": {
+      "type": "string"
+    },
+    "delai": {
+      "type": "integer"
+    },
+    "prix": {
+      "type": "integer"
+    },
+    "formulaireTelecharger": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": false
+    }
+  }
+}

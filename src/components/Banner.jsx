@@ -4,6 +4,7 @@ import { motion, useScroll, useTransform } from "framer-motion"
 import { useEffect, useState } from "react"
 import { FaArrowRight, FaInfoCircle } from "react-icons/fa"
 import ImageMamou from "../assets/images/Mamou1.png"
+import { Link } from "react-router-dom"
 
 function Banner() {
   const [isInView, setIsInView] = useState(false)
@@ -40,7 +41,7 @@ function Banner() {
             backgroundPosition: "center",
             y,
           }}
-          className="absolute inset-0 w-full h-[120%]"
+          className="absolute inset-0 w-full h-[100%]"
         />
 
         <div className="absolute inset-0 bg-gradient-to-r from-blue-900/90 to-blue-600/80 flex flex-col items-center justify-center text-center text-white px-4">
@@ -65,7 +66,7 @@ function Banner() {
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
               transition={{ duration: 0.8, delay: 0.4 }}
             >
-              Endless Beauty <span className="text-yellow-400">&</span> Natural Charm
+              Beauté Infinie <span className="text-yellow-400">&</span> Charme Naturel
             </motion.h2>
 
             <motion.p
@@ -74,8 +75,8 @@ function Banner() {
               animate={isInView ? { opacity: 1 } : { opacity: 0 }}
               transition={{ duration: 0.8, delay: 0.6 }}
             >
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-              dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.
+              Explorez une destination où l'aventure et la tranquillité se rencontrent. Que ce soit pour une randonnée à travers des 
+              paysages à couper le souffle ou pour un moment de quiétude, Mamou offre une expérience inoubliable.
             </motion.p>
 
             <motion.div
@@ -93,14 +94,14 @@ function Banner() {
                 <span>En savoir plus</span>
               </motion.button>
 
-              <motion.button
+              <motion.Link to="/about"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="bg-transparent border border-white py-3 px-8 rounded-full font-semibold flex items-center space-x-2 hover:bg-white/10 transition duration-300"
               >
                 <span>Visiter Mamou</span>
                 <FaArrowRight />
-              </motion.button>
+              </motion.Link>
             </motion.div>
           </motion.div>
         </div>

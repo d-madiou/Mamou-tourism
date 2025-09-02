@@ -1,38 +1,44 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-
 import { FaChevronDown, FaFacebookF, FaInfoCircle, FaLinkedinIn, FaMapMarkerAlt, FaWhatsapp } from "react-icons/fa"
 import ImageMamou from "../assets/images/Mamou1.png"
 import ImageMamou3 from "../assets/images/Mamou3.png"
+import MamouHero from "../assets/images/MamouHero.jpg"
+import MamouHero2 from "../assets/images/MamouHero2.jpg"
 import AboutSection from "../components/AboutSection"
 import Banner from "../components/Banner"
 import Gallery from "../components/Galley"
 import Guide from "../components/Guide"
 import NavBar from "../components/NavBar"
 import PopularActivity from "../components/PopularActivity"
+import Police from "../components/Guide"
 
-function Home() {
-  const [currentImage, setCurrentImage] = useState(ImageMamou)
-  const heroRef = useRef(null)
+function Home({ activities = [], galleryData = [], policeData = [] }) {
+  // Define an array of all images
+  const images = [MamouHero, MamouHero2, ImageMamou, ImageMamou3];
+  // Use a state to track the index of the current image
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const heroRef = useRef(null);
 
   useEffect(() => {
-    // Simple image transition without complex animations
+    // Simple image transition
     const interval = setInterval(() => {
-      setCurrentImage((prevImage) => (prevImage === ImageMamou ? ImageMamou3 : ImageMamou))
-    }, 5000) // Change image every 5 seconds
+      // Increment the index, and loop back to 0 if it goes past the last image
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
+    }, 5000); 
 
     return () => {
-      clearInterval(interval)
-    }
-  }, [])
+      clearInterval(interval);
+    };
+  }, [images.length]); // The dependency array should be images.length to re-run if the array size changes
 
-  const scrollToContent = () => {
-    const contentElement = document.getElementById("about-section")
-    if (contentElement) {
-      contentElement.scrollIntoView({ behavior: "smooth" })
-    }
-  }
+    const scrollToContent = () => {
+      const contentElement = document.getElementById("about-section");
+      if (contentElement) {
+        contentElement.scrollIntoView({ behavior: "smooth" });
+      }
+    };
 
   return (
     <>
@@ -41,10 +47,12 @@ function Home() {
         <title>Mamou - Découvrez la beauté et la nature de notre ville</title>
         <meta
           name="description"
-          content="Explorez Mamou, une ville paradisiaque en République de Guinée. Découvrez sa culture, ses attractions touristiques et sa beauté naturelle."
+          content="Explorez Mamou, une ville carrefour en République de Guinée. Découvrez sa culture, ses attractions touristiques et sa beauté naturelle."
         />
-        <meta name="keywords" content="Mamou, Guinée, tourisme, culture, attractions, ville" />
-        <meta property="og:title" content="Mamou - Découvrez la beauté et la nature de notre ville" />
+        <meta name="keywords" content="Mamou, Guinée, tourisme, culture, attractions, ville, Timbo, Tolo, Institute superieur de la technologie de Mamou" />
+        <meta property="og:title" content="Mamou - Découvrez la region de Mamou" />
+        <meta name="author" content="Ville de Mamou"/>
+
         <meta
           property="og:description"
           content="Explorez Mamou, une ville paradisiaque en République de Guinée. Découvrez sa culture, ses attractions touristiques et sa beauté naturelle."
@@ -56,18 +64,12 @@ function Home() {
 
       <div className="w-full overflow-hidden">
         <div style={{ fontFamily: "var(--font)" }} className="relative">
-          {/* Hero Section - Simplified */}
-          <div ref={heroRef} className="relative h-screen w-full overflow-hidden">
-            {/* Simple fade transition instead of complex motion animations */}
-            <img
-              src={currentImage || "/placeholder.svg"}
-              alt="Vue panoramique de la ville de Mamou"
-              className="absolute w-full h-full object-cover transition-opacity duration-1000"
-              style={{
-                opacity: 1,
-                transform: "scale(1.05)",
-              }}
-            />
+          {/* Hero Section - With Zoom Effect */}
+           <div
+            ref={heroRef}
+            className="relative h-screen w-full bg-cover bg-center transition-all duration-1000"
+            style={{ backgroundImage: `url(${images[currentImageIndex]})` }}
+          >
 
             <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/70"></div>
 
@@ -77,19 +79,19 @@ function Home() {
               <div className="mt-8 px-4 max-w-5xl animate-fade-in">
                 <div className="flex space-x-6 justify-center mb-6">
                   <a
-                    href="#"
+                    href="https://www.facebook.com/share/16XspHxKcv/?mibextid=wwXIfr"
                     aria-label="Facebook"
                     className="w-10 h-10 flex items-center justify-center rounded-full border border-white/50 bg-white/10 backdrop-blur-sm transition-all duration-300 hover:bg-white hover:text-blue-600"
                   >
                     <FaFacebookF />
                   </a>
-                  <a
-                    href="#"
+                 <a
+                    href="https://wa.me/224620150481"
                     aria-label="WhatsApp"
                     className="w-10 h-10 flex items-center justify-center rounded-full border border-white/50 bg-white/10 backdrop-blur-sm transition-all duration-300 hover:bg-white hover:text-green-600"
-                  >
+                >
                     <FaWhatsapp />
-                  </a>
+                </a>
                   <a
                     href="#"
                     aria-label="LinkedIn"
@@ -99,14 +101,13 @@ function Home() {
                   </a>
                 </div>
 
-                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+                <h1 className="text-3xl md:text-6xl lg:text-5xl font-bold mb-6 leading-tight">
                   Découvrez la beauté et la nature de la ville de
                   <span className="text-yellow-400"> Mamou</span>
                 </h1>
 
                 <p className="text-lg md:text-xl mb-8 max-w-3xl mx-auto text-gray-200">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-                  dolore magna aliqua
+                  Porte d'entrée du Fouta-Djalon, Mamou vous invite à explorer ses paysages pittoresques, ses cascades majestueuses et sa richesse culturelle
                 </p>
 
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -121,16 +122,6 @@ function Home() {
                   </div>
                 </div>
               </div>
-
-              <div
-                className="absolute bottom-10 left-1/2 transform -translate-x-1/2 cursor-pointer animate-bounce"
-                onClick={scrollToContent}
-              >
-                <div className="flex flex-col items-center">
-                  <span className="text-sm mb-2">Découvrir</span>
-                  <FaChevronDown className="text-yellow-400" />
-                </div>
-              </div>
             </div>
           </div>
 
@@ -138,42 +129,14 @@ function Home() {
           <div id="about-section">
             <AboutSection />
           </div>
-          <PopularActivity />
+          <PopularActivity activities={activities} />
           <Banner />
-          <Guide />
-          <Gallery />
+          <Police policeData={policeData} />
+          <Gallery galleryData={galleryData} />
         </div>
       </div>
     </>
   )
-}
-
-// Add custom CSS for simple animations
-const styles = `
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  
-  .animate-fade-in {
-    animation: fadeIn 1s ease-out;
-  }
-  
-  @keyframes bounce {
-    0%, 100% { transform: translateY(0) translateX(-50%); }
-    50% { transform: translateY(-10px) translateX(-50%); }
-  }
-  
-  .animate-bounce {
-    animation: bounce 2s infinite;
-  }
-`
-
-// Inject the styles
-if (typeof document !== "undefined") {
-  const styleElement = document.createElement("style")
-  styleElement.innerHTML = styles
-  document.head.appendChild(styleElement)
 }
 
 export default Home

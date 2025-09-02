@@ -1,284 +1,247 @@
 "use client"
 
-import { motion } from "framer-motion"
-import { useEffect, useRef, useState } from "react"
+import { useState } from "react"
 import { FaCalendarAlt, FaChevronLeft, FaChevronRight, FaInfoCircle, FaMapMarkerAlt } from "react-icons/fa"
 import { FaLightbulb } from "react-icons/fa6"
-import "../App.css"
-import { Activities } from "../assets/mockData"
+import { Link } from "react-router-dom"
 
-function PopularActivity() {
-  const containerRef = useRef(null)
-  const [scrollPosition, setScrollPosition] = useState(0)
-  const [maxScroll, setMaxScroll] = useState(0)
-  const [activeIndex, setActiveIndex] = useState(0)
-  const [isHovered, setIsHovered] = useState(false)
-  const [autoScrollEnabled, setAutoScrollEnabled] = useState(true)
+function PopularActivity({ activities = [] }) {
+  const [currentIndex, setCurrentIndex] = useState(0)
+  
 
-  // Calculate max scroll width
-  useEffect(() => {
-    const updateMaxScroll = () => {
-      if (containerRef.current) {
-        setMaxScroll(containerRef.current.scrollWidth - containerRef.current.clientWidth)
-      }
+  // Helper function to get image URL
+  const getImageUrl = (imageArray) => {
+    if (!imageArray || !imageArray.length) return "/placeholder.svg?height=400&width=600";
+    const image = imageArray[0];
+    return image.url.startsWith('http') ? image.url : `https://cozy-sparkle-24ced58ec1.strapiapp.com${image.url}`;
+  };
+
+  // Helper function to get description text
+  const getDescriptionText = (descriptionArray) => {
+    if (!descriptionArray || !descriptionArray.length) return "Description non disponible";
+    const firstBlock = descriptionArray[0];
+    if (firstBlock.children && firstBlock.children.length > 0) {
+      return firstBlock.children[0].text || "Description non disponible";
     }
+    return "Description non disponible";
+  };
 
-    updateMaxScroll()
-    window.addEventListener("resize", updateMaxScroll)
+  // Helper function to get type color
+  const getTypeColor = (type) => {
+    const colors = {
+      'agriculture': 'bg-green-600',
+      'tourism': 'bg-blue-600',
+      'culture': 'bg-purple-600',
+      'nature': 'bg-emerald-600',
+      'sport': 'bg-orange-600',
+      'default': 'bg-blue-700'
+    };
+    return colors[type] || colors.default;
+  };
 
-    return () => window.removeEventListener("resize", updateMaxScroll)
-  }, [])
+  // Navigation functions
+  const handlePrevious = () => {
+    setCurrentIndex((prev) => (prev - 1 + activities.length) % activities.length);
+  };
 
-  // Handle scroll event to update position
-  useEffect(() => {
-    const handleScrollEvent = () => {
-      if (containerRef.current) {
-        setScrollPosition(containerRef.current.scrollLeft)
-        
-        // Calculate active index based on scroll position
-        const cardWidth = containerRef.current.firstElementChild?.offsetWidth || 0
-        const margin = 16 // 4rem in pixels
-        const newIndex = Math.round(containerRef.current.scrollLeft / (cardWidth + margin))
-        setActiveIndex(Math.min(newIndex, Activities.length - 1))
-      }
-    }
+  const handleNext = () => {
+    setCurrentIndex((prev) => (prev + 1) % activities.length);
+  };
 
-    const container = containerRef.current
-    if (container) {
-      container.addEventListener("scroll", handleScrollEvent)
-      return () => container.removeEventListener("scroll", handleScrollEvent)
-    }
-  }, [])
+  const handleDotClick = (index) => {
+    setCurrentIndex(index);
+  };
 
-  // Auto-scroll effect
-  useEffect(() => {
-    if (!autoScrollEnabled || isHovered) return
+  console.log("Activities data in component:", activities);
 
-    const interval = setInterval(() => {
-      if (containerRef.current) {
-        const cardWidth = containerRef.current.firstElementChild?.offsetWidth || 0
-        const margin = 16 // 4rem in pixels
-        const scrollAmount = cardWidth + margin
-
-        if (containerRef.current.scrollLeft + scrollAmount >= maxScroll) {
-          containerRef.current.scrollTo({ left: 0, behavior: "smooth" })
-          setActiveIndex(0)
-        } else {
-          containerRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" })
-          setActiveIndex(prev => Math.min(prev + 1, Activities.length - 1))
-        }
-      }
-    }, 5000)
-
-    return () => clearInterval(interval)
-  }, [maxScroll, isHovered, autoScrollEnabled])
-
-  const handleScroll = (direction) => {
-    if (!containerRef.current) return
-    
-    const card = containerRef.current.firstElementChild
-    const cardWidth = card?.offsetWidth || 0
-    const margin = 16 // 4rem in pixels
-    const scrollAmount = cardWidth + margin
-
-    const newScrollPosition =
-      direction === "left"
-        ? Math.max(containerRef.current.scrollLeft - scrollAmount, 0)
-        : Math.min(containerRef.current.scrollLeft + scrollAmount, maxScroll)
-
-    containerRef.current.scrollTo({
-      left: newScrollPosition,
-      behavior: "smooth",
-    })
-
-    // Update active index
-    const newIndex = Math.round(newScrollPosition / scrollAmount)
-    setActiveIndex(Math.min(newIndex, Activities.length - 1))
-    setScrollPosition(newScrollPosition)
-  }
-
-  const scrollToIndex = (index) => {
-    if (!containerRef.current) return
-    
-    const card = containerRef.current.firstElementChild
-    const cardWidth = card?.offsetWidth || 0
-    const margin = 16 // 4rem in pixels
-    const scrollAmount = cardWidth + margin
-
-    const newScrollPosition = index * scrollAmount
-    
-    containerRef.current.scrollTo({
-      left: newScrollPosition,
-      behavior: "smooth",
-    })
-
-    setActiveIndex(index)
-    setScrollPosition(newScrollPosition)
+  if (activities.length === 0) {
+    return (
+      <div className="py-20 px-4 bg-gradient-to-b from-white to-blue-50">
+        <div className="flex flex-col items-center">
+          <h1 className="text-4xl font-bold mb-4 text-center">
+            Activités <span className="text-blue-700">Populaires</span>
+          </h1>
+          <div className="flex items-center space-x-4 w-full max-w-sm mt-2">
+            <hr className="flex-1 border-t-2 border-blue-200" />
+            <FaLightbulb className="text-2xl text-yellow-500" />
+            <hr className="flex-1 border-t-2 border-blue-200" />
+          </div>
+          <p className="text-lg mt-4 text-center text-gray-600 max-w-2xl">
+            Chargement des activités populaires...
+          </p>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="py-20 px-4 bg-gradient-to-b from-white to-blue-50">
-      <motion.div 
-        className="flex flex-col items-center"
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        viewport={{ once: true }}
-      >
+      {/* Header Section */}
+      <div className="flex flex-col items-center mb-16">
         <h1 className="text-4xl font-bold mb-4 text-center">
           Activités <span className="text-blue-700">Populaires</span>
         </h1>
         <div className="flex items-center space-x-4 w-full max-w-sm mt-2">
           <hr className="flex-1 border-t-2 border-blue-200" />
-          <motion.div
-            whileHover={{ rotate: 180, scale: 1.2 }}
-            transition={{ duration: 0.5 }}
-          >
-            <FaLightbulb className="text-2xl text-yellow-500" />
-          </motion.div>
+          <FaLightbulb className="text-2xl text-yellow-500" />
           <hr className="flex-1 border-t-2 border-blue-200" />
         </div>
         <p className="text-lg mt-4 text-center text-gray-600 max-w-2xl">
-          Concerts passionnants, ateliers, festivals et plus encore - plongez dans un monde d'expériences inoubliables à Mamou!
+          Découvrez les activités les plus appréciées et les expériences uniques que Mamou a à offrir
         </p>
-      </motion.div>
+      </div>
 
-      <div className="relative mt-12 max-w-7xl mx-auto">
-        <div
-          className="relative overflow-hidden px-4"
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-        >
-          <div
-            ref={containerRef}
-            className="flex overflow-x-auto scrollbar-hide snap-x snap-mandatory gap-8 pb-8"
-            style={{
-              scrollBehavior: "smooth",
-              scrollbarWidth: "none",
-              msOverflowStyle: "none",
-            }}
-          >
-            {Activities.map((activity, index) => (
-              <motion.div
-                key={index}
-                className={`snap-start flex-none w-full sm:w-[350px] md:w-[380px] rounded-xl shadow-lg overflow-hidden bg-white 
-                  ${activeIndex === index ? 'ring-2 ring-blue-500 ring-offset-2' : ''}`}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                whileHover={{ y: -10 }}
-              >
-                <div className="relative overflow-hidden h-56">
-                  <img
-                    src={activity.image || "/placeholder.svg"}
-                    alt={activity.name}
-                    className="w-full h-full object-cover transition-transform duration-700 ease-in-out hover:scale-110"
-                  />
-                  <div className="absolute top-4 left-4 bg-blue-700 text-white text-xs font-semibold px-3 py-1.5 rounded-full">
-                    {activity.title}
-                  </div>
+      {/* Activities Grid */}
+      <div className="max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {activities.map((activity, index) => (
+            <div
+              key={activity.id || index}
+              className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
+            >
+              <div className="relative h-56 overflow-hidden">
+                <img
+                  src={getImageUrl(activity.image)}
+                  alt={activity.Titre}
+                  className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+                  onError={(e) => {
+                    e.target.src = "/placeholder.svg?height=400&width=600";
+                  }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                
+                {/* Type Badge */}
+                <div className={`absolute top-4 left-4 ${getTypeColor(activity.type)} text-white text-xs font-semibold px-3 py-1.5 rounded-full capitalize`}>
+                  {activity.type || "Activité"}
                 </div>
-                <div className="p-6">
-                  <h2 className="text-xl font-bold mb-3 text-blue-900 truncate">
-                    {activity.name}
-                  </h2>
-                  <div className="flex items-center mb-4 flex-wrap gap-2">
+              </div>
+              
+              <div className="p-6">
+                <h2 className="text-xl font-bold mb-3 text-blue-900 line-clamp-2">
+                  {activity.Titre || `Activité ${index + 1}`}
+                </h2>
+                
+                <div className="flex items-center mb-4 flex-wrap gap-4">
+                  {activity.date && (
                     <span className="text-gray-600 text-sm flex items-center">
                       <FaCalendarAlt className="mr-1.5 text-blue-600" />
-                      12 Mars, 2025
+                      {new Date(activity.date).toLocaleDateString('fr-FR')}
                     </span>
-                    <span className="text-gray-600 text-sm flex items-center ml-4">
-                      <FaMapMarkerAlt className="mr-1.5 text-blue-600" />
-                      Mamou
-                    </span>
-                  </div>
-                  <p className="text-gray-700 mb-5 line-clamp-3 leading-relaxed">
-                    {activity.description}
-                  </p>
-                  <motion.div 
-                    className="flex items-center text-blue-700 cursor-pointer group"
-                    whileHover={{ x: 5 }}
+                  )}
+                  <span className="text-gray-600 text-sm flex items-center">
+                    <FaMapMarkerAlt className="mr-1.5 text-blue-600" />
+                    {activity.localisation || "Mamou"}
+                  </span>
+                </div>
+                
+                <p className="text-gray-700 mb-5 line-clamp-3 leading-relaxed">
+                  {getDescriptionText(activity.description)}
+                </p>
+                
+                <Link 
+                    to={`/blog/${activity.type}/${activity.id}`} 
+                    className="flex items-center text-blue-700 cursor-pointer group hover:text-blue-800"
                   >
                     <span className="font-semibold text-sm mr-2">Voir Plus</span>
-                    <FaInfoCircle className="group-hover:animate-bounce" />
-                  </motion.div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+                    <FaInfoCircle className="transition-transform group-hover:scale-110" />
+                  </Link>
 
-          {/* Navigation Buttons */}
-          <motion.button
-            onClick={() => handleScroll("left")}
-            className={`absolute left-0 top-1/2 transform -translate-y-1/2 bg-white text-blue-700 w-10 h-10 rounded-full flex items-center justify-center shadow-lg z-10 ${
-              scrollPosition <= 0 ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700 hover:text-white"
-            }`}
-            disabled={scrollPosition <= 0}
-            whileHover={scrollPosition > 0 ? { scale: 1.1 } : {}}
-            whileTap={scrollPosition > 0 ? { scale: 0.9 } : {}}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <FaChevronLeft />
-          </motion.button>
-          
-          <motion.button
-            onClick={() => handleScroll("right")}
-            className={`absolute right-0 top-1/2 transform -translate-y-1/2 bg-white text-blue-700 w-10 h-10 rounded-full flex items-center justify-center shadow-lg z-10 ${
-              scrollPosition >= maxScroll ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700 hover:text-white"
-            }`}
-            disabled={scrollPosition >= maxScroll}
-            whileHover={scrollPosition < maxScroll ? { scale: 1.1 } : {}}
-            whileTap={scrollPosition < maxScroll ? { scale: 0.9 } : {}}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <FaChevronRight />
-          </motion.button>
-        </div>
-
-        {/* Dots Navigation */}
-        <div className="flex justify-center mt-8 space-x-2">
-          {Activities.map((_, index) => (
-            <motion.button
-              key={index}
-              className={`w-3 h-3 rounded-full ${
-                activeIndex === index ? "bg-blue-700 w-8" : "bg-gray-300 hover:bg-blue-300"
-              } transition-all duration-300`}
-              onClick={() => scrollToIndex(index)}
-              whileHover={{ scale: 1.2 }}
-              whileTap={{ scale: 0.9 }}
-            />
+              </div>
+            </div>
           ))}
         </div>
-
-        {/* Auto-scroll Toggle */}
-        <div className="flex justify-center mt-6">
-          <motion.button
-            onClick={() => setAutoScrollEnabled(!autoScrollEnabled)}
-            className={`text-sm px-4 py-2 rounded-full flex items-center ${
-              autoScrollEnabled ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-500"
-            }`}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <span className="mr-2">{autoScrollEnabled ? "Pause" : "Auto-scroll"}</span>
-            <div className={`w-8 h-4 rounded-full ${autoScrollEnabled ? "bg-blue-700" : "bg-gray-300"} relative`}>
-              <motion.div
-                className="w-3 h-3 bg-white rounded-full absolute top-0.5"
-                animate={{ x: autoScrollEnabled ? 18 : 2 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              />
-            </div>
-          </motion.button>
-        </div>
       </div>
+
+      {/* Featured Activity Carousel (if more than 3 activities) */}
+      {activities.length > 3 && (
+        <div className="mt-20 max-w-4xl mx-auto">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">Activité en Vedette</h2>
+            <p className="text-gray-600">Découvrez notre sélection spéciale</p>
+          </div>
+          
+          <div className="relative">
+            <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+              <div className="md:flex">
+                <div className="md:w-1/2 h-64 md:h-80">
+                  <img
+                    src={getImageUrl(activities[currentIndex]?.image)}
+                    alt={activities[currentIndex]?.Titre}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.src = "/placeholder.svg?height=400&width=600";
+                    }}
+                  />
+                </div>
+                <div className="md:w-1/2 p-8 flex flex-col justify-center">
+                  <div className={`inline-block px-3 py-1 ${getTypeColor(activities[currentIndex]?.type)} text-white text-sm font-semibold rounded-full mb-4 capitalize`}>
+                    {activities[currentIndex]?.type || "Activité"}
+                  </div>
+                  
+                  <h3 className="text-2xl font-bold text-gray-800 mb-4">
+                    {activities[currentIndex]?.Titre}
+                  </h3>
+                  
+                  <p className="text-gray-600 mb-6 leading-relaxed">
+                    {getDescriptionText(activities[currentIndex]?.description)}
+                  </p>
+                  
+                  <div className="flex items-center gap-4 text-sm text-gray-500 mb-6">
+                    {activities[currentIndex]?.date && (
+                      <div className="flex items-center">
+                        <FaCalendarAlt className="mr-1 text-blue-600" />
+                        {new Date(activities[currentIndex].date).toLocaleDateString('fr-FR')}
+                      </div>
+                    )}
+                    <div className="flex items-center">
+                      <FaMapMarkerAlt className="mr-1 text-blue-600" />
+                      {activities[currentIndex]?.localisation || "Mamou"}
+                    </div>
+                  </div>
+                  
+                  <Link 
+                      to={`/blog/${activities[currentIndex]?.type}/${activities[currentIndex]?.id}`}
+                      className="bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-800 transition-colors w-fit"
+                    >
+                      Découvrir maintenant
+                    </Link>
+
+                </div>
+              </div>
+            </div>
+
+            {/* Navigation Buttons */}
+            <button
+              onClick={handlePrevious}
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/90 text-blue-700 w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-blue-700 hover:text-white transition-all duration-300 z-10"
+            >
+              <FaChevronLeft />
+            </button>
+            
+            <button
+              onClick={handleNext}
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/90 text-blue-700 w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-blue-700 hover:text-white transition-all duration-300 z-10"
+            >
+              <FaChevronRight />
+            </button>
+
+            {/* Dots Navigation */}
+            <div className="flex justify-center mt-6 space-x-2">
+              {activities.map((_, index) => (
+                <button
+                  key={index}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    currentIndex === index ? "bg-blue-700 w-8" : "bg-gray-300 hover:bg-blue-300"
+                  }`}
+                  onClick={() => handleDotClick(index)}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
 
 export default PopularActivity
-

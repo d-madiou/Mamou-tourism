@@ -1,0 +1,56 @@
+{
+  "kind": "collectionType",
+  "collectionName": "hotels",
+  "info": {
+    "singularName": "hotel",
+    "pluralName": "hotels",
+    "displayName": "hotel"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "nom": {
+      "type": "string",
+      "required": true
+    },
+    "image": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": true
+    },
+    "localisation": {
+      "type": "string"
+    },
+    "typeHotel": {
+      "type": "enumeration",
+      "enum": [
+        "hotel",
+        "motel",
+        "auberge",
+        "pension",
+        "lodge"
+      ]
+    },
+    "description": {
+      "type": "blocks"
+    },
+    "prixParNuit": {
+      "type": "decimal"
+    },
+    "telephoneContact": {
+      "type": "string"
+    },
+    "emailContact": {
+      "type": "email"
+    },
+    "nombreChambres": {
+      "type": "integer"
+    }
+  }
+}
