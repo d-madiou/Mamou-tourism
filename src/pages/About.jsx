@@ -1,6 +1,6 @@
 "use client"
 import { ArrowRight, Calendar, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, ExternalLink, Facebook, Globe, Instagram, MapPin, Share2, TrendingUp, Twitter, Users, Play, Pause } from "lucide-react"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import { ThreeDot } from "react-loading-indicators"
 import NavBar from "../components/NavBar"
 import SousPrefectures from "../components/SousPrefectures"

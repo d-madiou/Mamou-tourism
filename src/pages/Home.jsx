@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { FaChevronDown, FaFacebookF, FaInfoCircle, FaLinkedinIn, FaMapMarkerAlt, FaWhatsapp } from "react-icons/fa"
+import { FaFacebookF, FaInfoCircle, FaLinkedinIn, FaMapMarkerAlt, FaWhatsapp } from "react-icons/fa"
 import ImageMamou from "../assets/images/Mamou1.png"
 import ImageMamou3 from "../assets/images/Mamou3.png"
 import MamouHero from "../assets/images/MamouHero.jpg"
@@ -9,7 +9,6 @@ import MamouHero2 from "../assets/images/MamouHero2.jpg"
 import AboutSection from "../components/AboutSection"
 import Banner from "../components/Banner"
 import Gallery from "../components/Galley"
-import Guide from "../components/Guide"
 import NavBar from "../components/NavBar"
 import PopularActivity from "../components/PopularActivity"
 import Police from "../components/Guide"
@@ -33,35 +32,12 @@ function Home({ activities = [], galleryData = [], policeData = [] }) {
     };
   }, [images.length]); // The dependency array should be images.length to re-run if the array size changes
 
-    const scrollToContent = () => {
-      const contentElement = document.getElementById("about-section");
-      if (contentElement) {
-        contentElement.scrollIntoView({ behavior: "smooth" });
-      }
-    };
+  useEffect(() => {
+    document.title = "Mamou - Découvrez la beauté et la nature de notre ville";
+  }, []);
 
   return (
     <>
-      {/* SEO Head Tags */}
-      
-        <title>Mamou - Découvrez la beauté et la nature de notre ville</title>
-        <meta
-          name="description"
-          content="Explorez Mamou, une ville carrefour en République de Guinée. Découvrez sa culture, ses attractions touristiques et sa beauté naturelle."
-        />
-        <meta name="keywords" content="Mamou, Guinée, tourisme, culture, attractions, ville, Timbo, Tolo, Institute superieur de la technologie de Mamou" />
-        <meta property="og:title" content="Mamou - Découvrez la region de Mamou" />
-        <meta name="author" content="Ville de Mamou"/>
-
-        <meta
-          property="og:description"
-          content="Explorez Mamou, une ville paradisiaque en République de Guinée. Découvrez sa culture, ses attractions touristiques et sa beauté naturelle."
-        />
-        <meta property="og:image" content="/og-image.jpg" />
-        <meta property="og:type" content="website" />
-        <link rel="canonical" href="https://www.mamou-ville.com" />
-   
-
       <div className="w-full overflow-hidden">
         <div style={{ fontFamily: "var(--font)" }} className="relative">
           {/* Hero Section - With Zoom Effect */}

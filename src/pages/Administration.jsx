@@ -1,30 +1,13 @@
 "use client";
 import { useState, useEffect } from "react";
 import {
-  Calendar,
-  Clock,
-  Download,
-  FileText,
-  Mail,
-  MapPin,
-  Phone,
-  Search,
-  User,
-  Building2,
-  Shield,
-  Users,
-  Star,
-  ChevronRight,
-  ChevronUp,
-  Filter,
-  Grid,
-  List,
-  Eye,
+  Calendar, Clock, Download, FileText, Mail, MapPin, Phone,
+  Search, User, Building2, Shield, Users, ChevronRight,
+  Filter, Grid, List, Eye, ChevronDown, ChevronUp
 } from "lucide-react";
 import NavBar from "../components/NavBar";
 import Image1 from "../assets/images/document.png";
 import jsPDF from "jspdf";
-
 
 const carouselImages = [
   Image1,
@@ -32,396 +15,548 @@ const carouselImages = [
   "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/%DF%9E%DF%8A%DF%B2%DF%9E%DF%8A%DF%B2%DF%AB_%DF%9E%DF%90%DF%B2%DF%AC%DF%9B%DF%8F%DF%AC%DF%9C%DF%98%DF%8B_%DF%96%DF%8C%DF%AC%DF%A6%DF%8A%DF%AC%DF%93%DF%8F%DF%B2.jpg/330px-%DF%9E%DF%8A%DF%B2%DF%9E%DF%8A%DF%B2%DF%AB_%DF%9E%DF%90%DF%B2%DF%AC%DF%9B%DF%8F%DF%AC%DF%9C%DF%98%DF%8B_%DF%96%DF%8C%DF%AC%DF%A6%DF%8A%DF%AC%DF%93%DF%8F%DF%B2.jpg",
 ];
 
+/* ─── Reusable styled label ─────────────────────────────── */
+const SectionLabel = ({ children }) => (
+  <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "12px", justifyContent: "center" }}>
+    <div style={{ height: "2px", flex: 1, maxWidth: "60px", background: "#2563eb" }} />
+    <span style={{ color: "#2563eb", fontWeight: 700, fontSize: "13px", letterSpacing: "0.15em", textTransform: "uppercase", fontFamily: "'Barlow Condensed', sans-serif" }}>
+      {children}
+    </span>
+    <div style={{ height: "2px", flex: 1, maxWidth: "60px", background: "#2563eb" }} />
+  </div>
+);
+
+/* ─── Official Card ─────────────────────────────────────── */
+const OfficialCard = ({ official, getImageUrl, getBiographyText, compact = false }) => (
+  <div
+    className="official-card"
+    onMouseEnter={e => {
+      e.currentTarget.style.transform = "translateY(-5px)";
+      e.currentTarget.style.boxShadow = "0 16px 40px rgba(37,99,235,0.12)";
+    }}
+    onMouseLeave={e => {
+      e.currentTarget.style.transform = "translateY(0)";
+      e.currentTarget.style.boxShadow = "0 4px 20px rgba(0,0,0,0.06)";
+    }}
+  >
+    {/* Top accent */}
+    <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "3px", background: "linear-gradient(90deg, #1d4ed8, #3b82f6)" }} />
+
+    {/* Avatar */}
+    <div style={{ position: "relative", marginBottom: "16px" }}>
+      <img
+        src={getImageUrl(official.image)}
+        alt={official.nom}
+        style={{
+          width: compact ? "80px" : "110px",
+          height: compact ? "80px" : "110px",
+          borderRadius: "50%",
+          objectFit: "cover",
+          border: "4px solid #eff6ff",
+          display: "block",
+        }}
+        onError={e => { e.target.src = "https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=600"; }}
+      />
+      <div style={{
+        position: "absolute", bottom: "-4px", right: "-4px",
+        background: "linear-gradient(135deg, #1d4ed8, #2563eb)",
+        color: "#fff", borderRadius: "999px",
+        fontSize: "9px", fontWeight: 800, letterSpacing: "0.06em",
+        padding: "3px 8px", textTransform: "uppercase",
+        boxShadow: "0 2px 8px rgba(37,99,235,0.4)",
+        whiteSpace: "nowrap",
+        fontFamily: "'Barlow Condensed', sans-serif",
+      }}>
+        {official.titre}
+      </div>
+    </div>
+
+    <h3 style={{ fontWeight: 800, fontSize: compact ? "16px" : "18px", color: "#0f172a", marginBottom: "6px", textAlign: "center", fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: "0.01em" }}>
+      {official.nom}
+    </h3>
+    {!compact && (
+      <p style={{ color: "#64748b", fontSize: "13px", textAlign: "center", marginBottom: "16px", lineHeight: 1.6, display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+        {getBiographyText(official.biographie)}
+      </p>
+    )}
+
+    <div style={{ display: "flex", flexDirection: "column", gap: "8px", width: "100%", marginTop: "auto" }}>
+      {official.telephone && (
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "#475569", fontSize: "12px" }}>
+          <div style={{ background: "#dcfce7", borderRadius: "6px", padding: "4px", minWidth: "20px" }}><Phone size={11} style={{ color: "#16a34a" }} /></div>
+          <span style={{ wordBreak: "break-all" }}>{official.telephone}</span>
+        </div>
+      )}
+      {official.email && (
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "#475569", fontSize: "12px" }}>
+          <div style={{ background: "#dbeafe", borderRadius: "6px", padding: "4px", minWidth: "20px" }}><Mail size={11} style={{ color: "#2563eb" }} /></div>
+          <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "100%" }}>{official.email}</span>
+        </div>
+      )}
+      {official.adresseBureau && (
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "#475569", fontSize: "12px" }}>
+          <div style={{ background: "#fef3c7", borderRadius: "6px", padding: "4px", minWidth: "20px" }}><MapPin size={11} style={{ color: "#d97706" }} /></div>
+          <span style={{ wordBreak: "break-word" }}>{official.adresseBureau}</span>
+        </div>
+      )}
+    </div>
+  </div>
+);
+
+/* ─── Main Component ─────────────────────────────────────── */
 const Administration = ({ documents = [], officials = [] }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [viewMode, setViewMode] = useState("grid");
-  const [showScrollTop, setShowScrollTop] = useState(false);
   const [filteredDocuments, setFilteredDocuments] = useState(documents);
   const [showFilters, setShowFilters] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [openFaqIndex, setOpenFaqIndex] = useState(null); // Added for FAQ toggle
 
-      // Let's organise here the PDF downloads
-      const generatePDF = (doc) => {
-      const pdf = new jsPDF();
+  const generatePDF = (doc) => {
+    const pdf = new jsPDF();
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(18);
+    pdf.text(doc.titre, 20, 20);
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(12);
+    pdf.text(`Type de document: ${doc.typeDocument}`, 20, 40);
+    if (doc.description) pdf.text(`Description: ${doc.description}`, 20, 50);
+    if (doc.lieu) pdf.text(`Lieu: ${doc.lieu}`, 20, 60);
+    if (doc.delai) pdf.text(`Délai: ${doc.delai} jours`, 20, 70);
+    if (doc.prix) pdf.text(`Prix: ${doc.prix.toLocaleString()} GNF`, 20, 80);
+    else pdf.text(`Prix: Gratuit`, 20, 80);
+    pdf.save(`${doc.titre}.pdf`);
+  };
 
-      pdf.setFont("helvetica", "bold");
-      pdf.setFontSize(18);
-      pdf.text(doc.titre, 20, 20);
-
-      pdf.setFont("helvetica", "normal");
-      pdf.setFontSize(12);
-      pdf.text(`Type de document: ${doc.typeDocument}`, 20, 40);
-      if (doc.description) pdf.text(`Description: ${doc.description}`, 20, 50);
-      if (doc.lieu) pdf.text(`Lieu: ${doc.lieu}`, 20, 60);
-      if (doc.delai) pdf.text(`Délai: ${doc.delai} jours`, 20, 70);
-      if (doc.prix) pdf.text(`Prix: ${doc.prix.toLocaleString()} GNF`, 20, 80);
-      else pdf.text(`Prix: Gratuit`, 20, 80);
-
-      // Save file
-      pdf.save(`${doc.titre}.pdf`);
-    };
-
-  // Carousel functionality (from App)
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % carouselImages.length);
+      setCurrentImageIndex(prev => (prev + 1) % carouselImages.length);
     }, 10000);
     return () => clearInterval(timer);
   }, []);
 
-  // Document categories (unchanged)
   const categories = [
-    { id: "all", label: "Tous les documents", count: documents.length },
-    {
-      id: "civil",
-      label: "État civil",
-      count: documents.filter((doc) =>
-        ["Acte de naissance", "Acte de mariage", "Acte de décès"].includes(doc.typeDocument)
-      ).length,
-    },
-    {
-      id: "residence",
-      label: "Résidence",
-      count: documents.filter((doc) => doc.typeDocument === "Certificat de résidence").length,
-    },
-    {
-      id: "business",
-      label: "Commerce",
-      count: documents.filter((doc) =>
-        ["Licence commerciale", "Permis de construire"].includes(doc.typeDocument)
-      ).length,
-    },
-    {
-      id: "legal",
-      label: "Juridique",
-      count: documents.filter((doc) => doc.typeDocument === "Jugement supplétif").length,
-    },
+    { id: "all", label: "Tous", count: documents.length },
+    { id: "civil", label: "État civil", count: documents.filter(d => ["Acte de naissance","Acte de mariage","Acte de décès"].includes(d.typeDocument)).length },
+    { id: "residence", label: "Résidence", count: documents.filter(d => d.typeDocument === "Certificat de résidence").length },
+    { id: "business", label: "Commerce", count: documents.filter(d => ["Licence commerciale","Permis de construire"].includes(d.typeDocument)).length },
+    { id: "legal", label: "Juridique", count: documents.filter(d => d.typeDocument === "Jugement supplétif").length },
   ];
 
-  // Filter documents based on search and category (unchanged)
   useEffect(() => {
     let filtered = documents;
     if (selectedCategory !== "all") {
       const categoryMap = {
-        civil: ["Acte de naissance", "Acte de mariage", "Acte de décès"],
+        civil: ["Acte de naissance","Acte de mariage","Acte de décès"],
         residence: ["Certificat de résidence"],
-        business: ["Licence commerciale", "Permis de construire"],
+        business: ["Licence commerciale","Permis de construire"],
         legal: ["Jugement supplétif"],
       };
-      filtered = filtered.filter((doc) => categoryMap[selectedCategory]?.includes(doc.typeDocument));
+      filtered = filtered.filter(doc => categoryMap[selectedCategory]?.includes(doc.typeDocument));
     }
     if (searchTerm) {
-      filtered = filtered.filter(
-        (doc) =>
-          doc.titre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          doc.typeDocument.toLowerCase().includes(searchTerm.toLowerCase())
+      filtered = filtered.filter(doc =>
+        doc.titre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        doc.typeDocument.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
     setFilteredDocuments(filtered);
   }, [searchTerm, selectedCategory, documents]);
 
-  // Scroll to top functionality (unchanged)
-  useEffect(() => {
-    const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 500);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  // Helper function to get image URL (unchanged)
   const getImageUrl = (imageArray) => {
     if (!imageArray || !imageArray.length)
-      return "https://images.pexels.com/photos/5668858/pexels-photo-5668858.jpeg?auto =compress&cs=tinysrgb&w=600";
+      return "https://images.pexels.com/photos/5668858/pexels-photo-5668858.jpeg?auto=compress&cs=tinysrgb&w=600";
     const image = imageArray[0];
     return image.url.startsWith("http") ? image.url : `https://cozy-sparkle-24ced58ec1.strapiapp.com${image.url}`;
   };
 
-  // Helper function to get description text from blocks (unchanged)
-  const getDescriptionText = (descriptionBlocks) => {
-    if (!descriptionBlocks || !descriptionBlocks.length) return "Description non disponible";
-    const firstBlock = descriptionBlocks[0];
-    if (firstBlock.children && firstBlock.children.length > 0) {
-      return firstBlock.children[0].text || "Description non disponible";
-    }
-    return "Description non disponible";
+  const getDescriptionText = (blocks) => {
+    if (!blocks || !blocks.length) return "Description non disponible";
+    const first = blocks[0];
+    return first.children?.[0]?.text || first.text || "Description non disponible";
   };
 
-  // Helper function to get biography text from blocks (unchanged)
-  const getBiographyText = (biographyBlocks) => {
-    if (!biographyBlocks || !biographyBlocks.length) return "Biographie non disponible";
-    const firstBlock = biographyBlocks[0];
-    if (firstBlock.children && firstBlock.children.length > 0) {
-      return firstBlock.children[0].text || "Biographie non disponible";
-    }
-    return "Biographie non disponible";
+  const getBiographyText = (blocks) => {
+    if (!blocks || !blocks.length) return "Biographie non disponible";
+    const first = blocks[0];
+    return first.children?.[0]?.text || first.text || "Biographie non disponible";
   };
 
-  // Helper function to get document type icon (unchanged)
   const getDocumentIcon = (type) => {
-    const iconMap = {
-      "Acte de naissance": <User className="h-6 w-6 text-blue-600" />,
-      "Acte de mariage": <Users className="h-6 w-6 text-pink-600" />,
-      "Acte de décès": <FileText className="h-6 w-6 text-gray-600" />,
-      "Certificat de résidence": <MapPin className="h-6 w-6 text-orange-600" />,
-      "Licence commerciale": <Building2 className="h-6 w-6 text-green-600" />,
-      "Permis de construire": <Building2 className="h-6 w-6 text-yellow-600" />,
-      "Jugement supplétif": <Shield className="h-6 w-6 text-purple-600" />,
+    const map = {
+      "Acte de naissance": <User className="h-5 w-5 text-blue-600" />,
+      "Acte de mariage": <Users className="h-5 w-5 text-pink-500" />,
+      "Acte de décès": <FileText className="h-5 w-5 text-slate-500" />,
+      "Certificat de résidence": <MapPin className="h-5 w-5 text-orange-500" />,
+      "Licence commerciale": <Building2 className="h-5 w-5 text-green-600" />,
+      "Permis de construire": <Building2 className="h-5 w-5 text-yellow-600" />,
+      "Jugement supplétif": <Shield className="h-5 w-5 text-blue-500" />,
     };
-    return iconMap[type] || <FileText className="h-6 w-6 text-gray-500" />;
+    return map[type] || <FileText className="h-5 w-5 text-slate-500" />;
   };
 
-  // Helper function to get official title badge color (unchanged)
-  const getTitleColor = (titre) => {
-    const colorMap = {
-      maire: "bg-blue-600",
-      adjoint: "bg-blue-600",
-      conseiller: "bg-blue-600",
-      prefet: "bg-blue-600",
-      gouverneur: "bg-blue-600",
-    };
-    return colorMap[titre.toLowerCase()] || "from-gray-500 to-gray-600";
-  };
+  // Split officials
+  const leaderOfficials = officials.filter(o => o.titre?.toLowerCase() !== "conseiller");
+  const conseillerOfficials = officials.filter(o => o.titre?.toLowerCase() === "conseiller");
 
   return (
-    <div className="min-h-screen bg-slate-50 font-[Poppins] text-white">
+    <div style={{ minHeight: "100vh", background: "#f8fafc", fontFamily: "'DM Sans', sans-serif" }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap');
+        * { box-sizing: border-box; }
+        
+        /* --- Responsive CSS Classes --- */
+        .responsive-container {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 80px 24px;
+        }
+        
+        .hero-section {
+          min-height: 600px;
+        }
+        
+        .hero-title {
+          font-size: clamp(42px, 6vw, 72px);
+        }
+
+        .search-container-wrap {
+          display: flex;
+          gap: 10px;
+          flex-wrap: nowrap;
+        }
+
+        .contact-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+          gap: 4px;
+        }
+
+        .doc-controls {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 12px;
+        }
+
+        .doc-grid-view {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+          gap: 20px;
+        }
+
+        .official-card {
+          background: #fff;
+          border-radius: 20px;
+          overflow: hidden;
+          border: 1px solid #e8edf5;
+          box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 32px 24px;
+          position: relative;
+        }
+
+        /* --- Mobile Specific Overrides (Max-width: 768px) --- */
+        @media (max-width: 768px) {
+          .responsive-container {
+            padding: 40px 16px;
+          }
+          
+          .hero-section {
+            min-height: auto;
+            padding-top: 100px;
+            padding-bottom: 60px;
+          }
+
+          .hero-title {
+            font-size: 42px;
+          }
+          
+          .search-container-wrap {
+            flex-wrap: wrap;
+          }
+          
+          .contact-grid {
+            grid-template-columns: 1fr;
+            gap: 12px;
+          }
+
+          .doc-grid-view {
+            grid-template-columns: 1fr;
+          }
+
+          /* Force buttons to be full width on mobile */
+          .full-width-mobile {
+            width: 100%;
+          }
+          
+          .official-card {
+            padding: 24px 16px;
+          }
+        }
+      `}</style>
+
       <NavBar />
 
-      {/* Hero Section (adapted from App) */}
-      <header className="relative h-[50vh] min-h-[500px] md:h-screen md:min-h-[700px] text-white overflow-hidden pt-20">
-        <div className="absolute inset-0 w-full h-80%">
+      {/* ── Hero ───────────────────────────────────────────────── */}
+      <header className="hero-section" style={{ position: "relative", overflow: "hidden", display: "flex", alignItems: "center", paddingTop: "80px" }}>
+        <div style={{ position: "absolute", inset: 0 }}>
           {carouselImages.map((src, index) => (
             <img
               key={src}
               src={src}
               alt="Administration background"
-              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${
-                index === currentImageIndex ? "opacity-100" : "opacity-0"
-              }`}
+              style={{
+                position: "absolute", inset: 0, width: "100%", height: "100%",
+                objectFit: "cover", transition: "opacity 1s ease",
+                opacity: index === currentImageIndex ? 1 : 0,
+              }}
             />
           ))}
         </div>
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent"></div>
-        <div className="relative container mx-auto px-4 h-full flex flex-col justify-center">
-          <div className="max-w-2xl text-left">
-            <div className="mb-8">
-              
-              <p className="text-xl md:text-2xl text-slate-200 leading-relaxed">
-                Services administratifs modernes et efficaces pour tous vos besoins officiels.
-              </p>
-            </div>
-            <div className="flex items-center text-slate-300 mb-12">
-              <a href="/" className="hover:text-white transition-colors">
-                Accueil
-              </a>
-              <ChevronRight className="mx-2 h-4 w-4" />
-              <span className="font-semibold text-white">Administration</span>
-            </div>
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl p-3 max-w-xl">
-              <div className="flex flex-col sm:flex-row gap-3">
-                <div className="flex-1 flex items-center bg-white/90 rounded-xl px-4">
-                  <Search className="text-gray-400 mr-3 h-5 w-5" />
-                  <input
-                    type="text"
-                    placeholder="Rechercher une démarche..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full bg-transparent border-none focus:outline-none focus:ring-0 text-gray-800 text-lg placeholder-gray-500 py-3"
-                  />
-                </div>
-                <button
-                  onClick={() => setShowFilters(!showFilters)}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300 font-semibold flex items-center justify-center gap-2"
-                >
-                  <Filter className="h-5 w-5" />
-                  Filtres
-                </button>
+        {/* Gradient overlay */}
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(135deg, rgba(15,23,42,0.92) 0%, rgba(30,58,138,0.6) 60%, rgba(0,0,0,0.2) 100%)" }} />
+
+        <div style={{ position: "relative", zIndex: 10, maxWidth: "1200px", margin: "0 auto", padding: "0 24px", width: "100%" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "#94a3b8", fontSize: "13px", marginBottom: "24px" }}>
+            <a href="/" style={{ color: "#94a3b8", textDecoration: "none" }}>Accueil</a>
+            <ChevronRight size={14} />
+            <span style={{ color: "#fff", fontWeight: 600 }}>Administration</span>
+          </div>
+
+          <div style={{ marginBottom: "12px" }}>
+            <SectionLabel>Services Officiels</SectionLabel>
+          </div>
+          <h1 className="hero-title" style={{
+            fontFamily: "'Barlow Condensed', sans-serif",
+            fontWeight: 900,
+            color: "#fff", lineHeight: 1.05, marginBottom: "16px",
+            letterSpacing: "-0.01em",
+          }}>
+            Administration<br />
+            <span style={{ color: "#60a5fa" }}>Communale</span>
+          </h1>
+          <p style={{ color: "#cbd5e1", fontSize: "18px", maxWidth: "520px", lineHeight: 1.7, marginBottom: "40px" }}>
+            Services administratifs modernes et efficaces pour tous vos besoins officiels.
+          </p>
+
+          {/* Search bar */}
+          <div style={{
+            background: "rgba(255,255,255,0.08)", backdropFilter: "blur(16px)",
+            borderRadius: "16px", border: "1px solid rgba(255,255,255,0.15)",
+            padding: "12px", maxWidth: "540px",
+          }}>
+            <div className="search-container-wrap">
+              <div style={{ flex: 1, minWidth: "200px", display: "flex", alignItems: "center", background: "#fff", borderRadius: "10px", padding: "0 16px" }}>
+                <Search size={16} style={{ color: "#94a3b8", marginRight: "10px", flexShrink: 0 }} />
+                <input
+                  type="text"
+                  placeholder="Rechercher une démarche..."
+                  value={searchTerm}
+                  onChange={e => setSearchTerm(e.target.value)}
+                  style={{ border: "none", outline: "none", background: "transparent", color: "#0f172a", fontSize: "15px", padding: "12px 0", width: "100%" }}
+                />
               </div>
-              {showFilters && (
-                <div className="mt-4 pt-4 border-t border-white/20">
-                  <div className="flex flex-wrap gap-2">
-                    {categories.map((category) => (
-                      <button
-                        key={category.id}
-                        onClick={() => setSelectedCategory(category.id)}
-                        className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                          selectedCategory === category.id
-                            ? "bg-white text-blue-700 shadow-lg"
-                            : "bg-white/20 text-white hover:bg-white/40"
-                        }`}
-                      >
-                        {category.label} ({category.count})
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
+              <button
+                className="full-width-mobile"
+                onClick={() => setShowFilters(!showFilters)}
+                style={{
+                  background: "linear-gradient(135deg, #1d4ed8, #2563eb)",
+                  color: "#fff", border: "none", borderRadius: "10px",
+                  padding: "12px 20px", fontWeight: 700, fontSize: "14px",
+                  cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px",
+                  transition: "all 0.2s",
+                }}
+              >
+                <Filter size={15} />
+                Filtres
+              </button>
             </div>
+            {showFilters && (
+              <div style={{ marginTop: "12px", paddingTop: "12px", borderTop: "1px solid rgba(255,255,255,0.15)" }}>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                  {categories.map(cat => (
+                    <button
+                      key={cat.id}
+                      onClick={() => setSelectedCategory(cat.id)}
+                      style={{
+                        padding: "6px 14px", borderRadius: "999px", fontSize: "13px",
+                        fontWeight: 600, cursor: "pointer", border: "none",
+                        background: selectedCategory === cat.id ? "#fff" : "rgba(255,255,255,0.15)",
+                        color: selectedCategory === cat.id ? "#1d4ed8" : "#fff",
+                        transition: "all 0.2s",
+                      }}
+                    >
+                      {cat.label} ({cat.count})
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </header>
 
-      {/* Contact Info Bar (adapted from App) */}
-      <section className="bg-white shadow-md border-t-4 border-blue-500 -mt-1 relative z-10">
-        <div className="container mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="flex items-center group hover:bg-blue-50 p-4 rounded-xl transition-all duration-300">
-              <div className="bg-blue-100 p-3 rounded-full mr-4 group-hover:bg-blue-200 transition-colors">
-                <Clock className="h-6 w-6 text-blue-600" />
+      {/* ── Contact Bar ─────────────────────────────────────────── */}
+      <section style={{
+        background: "#fff", borderTop: "4px solid #2563eb",
+        boxShadow: "0 4px 24px rgba(0,0,0,0.07)", position: "relative", zIndex: 10,
+      }}>
+        <div className="contact-grid" style={{ maxWidth: "1200px", margin: "0 auto", padding: "24px" }}>
+          {[
+            { icon: Clock, label: "Horaires", value: "Lun-Ven: 8h-16h", bg: "#eff6ff", color: "#2563eb" },
+            { icon: Phone, label: "Téléphone", value: "+224 12 345 6789", bg: "#f0fdf4", color: "#16a34a" },
+            { icon: Mail, label: "Email", value: "admin@mamou.gov.gn", bg: "#fef9ec", color: "#d97706" },
+            { icon: MapPin, label: "Adresse", value: "Centre-ville, Mamou", bg: "#fff7ed", color: "#ea580c" },
+          ].map(({ icon: Icon, label, value, bg, color }) => (
+            <div key={label} style={{ display: "flex", alignItems: "center", gap: "14px", padding: "16px 20px", borderRadius: "12px", transition: "background 0.2s", cursor: "default" }}
+              onMouseEnter={e => e.currentTarget.style.background = bg}
+              onMouseLeave={e => e.currentTarget.style.background = "transparent"}
+            >
+              <div style={{ background: bg, borderRadius: "10px", padding: "10px", flexShrink: 0 }}>
+                <Icon size={20} style={{ color }} />
               </div>
               <div>
-                <p className="font-semibold text-gray-800">Horaires d'ouverture</p>
-                <p className="text-gray-600">Lun-Ven: 8h00-16h00</p>
+                <p style={{ fontWeight: 700, color: "#0f172a", fontSize: "14px", marginBottom: "2px" }}>{label}</p>
+                <p style={{ color: "#64748b", fontSize: "13px" }}>{value}</p>
               </div>
             </div>
-            <div className="flex items-center group hover:bg-green-50 p-4 rounded-xl transition-all duration-300">
-              <div className="bg-green-100 p-3 rounded-full mr-4 group-hover:bg-green-200 transition-colors">
-                <Phone className="h-6 w-6 text-green-600" />
-              </div>
-              <div>
-                <p className="font-semibold text-gray-800">Téléphone</p>
-                <p className="text-gray-600">+224 12 345 6789</p>
-              </div>
-            </div>
-            <div className="flex items-center group hover:bg-purple-50 p-4 rounded-xl transition-all duration-300">
-              <div className="bg-purple-100 p-3 rounded-full mr-4 group-hover:bg-purple-200 transition-colors">
-                <Mail className="h-6 w-6 text-purple-600" />
-              </div>
-              <div>
-                <p className="font-semibold text-gray-800">Email</p>
-                <p className="text-gray-600">admin@mamou.gov.gn</p>
-              </div>
-            </div>
-            <div className="flex items-center group hover:bg-orange-50 p-4 rounded-xl transition-all duration-300">
-              <div className="bg-orange-100 p-3 rounded-full mr-4 group-hover:bg-orange-200 transition-colors">
-                <MapPin className="h-6 w-6 text-orange-600" />
-              </div>
-              <div>
-                <p className="font-semibold text-gray-800">Adresse</p>
-                <p className="text-gray-600">Centre-ville, Mamou</p>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
       </section>
 
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-20">
-        {/* Documents Section (adapted from App) */}
-        <section className="mb-24">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-extrabold text-gray-800 mb-4">
-              Documents Administratifs
+      <main className="responsive-container">
+
+        {/* ── Documents ─────────────────────────────────────────── */}
+        <section style={{ marginBottom: "96px" }}>
+          <div style={{ textAlign: "center", marginBottom: "56px" }}>
+            <SectionLabel>Démarches Administratives</SectionLabel>
+            <h2 style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 900, fontSize: "clamp(32px,5vw,52px)", color: "#0f172a", marginBottom: "12px", letterSpacing: "-0.01em" }}>
+              Documents Officiels
             </h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            <p style={{ color: "#64748b", fontSize: "16px", maxWidth: "560px", margin: "0 auto", lineHeight: 1.7 }}>
               Obtenez facilement tous vos documents officiels avec nos services rapides et efficaces.
             </p>
           </div>
 
-          {/* View Toggle and Results Count */}
-          <div className="flex flex-col md:flex-row justify-between items-center mb-8">
-            <span className="text-gray-700 font-medium text-lg mb-4 md:mb-0">
+          <div className="doc-controls" style={{ marginBottom: "28px" }}>
+            <span style={{ color: "#475569", fontWeight: 600, fontSize: "15px" }}>
               {filteredDocuments.length} résultat{filteredDocuments.length > 1 ? "s" : ""}
             </span>
-            <div className="flex items-center gap-2 bg-gray-100 p-1 rounded-lg">
-              <button
-                onClick={() => setViewMode("grid")}
-                className={`p-2 rounded-md transition-all duration-300 ${
-                  viewMode === "grid" ? "bg-white text-blue-600 shadow" : "text-gray-600"
-                }`}
-              >
-                <Grid className="h-5 w-5" />
-              </button>
-              <button
-                onClick={() => setViewMode("list")}
-                className={`p-2 rounded-md transition-all duration-300 ${
-                  viewMode === "list" ? "bg-white text-blue-600 shadow" : "text-gray-600"
-                }`}
-              >
-                <List className="h-5 w-5" />
-              </button>
+            <div style={{ display: "flex", background: "#f1f5f9", borderRadius: "10px", padding: "4px", gap: "2px" }}>
+              {[{ mode: "grid", Icon: Grid }, { mode: "list", Icon: List }].map(({ mode, Icon }) => (
+                <button
+                  key={mode}
+                  onClick={() => setViewMode(mode)}
+                  style={{
+                    padding: "8px 12px", borderRadius: "7px", border: "none", cursor: "pointer",
+                    background: viewMode === mode ? "#fff" : "transparent",
+                    color: viewMode === mode ? "#2563eb" : "#94a3b8",
+                    boxShadow: viewMode === mode ? "0 1px 4px rgba(0,0,0,0.1)" : "none",
+                    transition: "all 0.2s",
+                  }}
+                >
+                  <Icon size={16} />
+                </button>
+              ))}
             </div>
           </div>
 
           {filteredDocuments.length === 0 ? (
-            <div className="text-center py-20 bg-white rounded-3xl shadow-sm">
-              <FileText className="h-20 w-20 text-gray-300 mx-auto mb-6" />
-              <h3 className="text-2xl font-bold text-gray-600 mb-4">Aucun document trouvé</h3>
-              <p className="text-gray-500 text-lg">Essayez d'ajuster vos filtres ou votre recherche.</p>
+            <div style={{ textAlign: "center", padding: "80px 24px", background: "#fff", borderRadius: "24px", border: "1px solid #e2e8f0" }}>
+              <FileText size={64} style={{ color: "#cbd5e1", margin: "0 auto 20px" }} />
+              <h3 style={{ fontWeight: 800, fontSize: "22px", color: "#475569", marginBottom: "8px" }}>Aucun document trouvé</h3>
+              <p style={{ color: "#94a3b8", marginBottom: "24px" }}>Essayez d'ajuster vos filtres ou votre recherche.</p>
               <button
-                onClick={() => {
-                  setSearchTerm("");
-                  setSelectedCategory("all");
-                }}
-                className="mt-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-full hover:shadow-lg transition-all duration-300"
+                onClick={() => { setSearchTerm(""); setSelectedCategory("all"); }}
+                style={{ background: "#2563eb", color: "#fff", border: "none", borderRadius: "999px", padding: "12px 28px", fontWeight: 700, cursor: "pointer", fontSize: "14px" }}
               >
                 Réinitialiser les filtres
               </button>
             </div>
           ) : (
-            <div className={viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" : "space-y-4"}>
-              {filteredDocuments.map((doc) => (
+            <div className={viewMode === 'grid' ? 'doc-grid-view' : ''} style={{
+              display: viewMode === 'list' ? 'flex' : 'grid',
+              flexDirection: 'column',
+              gap: "20px",
+            }}>
+              {filteredDocuments.map(doc => (
                 <div
                   key={doc.id}
-                  className={`group bg-white hover:shadow-md hover:-translate-y-1 transition-all duration-300 rounded-2xl border border-gray-100 ${
-                    viewMode === "list" && "flex items-center p-4"
-                  }`}
+                  className="doc-card"
+                  style={{
+                    background: "#fff",
+                    borderRadius: "20px",
+                    border: "1px solid #e8edf5",
+                    boxShadow: "0 2px 12px rgba(0,0,0,0.05)",
+                    overflow: "hidden",
+                    display: "flex",
+                    flexDirection: viewMode === "list" ? "row" : "column",
+                  }}
                 >
-                  <div className={viewMode === "grid" ? "p-6" : "flex-1 ml-4"}>
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="bg-slate-100 p-3 rounded-lg">{getDocumentIcon(doc.typeDocument)}</div>
-                      <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold">
+                  {/* Color stripe */}
+                  <div style={{ width: viewMode === "list" ? "5px" : "auto", height: viewMode === "list" ? "auto" : "5px", background: "linear-gradient(135deg, #1d4ed8, #3b82f6)", flexShrink: 0 }} />
+
+                  <div style={{ padding: "24px", flex: 1, display: "flex", flexDirection: "column" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "16px" }}>
+                      <div style={{ background: "#eff6ff", borderRadius: "12px", padding: "10px" }}>
+                        {getDocumentIcon(doc.typeDocument)}
+                      </div>
+                      <span style={{ background: "#f0f9ff", color: "#0284c7", fontSize: "11px", fontWeight: 700, padding: "4px 10px", borderRadius: "999px", letterSpacing: "0.05em", textTransform: "uppercase" }}>
                         {doc.typeDocument}
                       </span>
                     </div>
-                    <h3 className="font-bold text-xl text-gray-800 mb-2 group-hover:text-blue-600 transition-colors">
-                      {doc.titre}
-                    </h3>
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">{getDescriptionText(doc.description)}</p>
-                    <div className="space-y-3 mb-4">
+
+                    <h3 style={{ fontWeight: 800, fontSize: "17px", color: "#0f172a", marginBottom: "6px", lineHeight: 1.3 }}>{doc.titre}</h3>
+                    <p style={{ color: "#64748b", fontSize: "13px", marginBottom: "16px", lineHeight: 1.6, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                      {getDescriptionText(doc.description)}
+                    </p>
+
+                    <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "20px", marginTop: "auto" }}>
                       {doc.lieu && (
-                        <div className="flex items-center text-gray-700">
-                          <MapPin className="h-4 w-4 mr-3 text-blue-500 flex-shrink-0" />
-                          <span className="text-sm">{doc.lieu}</span>
+                        <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "#475569", fontSize: "12px" }}>
+                          <MapPin size={13} style={{ color: "#3b82f6" }} />
+                          <span>{doc.lieu}</span>
                         </div>
                       )}
                       {doc.delai && (
-                        <div className="flex items-center text-gray-700">
-                          <Clock className="h-4 w-4 mr-3 text-green-500 flex-shrink-0" />
-                          <span className="text-sm">Délai: {doc.delai} jours</span>
-                        </div>
-                      )}
-                      {doc.prix && (
-                        <div className="flex items-center text-gray-700">
-                          <Star className="h-4 w-4 mr-3 text-yellow-500 flex-shrink-0" />
-                          <span className="text-sm font-semibold text-green-600">
-                            {doc.prix.toLocaleString()} GNF
-                          </span>
+                        <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "#475569", fontSize: "12px" }}>
+                          <Clock size={13} style={{ color: "#16a34a" }} />
+                          <span>Délai: {doc.delai} jours</span>
                         </div>
                       )}
                     </div>
-                    <div className="flex items-center justify-between border-t pt-4">
-                      <span className="text-lg font-bold text-green-600">
+
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid #f1f5f9", paddingTop: "16px", flexWrap: "wrap", gap: "10px" }}>
+                      <span style={{ fontWeight: 800, fontSize: "16px", color: doc.prix ? "#0f172a" : "#16a34a" }}>
                         {doc.prix ? `${doc.prix.toLocaleString()} GNF` : "Gratuit"}
                       </span>
-                      <div className="flex gap-2">
+                      <div style={{ display: "flex", gap: "8px" }}>
                         {doc.formulaireTelecharger && (
                           <button
                             onClick={() => generatePDF(doc)}
-                            className="bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold text-sm hover:bg-blue-700 transition-colors flex items-center gap-2"
+                            style={{
+                              background: "linear-gradient(135deg, #1d4ed8, #2563eb)",
+                              color: "#fff", border: "none", borderRadius: "10px",
+                              padding: "8px 16px", fontWeight: 700, fontSize: "13px",
+                              cursor: "pointer", display: "flex", alignItems: "center", gap: "6px",
+                              transition: "all 0.2s",
+                            }}
                           >
-                            <Download className="w-4 h-4" />
-                            Télécharger
+                            <Download size={13} />
+                            <span className="hidden sm:inline">Télécharger</span>
                           </button>
-
                         )}
-                        <button className="bg-gray-100 hover:bg-gray-200 text-gray-700 p-2 rounded-lg transition-all duration-300">
-                          <Eye className="h-4 w-4" />
+                        <button style={{ background: "#f1f5f9", border: "none", borderRadius: "10px", padding: "8px 10px", cursor: "pointer", transition: "background 0.2s", color: "#475569" }}
+                          onMouseEnter={e => e.currentTarget.style.background = "#e2e8f0"}
+                          onMouseLeave={e => e.currentTarget.style.background = "#f1f5f9"}
+                        >
+                          <Eye size={14} />
                         </button>
                       </div>
                     </div>
@@ -432,163 +567,95 @@ const Administration = ({ documents = [], officials = [] }) => {
           )}
         </section>
 
-        {/* Officials Section (adapted from App) */}
-        <section className="mb-24">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-extrabold text-gray-800 mb-4">
-              Les Élus et Responsables de Region
-            </h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Rencontrez les personnes dévouées qui servent notre communauté avec passion et engagement.
-            </p>
-          </div>
-          {officials.length === 0 ? (
-            <div className="text-center py-20 bg-white rounded-3xl shadow-sm">
-              <Users className="h-20 w-20 text-gray-300 mx-auto mb-6" />
-              <h3 className="text-2xl font-bold text-gray-600 mb-4">Chargement des élus...</h3>
-              <p className="text-gray-500 text-lg">Veuillez patienter pendant le chargement des informations</p>
+        {/* ── Officials ─────────────── */}
+        {(leaderOfficials.length > 0 || conseillerOfficials.length > 0) && (
+          <section style={{ marginBottom: "96px" }}>
+            <div style={{ textAlign: "center", marginBottom: "56px" }}>
+              <SectionLabel>Gouvernance Locale</SectionLabel>
+              <h2 style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 900, fontSize: "clamp(32px,5vw,52px)", color: "#0f172a", marginBottom: "12px", letterSpacing: "-0.01em" }}>
+                Élus & Responsables
+              </h2>
             </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-              {officials.map((official) => (
-                <div key={official.id} className="group text-center flex flex-col items-center">
-                  <div className="relative mb-6">
-                    <img
-                      src={getImageUrl(official.image)}
-                      alt={official.nom}
-                      className="w-48 h-48 rounded-full object-cover shadow-md border-4 border-white group-hover:border-blue-300 transition-all duration-300 group-hover:scale-105"
-                      onError={(e) => {
-                        e.target.src =
-                          "https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=600";
-                      }}
-                    />
-                    <div
-                      className={`absolute bottom-2 right-2 bg-gradient-to-r ${getTitleColor(
-                        official.titre
-                      )} text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg`}
-                    >
-                      {official.titre?.toUpperCase()}
-                    </div>
-                  </div>
-                  <h3 className="font-bold text-2xl text-gray-800 mb-2 group-hover:text-blue-600 transition-colors">
-                    {official.nom}
-                  </h3>
-                  <p className="text-gray-600 mb-4 leading-relaxed line-clamp-3 px-4">
-                    {getBiographyText(official.biographie)}
-                  </p>
-                  <div className="space-y-3 mb-6">
-                    {official.telephone && (
-                      <div className="flex items-center text-gray-700 group/item hover:text-green-600 transition-colors">
-                        <div className="bg-green-100 p-1 rounded-full mr-3 group-hover/item:bg-green-200 transition-colors">
-                          <Phone className="h-3 w-3 text-green-600" />
-                        </div>
-                        <span className="text-sm">{official.telephone}</span>
-                      </div>
-                    )}
-                    {official.email && (
-                      <div className="flex items-center text-gray-700 group/item hover:text-blue-600 transition-colors">
-                        <div className="bg-blue-100 p-1 rounded-full mr-3 group-hover/item:bg-blue-200 transition-colors">
-                          <Mail className="h-3 w-3 text-blue-600" />
-                        </div>
-                        <span className="text-sm">{official.email}</span>
-                      </div>
-                    )}
-                    {official.adresseBureau && (
-                      <div className="flex items-center text-gray-700 group/item hover:text-blue-600 transition-colors">
-                        <div className="bg-purple-100 p-1 rounded-full mr-3 group-hover/item:bg-purple-200 transition-colors">
-                          <MapPin className="h-3 w-3 text-purple-600" />
-                        </div>
-                        <span className="text-sm">{official.adresseBureau}</span>
-                      </div>
-                    )}
-                    {official.dateDebut && (
-                      <div className="flex items-center text-gray-700 group/item hover:text-orange-600 transition-colors">
-                        <div className="bg-orange-100 p-1 rounded-full mr-3 group-hover/item:bg-orange-200 transition-colors">
-                          <Calendar className="h-3 w-3 text-orange-600" />
-                        </div>
-                        <span className="text-sm">
-                          Depuis {new Date(official.dateDebut).toLocaleDateString("fr-FR")}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  {/* <button className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-3 rounded-full font-semibold hover:shadow-md transition-all duration-300 group-hover:scale-105">
-                    Contacter
-                  </button> */}
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
 
-        {/* FAQ Section (styled to match App's card design) */}
-        <section className="mb-24">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-extrabold text-gray-800 mb-4">
-              Questions <span className="bg-gradient-to-r from-yellow-600 to-yellow-600 bg-clip-text text-transparent">Fréquentes</span>
+            {leaderOfficials.length > 0 && (
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: "24px", marginBottom: conseillerOfficials.length > 0 ? "72px" : "0" }}>
+                {leaderOfficials.map(official => (
+                  <OfficialCard key={official.id} official={official} getImageUrl={getImageUrl} getBiographyText={getBiographyText} />
+                ))}
+              </div>
+            )}
+
+            {conseillerOfficials.length > 0 && (
+              <div>
+                <div style={{
+                  position: "relative", marginBottom: "48px",
+                  display: "flex", alignItems: "center", gap: "20px", flexDirection: "column"
+                }}>
+                  <div style={{
+                    background: "linear-gradient(135deg, #0f172a, #1e3a5f)",
+                    color: "#fff", borderRadius: "999px",
+                    padding: "10px 28px", textAlign: "center",
+                    fontFamily: "'Barlow Condensed', sans-serif",
+                    fontWeight: 800, fontSize: "15px", letterSpacing: "0.06em",
+                    textTransform: "uppercase",
+                  }}>
+                    Les Conseillers des Quartiers de Mamou
+                  </div>
+                </div>
+
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "18px" }}>
+                  {conseillerOfficials.map(official => (
+                    <OfficialCard key={official.id} official={official} getImageUrl={getImageUrl} getBiographyText={getBiographyText} compact />
+                  ))}
+                </div>
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* ── FAQ ──────────────────────────────────────────────── */}
+        <section style={{ marginBottom: "48px" }}>
+          <div style={{ textAlign: "center", marginBottom: "56px" }}>
+            <SectionLabel>Aide & Support</SectionLabel>
+            <h2 style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 900, fontSize: "clamp(32px,5vw,52px)", color: "#0f172a", marginBottom: "12px", letterSpacing: "-0.01em" }}>
+              Questions Fréquentes
             </h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Trouvez rapidement les réponses à vos questions les plus courantes
-            </p>
           </div>
-          <div className="max-w-4xl mx-auto space-y-6">
+
+          <div style={{ maxWidth: "800px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "14px" }}>
             {[
               {
-                question: "Quels documents dois-je apporter pour un acte de naissance?",
-                answer:
-                  "Vous devez apporter une pièce d'identité valide, un certificat de résidence récent, et les informations complètes sur la personne concernée.",
+                q: "Quels documents dois-je apporter pour un acte de naissance?",
+                a: "Vous devez apporter une pièce d'identité valide, un certificat de résidence récent, et les informations complètes sur la personne concernée.",
               },
               {
-                question: "Combien de temps faut-il pour obtenir un document?",
-                answer:
-                  "Les délais varient selon le type de document : 2-3 jours pour les certificats simples, 5-7 jours pour les actes d'état civil, et jusqu'à 15 jours pour les documents complexes.",
+                q: "Combien de temps faut-il pour obtenir un document?",
+                a: "Les délais varient selon le type de document : 2-3 jours pour les certificats simples, 5-7 jours pour les actes d'état civil.",
               },
               {
-                question: "Puis-je faire une demande en ligne?",
-                answer:
-                  "Certaines démarches peuvent être initiées en ligne, mais la plupart nécessitent une visite en personne pour la vérification des documents et la signature.",
-              },
-              {
-                question: "Quels sont les moyens de paiement acceptés?",
-                answer:
-                  "Nous acceptons les paiements en espèces, par chèque, et par mobile money (Orange Money, MTN Money). Les cartes bancaires seront bientôt disponibles.",
-              },
-              {
-                question: "Comment contacter un élu spécifique?",
-                answer:
-                  "Vous pouvez prendre rendez-vous via notre secrétariat au +224 12 345 6789 ou envoyer un email à admin@mamou.gov.gn avec vos coordonnées.",
+                q: "Puis-je faire une demande en ligne?",
+                a: "Certaines démarches peuvent être initiées en ligne, mais la plupart nécessitent une visite en personne.",
               },
             ].map((faq, index) => (
-              <div
-                key={index}
-                className="group bg-white hover:shadow-md hover:-translate-y-0 transition-all duration-300 rounded-2xl border border-gray-100 p-6"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="bg-slate-100 p-3 rounded-lg">
-                    <FileText className="h-6 w-6 text-indigo-600" />
+              <div key={index} style={{ border: "1px solid #e2e8f0", borderRadius: "12px", overflow: "hidden", background: "#fff" }}>
+                <button
+                  onClick={() => setOpenFaqIndex(openFaqIndex === index ? null : index)}
+                  style={{ width: "100%", padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", background: "none", border: "none", cursor: "pointer", textAlign: "left" }}
+                >
+                  <span style={{ fontWeight: 700, color: "#1e293b", fontSize: "16px" }}>{faq.q}</span>
+                  {openFaqIndex === index ? <ChevronUp size={20} className="text-blue-600" /> : <ChevronDown size={20} className="text-gray-400" />}
+                </button>
+                {openFaqIndex === index && (
+                  <div style={{ padding: "0 20px 20px", color: "#64748b", lineHeight: 1.6 }}>
+                    {faq.a}
                   </div>
-                  <div className="flex-1">
-                    <h3 className="font-bold text-xl text-gray-800 mb-2 group-hover:text-indigo-600 transition-colors">
-                      {faq.question}
-                    </h3>
-                    <p className="text-gray-600 text-sm leading-relaxed">{faq.answer}</p>
-                  </div>
-                </div>
+                )}
               </div>
             ))}
           </div>
         </section>
-      </main>
 
-      {/* Scroll to Top Button (from App) */}
-      {showScrollTop && (
-        <button
-          onClick={scrollToTop}
-          className="fixed bottom-8 right-8 bg-gradient-to-r from-blue-600 to-blue-600 text-white p-4 rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-110 z-50 animate-bounce"
-        >
-          <ChevronUp className="h-6 w-6" />
-        </button>
-      )}
+      </main>
     </div>
   );
 };

@@ -2,13 +2,14 @@
 
 import { motion } from "framer-motion"
 import { FaPhone, FaMapPin, FaShieldAlt, FaUser } from "react-icons/fa"
+import { toMediaUrl } from "../config/api"
 
 function Police({ policeData = [] }) {
   // Helper function to get image URL
   const getImageUrl = (imageArray) => {
     if (!imageArray || !imageArray.length) return "/placeholder.svg?height=300&width=400";
     const imageUrl = imageArray[0].url;
-    return imageUrl.startsWith('http') ? imageUrl : `https://cozy-sparkle-24ced58ec1.strapiapp.com${imageUrl}`;
+    return toMediaUrl(imageUrl);
   };
 
   // Helper function to get post type display name

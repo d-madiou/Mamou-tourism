@@ -2,7 +2,8 @@
 
 import { AnimatePresence, motion } from "framer-motion"
 import { ArrowLeft, ArrowRight, X } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
+import { toMediaUrl } from "../config/api"
 
 const Gallery = ({ galleryData = [] }) => {
   const [lightboxOpen, setLightboxOpen] = useState(false)
@@ -24,7 +25,7 @@ const Gallery = ({ galleryData = [] }) => {
   const getImageUrl = (imageArray) => {
     if (!imageArray || !imageArray.length) return "/placeholder.svg?height=400&width=600";
     const imageUrl = imageArray[0].url;
-    return imageUrl.startsWith('http') ? imageUrl : `https://cozy-sparkle-24ced58ec1.strapiapp.com${imageUrl}`;
+    return toMediaUrl(imageUrl);
   };
 
   // Filter images based on active category
@@ -60,13 +61,13 @@ const Gallery = ({ galleryData = [] }) => {
     setLightboxOpen(false)
   }
 
-  const navigateImage = (direction) => {
+  const navigateImage = useCallback((direction) => {
     if (direction === "next") {
       setCurrentImageIndex((prevIndex) => (prevIndex + 1) % filteredImages.length)
     } else {
       setCurrentImageIndex((prevIndex) => (prevIndex - 1 + filteredImages.length) % filteredImages.length)
     }
-  }
+  }, [filteredImages.length])
 
   // Handle keyboard navigation
   useEffect(() => {
@@ -90,7 +91,7 @@ const Gallery = ({ galleryData = [] }) => {
 
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [lightboxOpen, filteredImages.length])
+  }, [lightboxOpen, navigateImage])
 
   // Reset current image index when category changes
   useEffect(() => {

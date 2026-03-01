@@ -151,7 +151,7 @@ function Nouriture({ restaurant = [] }) {
         </div>
       </div>
 
-      <Footer />
+      
     </div>
   )
 }

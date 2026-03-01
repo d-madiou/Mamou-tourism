@@ -206,7 +206,7 @@ function Hotels({ hotels = [] }) {
         </div>
       </div>
 
-      <Footer />
+
     </div>
   )
 }

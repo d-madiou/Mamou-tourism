@@ -24,7 +24,7 @@ function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const [activeSection, setActiveSection] = useState("overview")
   const [isAuthenticated, setIsAuthenticated] = useState(true) // For demo purposes
-  const [stats, setStats] = useState({
+  const [stats] = useState({
     articles: 24,
     events: 12,
     places: 13,
@@ -1550,7 +1550,7 @@ function RestaurantsManager() {
 }
 
 function HotelsManager() {
-  const [hotels, setHotels] = useState([
+  const HOTELS = [
     {
       id: 1,
       name: "Hôtel Mamou Palace",
@@ -1578,7 +1578,7 @@ function HotelsManager() {
       amenities: ["Wifi", "Ventilateur"],
       featured: false,
     },
-  ])
+  ]
 
   return (
     <div>

@@ -1,29 +1,30 @@
 "use client"
 
 import {
-  Bookmark,
-  BookmarkCheck,
   Calendar,
-  ChevronLeft,
-  ChevronRight,
   Clock,
-  Heart,
   MessageSquare,
   Share2,
   User,
 } from "lucide-react"
 import { useEffect, useState } from "react"
-import { Link, useParams } from "react-router-dom"
+import { Link, useLocation, useParams } from "react-router-dom"
 import NavBar from "../components/NavBar"
+import { toMediaUrl } from "../config/api"
 
-const BlogPost = ({ blogsData, schoolsData, newsData, contentTypes = ['blogs', 'schools', 'news'] }) => {
-  const [isBookmarked, setIsBookmarked] = useState(false)
-  const [likes, setLikes] = useState(42)
-  const [hasLiked, setHasLiked] = useState(false)
+const BlogPost = ({
+  blogsData,
+  schoolsData,
+  ecolesData,
+  newsData,
+  activitePopularData,
+  contentTypes = ["blogs", "ecoles", "news"],
+}) => {
   const [currentPost, setCurrentPost] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [relatedPosts, setRelatedPosts] = useState([])
   const params = useParams()
+  const location = useLocation()
 
   // Helper function to extract text from blocks
   const getTextFromBlocks = (blocks) => {
@@ -46,16 +47,13 @@ const BlogPost = ({ blogsData, schoolsData, newsData, contentTypes = ['blogs', '
   const getImageUrl = (image) => {
     if (!image) return "https://via.placeholder.com/1200x600?text=Image+non+disponible";
     
-    // Handle array of images (schools)
+    // Handle array of images
     if (Array.isArray(image) && image.length > 0) {
       const firstImage = image[0];
-      return firstImage.url.startsWith('http') ? firstImage.url : `https://cozy-sparkle-24ced58ec1.strapiapp.com${firstImage.url}`;
+      return firstImage?.url ? toMediaUrl(firstImage.url) : "https://via.placeholder.com/1200x600?text=Image+non+disponible";
     }
     
-    // Handle single image (blogs, news)
-    if (image.url) {
-      return image.url.startsWith('http') ? image.url : `https://cozy-sparkle-24ced58ec1.strapiapp.com${image.url}`;
-    }
+    if (image?.url) return toMediaUrl(image.url);
     
     return "https://via.placeholder.com/1200x600?text=Image+non+disponible";
   };
@@ -68,28 +66,24 @@ const BlogPost = ({ blogsData, schoolsData, newsData, contentTypes = ['blogs', '
       return
     }
 
-    // Search in the appropriate data source based on contentTypes
+    const sourceByType = {
+      blogs: blogsData?.data || [],
+      ecoles: ecolesData?.data || schoolsData?.data || [],
+      schools: schoolsData?.data || [],
+      news: newsData?.data || [],
+      "activite-populaires": activitePopularData?.data || [],
+    };
+
     let post = null;
     let allPosts = [];
 
-    if (contentTypes.includes('blogs') && blogsData?.data) {
-      post = blogsData.data.find(item => item.id == params.id);
-      if (post) {
-        allPosts = blogsData.data;
-      }
-    }
-
-    if (!post && contentTypes.includes('schools') && schoolsData?.data) {
-      post = schoolsData.data.find(item => item.id == params.id);
-      if (post) {
-        allPosts = schoolsData.data;
-      }
-    }
-
-    if (!post && contentTypes.includes('news') && newsData?.data) {
-      post = newsData.data.find(item => item.id == params.id);
-      if (post) {
-        allPosts = newsData.data;
+    for (const type of contentTypes) {
+      const source = sourceByType[type] || [];
+      const found = source.find((item) => item.id == params.id);
+      if (found) {
+        post = found;
+        allPosts = source;
+        break;
       }
     }
 
@@ -98,18 +92,10 @@ const BlogPost = ({ blogsData, schoolsData, newsData, contentTypes = ['blogs', '
       // Set related posts (exclude current post)
       const related = allPosts.filter(item => item.id !== post.id).slice(0, 3);
       setRelatedPosts(related);
-      setLikes(Math.floor(Math.random() * 100) + 10); // Random likes for demo
     }
     
     setIsLoading(false)
-  }, [params.id, contentTypes, blogsData, schoolsData, newsData])
-
-  const handleBookmark = () => setIsBookmarked(!isBookmarked)
-
-  const handleLike = () => {
-    setLikes((prev) => (hasLiked ? prev - 1 : prev + 1))
-    setHasLiked(!hasLiked)
-  }
+  }, [params.id, contentTypes, blogsData, schoolsData, ecolesData, newsData, activitePopularData])
 
   const handleShare = () => {
     if (navigator.share) {
@@ -125,26 +111,29 @@ const BlogPost = ({ blogsData, schoolsData, newsData, contentTypes = ['blogs', '
   }
 
   const getPostTitle = () => {
-    return currentPost?.Titre || currentPost?.nom || "Article sans titre";
+    return currentPost?.Titre || currentPost?.nom || currentPost?.titleSport || "Article sans titre";
   };
 
   const getPostDescription = () => {
+    if (currentPost?.contentSport) return getTextFromBlocks(currentPost.contentSport);
     if (currentPost?.description) return getTextFromBlocks(currentPost.description);
     if (currentPost?.contenu) return getTextFromBlocks(currentPost.contenu);
     return "Description non disponible";
   };
 
   const getPostImage = () => {
+    if (currentPost?.imageSport) return getImageUrl(currentPost.imageSport);
     if (currentPost?.Image) return getImageUrl(currentPost.Image);
     if (currentPost?.image) return getImageUrl(currentPost.image);
     return "https://via.placeholder.com/1200x600?text=Image+non+disponible";
   };
 
   const getPostDate = () => {
-    return currentPost?.datePublication || currentPost?.createdAt || new Date().toISOString();
+    return currentPost?.datePublication || currentPost?.dateSport || currentPost?.date || currentPost?.createdAt || new Date().toISOString();
   };
 
   const getPostCategory = () => {
+    if (currentPost?.type) return currentPost.type.replace("_", " ").toUpperCase();
     if (currentPost?.categorie) {
       return currentPost.categorie.replace("_", " ").toUpperCase();
     }
@@ -157,6 +146,14 @@ const BlogPost = ({ blogsData, schoolsData, newsData, contentTypes = ['blogs', '
   const getAuthor = () => {
     return currentPost?.auteur || currentPost?.nomDuDirecteur || "Équipe éditoriale";
   };
+
+  const currentType = location.pathname.split("/")[2] || "article";
+  const fallbackPath = {
+    education: "/education",
+    school: "/education",
+    sport: "/sport",
+    article: "/articles",
+  }[currentType] || "/articles";
 
   const timeReading = () => {
     const content = getPostDescription();
@@ -174,7 +171,7 @@ const BlogPost = ({ blogsData, schoolsData, newsData, contentTypes = ['blogs', '
         month: "long",
         day: "numeric",
       })
-    } catch (e) {
+    } catch {
       return "Date non disponible"
     }
   };
@@ -226,7 +223,7 @@ const BlogPost = ({ blogsData, schoolsData, newsData, contentTypes = ['blogs', '
             <h2 className="text-2xl font-bold text-gray-800 mb-4">Article non trouvé</h2>
             <p className="text-gray-600 mb-6">L'article que vous recherchez n'existe pas ou a été supprimé.</p>
             <Link
-              to="/education"
+              to={fallbackPath}
               className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors duration-200"
             >
               Retour aux articles
@@ -366,7 +363,7 @@ const BlogPost = ({ blogsData, schoolsData, newsData, contentTypes = ['blogs', '
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {relatedPosts.map((item, index) => (
                   <Link
-                    to={`/blog/education/${item.id}`}
+                    to={`/blog/${currentType}/${item.id}`}
                     key={item.id || index}
                     className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200"
                   >
@@ -388,7 +385,7 @@ const BlogPost = ({ blogsData, schoolsData, newsData, contentTypes = ['blogs', '
                         {item.Titre || item.nom || `Article ${index + 1}`}
                       </h4>
                       <p className="text-sm text-gray-500 line-clamp-3">
-                        {getTextFromBlocks(item.description).substring(0, 100)}...
+                        {getTextFromBlocks(item.description || item.contentSport).substring(0, 100)}...
                       </p>
                     </div>
                   </Link>

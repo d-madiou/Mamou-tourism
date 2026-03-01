@@ -1,81 +1,346 @@
-import React, { useEffect, useState } from 'react'
-import { FaBars, FaChevronDown, FaMapMarkedAlt, FaTimes } from 'react-icons/fa'
-import { Link } from 'react-router-dom'
+"use client";
+
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom"; // Added useLocation for active state
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  FaBars,
+  FaTimes,
+  FaHome,
+  FaInfoCircle,
+  FaCompass,
+  FaNewspaper,
+  FaEnvelope,
+  FaGraduationCap,
+  FaFutbol,
+  FaFileAlt,
+  FaSearch,
+  FaFacebookF,
+  FaWhatsapp,
+  FaChevronDown,
+  FaMapMarkedAlt,
+} from "react-icons/fa";
+import { FaLocationCrosshairs } from "react-icons/fa6";
+
+// Import your logo
+import LogoImage from "../assets/images/logo.png";
 
 const NavBar = () => {
-  const [isOpen, setIsOpen] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState(null);
+  const location = useLocation(); // To track current page
+
+  // Define navigation data structure to avoid repetition
+  const navLinks = [
+    { label: "Home", path: "/", icon: FaHome },
+    { label: "À propos", path: "/about", icon: FaInfoCircle },
+    {
+      label: "Explore",
+      path: null, // Dropdown parent
+      icon: FaCompass,
+      id: "explore",
+      children: [
+        { label: "Nourriture", path: "/nourriture" },
+        { label: "Hotels", path: "/hotel" },
+        { label: "Places à visiter", path: "/place" },
+      ],
+    },
+    { label: "Articles", path: "/articles", icon: FaNewspaper },
+    { label: "Contact", path: "/contact", icon: FaEnvelope },
+    { label: "Education", path: "/education", icon: FaGraduationCap },
+    { label: "Sport", path: "/sport", icon: FaFutbol },
+    { label: "Administration", path: "/administration", icon: FaFileAlt },
+  ];
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 0)
-    }
+      setIsScrolled(window.scrollY > 0);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  const handleDropdownToggle = (id) => {
+    setActiveDropdown(activeDropdown === id ? null : id);
+  };
+
+  const closeMenu = () => {
+    setIsOpen(false);
+    setActiveDropdown(null);
+  };
+
+  // Helper to check if link is active
+  const isActive = (path) => location.pathname === path;
+
+  // Animation Variants
+  const mobileMenuVariants = {
+    hidden: { opacity: 0, height: 0 },
+    visible: {
+      opacity: 1,
+      height: "auto",
+      transition: { duration: 0.3, when: "beforeChildren", staggerChildren: 0.05 },
+    },
+    exit: {
+      opacity: 0,
+      height: 0,
+      transition: { duration: 0.2, when: "afterChildren", staggerChildren: 0.05, staggerDirection: -1 },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, x: -20 },
+    visible: { opacity: 1, x: 0 },
+  };
+
+  const dropdownVariants = {
+    hidden: { opacity: 0, y: -10, height: 0, overflow: "hidden" },
+    visible: { opacity: 1, y: 0, height: "auto", transition: { duration: 0.2 } },
+    exit: { opacity: 0, y: -10, height: 0, transition: { duration: 0.2 } },
+  };
 
   return (
-    <nav className={`fixed w-full top-0 left-0 right-0 flex justify-around items-center hover:bg-blue-700 p-6 z-50 transition-colors duration-500
-        ${isScrolled ? 'bg-blue-700' : ' bg-blue-700'} text-white`}>      
-
-      <div className=' flex items-start justify-start mr-30 md:text-2xl font-bold'>
-        Mamou Ville
-      </div>
-
-      <ul className='hidden md:flex space-x-6' style={{ fontFamily: 'var(--font)' }}>
-        <li><Link to='/' className='hover:text-yellow-500 transition-colors'>Home</Link></li>
-        <li><Link to='/about' className='hover:text-yellow-500 transition-colors'>About Us</Link></li>
-        <li className='flex items-center relative group'>
-          <div className='flex items-center gap-1 cursor-pointer group-hover:text-yellow-500 transition-colors duration-300'>
-            <Link to='/'>Explore</Link>
-            <FaChevronDown className='text-xs mt-0.5 transition-transform group-hover:rotate-180 duration-300'/>
+    <nav
+      className={`fixed w-full top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        isScrolled
+          ? "bg-blue-700 shadow-lg py-2"
+          : "md:bg-gradient-to-b md:from-black/70 md:to-transparent bg-blue-700 py-3"
+      }`}
+    >
+      <div className="container mx-auto px-4 flex justify-between items-center">
+        {/* ── Logo ── */}
+        <Link to="/" className="flex items-center space-x-2 z-50" onClick={closeMenu}>
+          <div className="h-12 w-12 flex items-center justify-center bg-white rounded-full p-0.5">
+            <img
+              src={LogoImage}
+              alt="Mamou Ville Logo"
+              className="h-full w-full object-contain rounded-full"
+            />
           </div>
-          <ul className="dropdown-menu absolute top-full left-0 hidden text-start group-hover:block bg-white text-black rounded mt-1 min-w-[170px] z-50 ">
-            <li><a href="#" className="block px-4 py-2 focus:outline-none hover:text-yellow-500">Nourriture</a></li>
-            <li><a href="#" className="block px-4 py-2 focus:outline-none hover:text-yellow-500">Hotels</a></li>
-            <li><a href="#" className="block px-4 py-2 focus:outline-none hover:text-yellow-500">Places à visiter</a></li>
-          </ul>
-        </li>
-        <li className='flex items-center relative group'>
-          <div className='flex items-center gap-1 cursor-pointer group-hover:text-yellow-500 transition-colors duration-300'>
-            <Link to='/'>Articles</Link>
-            <FaChevronDown className='text-xs mt-0.5 transition-transform group-hover:rotate-180 duration-300'/>
+        </Link>
+
+        {/* ── Desktop Menu ── */}
+        <ul className="hidden lg:flex items-center space-x-1 xl:space-x-2">
+          {navLinks.map((link, index) => {
+            const Icon = link.icon;
+
+            // Render Dropdown Parent
+            if (link.children) {
+              return (
+                <li
+                  key={index}
+                  className="relative group"
+                  onMouseEnter={() => setActiveDropdown(link.id)}
+                  onMouseLeave={() => setActiveDropdown(null)}
+                >
+                  <button
+                    className={`flex items-center px-3 py-2 rounded-lg transition-all duration-300 text-sm xl:text-base ${
+                      activeDropdown === link.id
+                        ? "bg-blue-600 text-yellow-400"
+                        : "text-white hover:bg-blue-600 hover:text-yellow-400"
+                    }`}
+                  >
+                    <Icon className="mr-2" />
+                    <span>{link.label}</span>
+                    <FaChevronDown
+                      className={`ml-1 text-xs transition-transform duration-300 ${
+                        activeDropdown === link.id ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+
+                  <AnimatePresence>
+                    {activeDropdown === link.id && (
+                      <motion.ul
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                        variants={dropdownVariants}
+                        className="absolute top-full left-0 bg-white shadow-xl rounded-lg py-2 mt-1 min-w-[200px] z-50 border-t-2 border-yellow-400"
+                      >
+                        {link.children.map((child, idx) => (
+                          <li key={idx}>
+                            <Link
+                              to={child.path}
+                              className={`block px-4 py-2 transition-colors ${
+                                isActive(child.path)
+                                  ? "bg-blue-50 text-blue-700 font-bold"
+                                  : "text-gray-800 hover:bg-blue-50 hover:text-blue-700"
+                              }`}
+                            >
+                              {child.label}
+                            </Link>
+                          </li>
+                        ))}
+                      </motion.ul>
+                    )}
+                  </AnimatePresence>
+                </li>
+              );
+            }
+
+            // Render Standard Link
+            return (
+              <li key={index}>
+                <Link
+                  to={link.path}
+                  className={`flex items-center px-3 py-2 rounded-lg transition-all duration-300 text-sm xl:text-base ${
+                    isActive(link.path)
+                      ? "bg-blue-800 text-yellow-400 font-semibold shadow-inner"
+                      : "text-white hover:bg-blue-600 hover:text-yellow-400"
+                  }`}
+                >
+                  <Icon className="mr-2" />
+                  <span>{link.label}</span>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+
+        {/* ── Right Side Icons (Location & Socials) ── */}
+        <div className="flex items-center space-x-3">
+          {/* Desktop Location */}
+          <div className="hidden lg:flex items-center space-x-2 text-white bg-blue-800/50 px-3 py-1.5 rounded-full">
+            <FaLocationCrosshairs className="text-red-400" />
+            <span className="text-sm xl:text-base">Mamou, Guinea</span>
           </div>
-          <ul className="dropdown-menu absolute top-full left-0 hidden text-start group-hover:block bg-white text-black rounded mt-1 min-w-[150px]">
-            <li><a href="#" className="block px-4 py-2 focus:outline-none hover:text-yellow-500">Sport</a></li>
-            <li><a href="#" className="block px-4 py-2 focus:outline-none hover:text-yellow-500">Cultures</a></li>
-            <li><a href="#" className="block px-4 py-2 focus:outline-none hover:text-yellow-500">Politiques</a></li>
-            <li><a href="#" className="block px-4 py-2 focus:outline-none hover:text-yellow-500">Citoyens</a></li>
-          </ul>
-        </li>
-        <li><Link to='/' className='hover:text-yellow-500 transition-colors'>Contact</Link></li>
-        <li><Link to='/education' className='hover:text-yellow-500 transition-colors'>Education</Link></li>
-      </ul>
 
-      <button className="md:hidden text-2xl focus:outline-none ml-10"
-        onClick={() => setIsOpen(!isOpen)}>
-        {isOpen ? <FaTimes /> : <FaBars />}
-      </button>
+          {/* Mobile Socials (Compact) */}
+          <div className="lg:hidden flex items-center space-x-2">
+            <a
+              href="https://www.facebook.com/share/16XspHxKcv/?mibextid=wwXIfr"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 hover:bg-white hover:text-blue-600 text-white transition-all"
+            >
+              <FaFacebookF size={14} />
+            </a>
+            <a
+              href="https://wa.me/224620150481"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 hover:bg-white hover:text-green-600 text-white transition-all"
+            >
+              <FaWhatsapp size={14} />
+            </a>
+          </div>
 
-      {isOpen && (
-        <div className="absolute top-16 left-0 w-full bg-blue-600 text-white p-6 flex flex-col space-y-4 transition-transform duration-500 ease-in-out transform translate-x-0 md:hidden motion-preset-slide-down">
-          <Link to='/' className='hover:text-yellow-500' onClick={() => setIsOpen(false)}>Home</Link>
-          <Link to='/about' className='hover:text-yellow-500' onClick={() => setIsOpen(false)}>About Us</Link>
-          <Link to='/' className='hover:text-yellow-500' onClick={() => setIsOpen(false)}>Explore</Link>
-          <Link to='/' className='hover:text-yellow-500' onClick={() => setIsOpen(false)}>Articles</Link>
-          <Link to='/' className='hover:text-yellow-500' onClick={() => setIsOpen(false)}>Contact</Link>
-          <Link to='/education' className='hover:text-yellow-500' onClick={() => setIsOpen(false)}>Education</Link>
+          {/* ── Mobile Hamburger ── */}
+          <button
+            className="lg:hidden text-2xl text-white focus:outline-none p-2"
+            onClick={() => setIsOpen(!isOpen)}
+            aria-label="Toggle menu"
+          >
+            {isOpen ? <FaTimes /> : <FaBars />}
+          </button>
         </div>
-      )}
-
-      <div className='hidden md:flex items-center space-x-2 text-white'>
-        <FaMapMarkedAlt />
-        <span>Mamou, République de Guinée</span>
       </div>
 
-    </nav>
-  )
-}
+      {/* ── Mobile Menu Overlay ── */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            variants={mobileMenuVariants}
+            className="lg:hidden bg-blue-800 border-t border-blue-600 shadow-inner overflow-hidden"
+          >
+            <div className="container mx-auto px-4 py-4 space-y-1">
+              
+              {/* Mobile Search */}
+              <div className="relative mb-6">
+                <input
+                  type="text"
+                  placeholder="Rechercher..."
+                  className="w-full bg-blue-900/50 text-white border border-blue-500 rounded-full py-2.5 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-yellow-400 placeholder-blue-300"
+                />
+                <FaSearch className="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-blue-300" />
+              </div>
 
-export default NavBar
+              {/* Mobile Links Loop */}
+              {navLinks.map((link, index) => {
+                const Icon = link.icon;
+
+                // Mobile Dropdown
+                if (link.children) {
+                  return (
+                    <motion.div key={index} variants={itemVariants} className="border-b border-blue-700/50">
+                      <button
+                        className="flex items-center justify-between w-full py-3 px-2 text-white hover:text-yellow-400 transition-colors"
+                        onClick={() => handleDropdownToggle(link.id)}
+                      >
+                        <div className="flex items-center">
+                          <Icon className="mr-3 text-blue-300" />
+                          <span className="font-medium">{link.label}</span>
+                        </div>
+                        <FaChevronDown
+                          className={`transition-transform duration-300 text-xs ${
+                            activeDropdown === link.id ? "rotate-180 text-yellow-400" : "text-blue-300"
+                          }`}
+                        />
+                      </button>
+                      <AnimatePresence>
+                        {activeDropdown === link.id && (
+                          <motion.div
+                            initial="hidden"
+                            animate="visible"
+                            exit="exit"
+                            variants={dropdownVariants}
+                            className="bg-blue-900/30 rounded-lg mb-2 overflow-hidden"
+                          >
+                            {link.children.map((child, idx) => (
+                              <Link
+                                key={idx}
+                                to={child.path}
+                                onClick={closeMenu}
+                                className={`block py-3 px-10 text-sm ${
+                                  isActive(child.path)
+                                    ? "text-yellow-400 font-semibold"
+                                    : "text-blue-100 hover:text-white"
+                                }`}
+                              >
+                                {child.label}
+                              </Link>
+                            ))}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </motion.div>
+                  );
+                }
+
+                // Mobile Standard Link
+                return (
+                  <motion.div key={index} variants={itemVariants} className="border-b border-blue-700/50">
+                    <Link
+                      to={link.path}
+                      onClick={closeMenu}
+                      className={`flex items-center py-3 px-2 transition-colors ${
+                        isActive(link.path)
+                          ? "text-yellow-400 font-bold bg-blue-700/30 rounded"
+                          : "text-white hover:text-yellow-400"
+                      }`}
+                    >
+                      <Icon className={`mr-3 ${isActive(link.path) ? "text-yellow-400" : "text-blue-300"}`} />
+                      <span className="font-medium">{link.label}</span>
+                    </Link>
+                  </motion.div>
+                );
+              })}
+
+              {/* Mobile Location Footer */}
+              <motion.div variants={itemVariants} className="pt-6 pb-2 flex items-center justify-center text-blue-200 text-sm">
+                <FaMapMarkedAlt className="mr-2 text-yellow-400" />
+                <span>Mamou, République de Guinée</span>
+              </motion.div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </nav>
+  );
+};
+
+export default NavBar;

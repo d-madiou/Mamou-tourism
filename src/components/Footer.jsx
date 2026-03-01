@@ -1,31 +1,15 @@
 "use client"
 
-import { motion } from "framer-motion"
 import { ArrowRight, Facebook, Instagram, Mail, MapPin, Twitter } from "lucide-react"
-import { useState } from "react"
 import { Link } from "react-router-dom"
 import LogoImage from "../assets/images/logo.png"
 
 const  Footer = ()=>{
-  const [email, setEmail] = useState("")
-  const [isSubscribed, setIsSubscribed] = useState(false)
-
-  const handleSubscribe = (e) => {
-    e.preventDefault()
-    if (email) {
-      setIsSubscribed(true)
-      setEmail("")
-      setTimeout(() => {
-        setIsSubscribed(false)
-      }, 3000)
-    }
-  }
-
   // Quick links data - reduced
   const quickLinks = [
     { path: "/", label: "Accueil" },
     { path: "/about", label: "À propos" },
-    { path: "/tourism", label: "Tourisme" },
+    { path: "/articles", label: "Articles" },
     { path: "/contact", label: "Contact" },
   ]
 
@@ -49,27 +33,24 @@ const  Footer = ()=>{
 
             {/* Social Media - Simplified */}
             <div className="flex space-x-3">
-              <motion.a
+              <a
                 href="https://www.facebook.com/share/16XspHxKcv/?mibextid=wwXIfr"
-                whileHover={{ y: -3 }}
                 className="rounded-full bg-blue-800 p-2 text-white transition-colors hover:bg-blue-700"
               >
                 <Facebook className="h-4 w-4" />
-              </motion.a>
-              <motion.a
+              </a>
+              <a
                 href="https://www.facebook.com/share/16XspHxKcv/?mibextid=wwXIfr"
-                whileHover={{ y: -3 }}
                 className="rounded-full bg-blue-800 p-2 text-white transition-colors hover:bg-blue-700"
               >
                 <Twitter className="h-4 w-4" />
-              </motion.a>
-              <motion.a
+              </a>
+              <a
                 href="https://www.facebook.com/share/16XspHxKcv/?mibextid=wwXIfr"
-                whileHover={{ y: -3 }}
                 className="rounded-full bg-blue-800 p-2 text-white transition-colors hover:bg-blue-700"
               >
                 <Instagram className="h-4 w-4" />
-              </motion.a>
+              </a>
             </div>
           </div>
 

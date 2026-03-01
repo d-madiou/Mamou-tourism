@@ -1,3 +1,5 @@
+import tailwindcssMotion from "tailwindcss-motion";
+
 export default {
     content: ['./src/**/*.{html,js,ts,jsx,tsx}'],
     theme: {
@@ -16,6 +18,6 @@ export default {
         },
       },
     },
-    plugins: [require('tailwindcss-motion')],
+    plugins: [tailwindcssMotion],
   };
   

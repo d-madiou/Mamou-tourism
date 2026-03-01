@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import NavBar from "../components/NavBar";
+import { toMediaUrl } from "../config/api";
 
 // Carousel images (inspired by EducationPage)
 const carouselImages = [
@@ -47,7 +48,7 @@ const Education = ({ data = [], loading = false, error = null, schools = [], sta
   // Helper function to get image URL
   const getImageUrl = (image) => {
     if (!image) return "/placeholder.svg?height=400&width=800";
-    return image.url?.startsWith("http") ? image.url : `https://cozy-sparkle-24ced58ec1.strapiapp.com${image.url}`;
+    return image.url ? toMediaUrl(image.url) : "/placeholder.svg?height=400&width=800";
   };
 
   // Helper function to extract text from blocks
@@ -279,6 +280,61 @@ const Education = ({ data = [], loading = false, error = null, schools = [], sta
                         En savoir plus
                       </button>
                     </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* Education Articles */}
+      <section className="container mx-auto px-4 py-10">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-800 mb-4">
+            Actualités de l'Éducation
+          </h2>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            {filteredData.length} article{filteredData.length > 1 ? "s" : ""} trouvé{filteredData.length > 1 ? "s" : ""}.
+          </p>
+        </div>
+
+        {filteredData.length === 0 ? (
+          <div className="text-center py-16 bg-white rounded-xl shadow-sm border border-gray-100">
+            <BookOpen className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-2xl font-bold text-gray-600 mb-3">Aucun article trouvé</h3>
+            <p className="text-gray-500">Essayez une autre recherche ou une autre catégorie.</p>
+          </div>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {filteredData.map((item, index) => (
+              <Link key={item.id || index} to={`/blog/education/${item.id}`}>
+                <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 h-full">
+                  <div className="h-48 overflow-hidden">
+                    <img
+                      src={getImageUrl(item?.image?.[0])}
+                      alt={item?.Titre || `Article ${index + 1}`}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                      onError={(e) => {
+                        e.target.src = "/placeholder.svg?height=400&width=800";
+                      }}
+                    />
+                  </div>
+                  <div className="p-6">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-xs px-3 py-1 font-bold rounded-full bg-blue-100 text-blue-700">
+                        {(item.categorie || "education").replace("_", " ")}
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        {item.datePublication ? new Date(item.datePublication).toLocaleDateString("fr-FR") : ""}
+                      </span>
+                    </div>
+                    <h3 className="font-bold text-xl text-gray-800 mb-3 line-clamp-2">
+                      {item?.Titre || `Article ${index + 1}`}
+                    </h3>
+                    <p className="text-gray-600 text-sm line-clamp-3">
+                      {getTextFromBlocks(item?.description)}
+                    </p>
                   </div>
                 </div>
               </Link>

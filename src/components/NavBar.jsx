@@ -1,445 +1,501 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import {
-  FaBars,
-  FaChevronDown,
-  FaMapMarkedAlt,
-  FaTimes,
-  FaHome,
-  FaInfoCircle,
-  FaCompass,
-  FaNewspaper,
-  FaEnvelope,
-  FaGraduationCap,
-  FaSearch,
-  FaBuilding,
-  FaFileAlt,
-  FaLinkedinIn,
-  FaWhatsapp,
-  FaFacebookF,
-  FaFutbol,
+  FaBars, FaChevronDown, FaTimes, FaHome,
+  FaInfoCircle, FaCompass, FaNewspaper, FaEnvelope,
+  FaGraduationCap, FaSearch, FaFileAlt, FaWhatsapp,
+  FaFacebookF, FaFutbol,
 } from "react-icons/fa"
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
-//let's import the logo image
 import LogoImage from "../assets/images/logo.png"
-import { LocateIcon } from "lucide-react"
-import { FaLocationArrow, FaLocationCrosshairs, FaLocationPin } from "react-icons/fa6"
+import { FaLocationCrosshairs } from "react-icons/fa6"
 
 const NavBar = () => {
-  const [isOpen, setIsOpen] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(false)
+  const [isOpen, setIsOpen]                 = useState(false)
+  const [isScrolled, setIsScrolled]         = useState(false)
   const [activeDropdown, setActiveDropdown] = useState(null)
+  const [searchValue, setSearchValue]       = useState("")
+  const dropdownTimer                       = useRef(null)
+  const location                            = useLocation()
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 0)
-    }
-
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
+    const onScroll = () => setIsScrolled(window.scrollY > 20)
+    window.addEventListener("scroll", onScroll)
+    return () => window.removeEventListener("scroll", onScroll)
   }, [])
 
-  const handleDropdownToggle = (dropdown) => {
-    if (activeDropdown === dropdown) {
-      setActiveDropdown(null)
-    } else {
-      setActiveDropdown(dropdown)
-    }
-  }
+  useEffect(() => { setIsOpen(false); setActiveDropdown(null) }, [location.pathname])
 
-  const closeMenu = () => {
-    setIsOpen(false)
-    setActiveDropdown(null)
-  }
+  const isActive        = (path) => location.pathname === path
+  const isExploreActive = ["/nourriture", "/hotel", "/place"].includes(location.pathname)
 
-  // Animation variants
-  const mobileMenuVariants = {
-    hidden: { opacity: 0, y: -20, height: 0 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      height: "auto",
-      transition: {
-        duration: 0.3,
-        staggerChildren: 0.1,
-        when: "beforeChildren",
-      },
-    },
-    exit: {
-      opacity: 0,
-      y: -20,
-      height: 0,
-      transition: {
-        duration: 0.2,
-        when: "afterChildren",
-        staggerChildren: 0.05,
-        staggerDirection: -1,
-      },
-    },
-  }
+  const openDropdown   = (name) => { clearTimeout(dropdownTimer.current); setActiveDropdown(name) }
+  const closeDropdown  = () => { dropdownTimer.current = setTimeout(() => setActiveDropdown(null), 130) }
+  const toggleDropdown = (name) => setActiveDropdown(p => p === name ? null : name)
+  const closeMenu      = () => { setIsOpen(false); setActiveDropdown(null) }
 
-  const itemVariants = {
-    hidden: { opacity: 0, x: -20 },
-    visible: { opacity: 1, x: 0 },
-    exit: { opacity: 0, x: -20 },
-  }
+  const navLinks = [
+    { to: "/",               icon: FaHome,          label: "Accueil" },
+    { to: "/about",          icon: FaInfoCircle,    label: "À propos" },
+    { to: "/articles",       icon: FaNewspaper,     label: "Articles" },
+    { to: "/education",      icon: FaGraduationCap, label: "Éducation" },
+    { to: "/sport",          icon: FaFutbol,        label: "Sport" },
+    { to: "/administration", icon: FaFileAlt,       label: "Administration" },
+    { to: "/contact",        icon: FaEnvelope,      label: "Contact" },
+  ]
 
-  const dropdownVariants = {
-    hidden: { opacity: 0, y: -10, height: 0 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      height: "auto",
-      transition: { duration: 0.2 },
-    },
-    exit: {
-      opacity: 0,
-      y: -10,
-      height: 0,
-      transition: { duration: 0.2 },
-    },
-  }
+  const exploreLinks = [
+    { to: "/nourriture", emoji: "🍽", label: "Nourriture" },
+    { to: "/hotel",      emoji: "🏨", label: "Hotels" },
+    { to: "/place",      emoji: "📍", label: "Places à visiter" },
+  ]
 
   return (
-    <nav
-      className={`fixed w-full top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isScrolled
-          ? "bg-blue-700 shadow-lg py-2"
-          : "md:bg-gradient-to-b md:from-black/70 md:to-transparent bg-blue-700 py-3"
-      }`}
-    >
-      <div className="container mx-auto px-4 flex justify-between items-center">
-        {/* Logo */}
-        <Link to="/" className="flex items-center space-x-2" aria-label="Go to homepage">
-          <div className="h-12 w-12 flex items-center justify-center">
-            <img
-              src={LogoImage}
-              alt="Mamou Ville Logo"
-              className="h-full w-full object-contain rounded-full"
-            />
-          </div>
-        </Link>
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+        *, *::before, *::after { box-sizing: border-box; }
 
-        {/* Desktop Menu - Centered */}
-        <ul className="hidden lg:flex items-center space-x-1 xl:space-x-2">
-          <li>
-            <Link
-              to="/"
-              className="flex items-center px-3 py-2 rounded-lg hover:bg-blue-600 text-white hover:text-yellow-400 transition-all duration-300 text-sm xl:text-base"
-            >
-              <FaHome className="mr-2" />
-              <span>Home</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/about"
-              className="flex items-center px-3 py-2 rounded-lg hover:bg-blue-600 text-white hover:text-yellow-400 transition-all duration-300 text-sm xl:text-base"
-            >
-              <FaInfoCircle className="mr-2" />
-              <span>À propos</span>
-            </Link>
-          </li>
-          <li className="relative group">
-            <button
-              className="flex items-center px-3 py-2 rounded-lg hover:bg-blue-600 text-white group-hover:text-yellow-400 transition-all duration-300 text-sm xl:text-base"
-              onMouseEnter={() => setActiveDropdown("explore")}
-              onMouseLeave={() => setActiveDropdown(null)}
-            >
-              <FaCompass className="mr-2" />
-              <span>Explore</span>
-              <FaChevronDown className="ml-1 text-xs transition-transform group-hover:rotate-180 duration-300" />
-            </button>
-            <AnimatePresence>
-              {activeDropdown === "explore" && (
-                <motion.ul
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
-                  variants={dropdownVariants}
-                  className="absolute top-full left-0 bg-white shadow-xl rounded-lg py-2 mt-1 min-w-[200px] z-50 border-t-2 border-yellow-400"
-                  onMouseEnter={() => setActiveDropdown("explore")}
-                  onMouseLeave={() => setActiveDropdown(null)}
-                >
-                  <li>
-                    <Link
-                      to="/nourriture"
-                      className="block px-4 py-2 text-gray-800 hover:bg-blue-50 hover:text-blue-700 transition-colors"
-                    >
-                      Nourriture
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to="/hotel"
-                      className="block px-4 py-2 text-gray-800 hover:bg-blue-50 hover:text-blue-700 transition-colors"
-                    >
-                      Hotels
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to="/place"
-                      className="block px-4 py-2 text-gray-800 hover:bg-blue-50 hover:text-blue-700 transition-colors"
-                    >
-                      Places à visiter
-                    </Link>
-                  </li>
-                </motion.ul>
-              )}
-            </AnimatePresence>
-          </li>
-          <li>
-            <Link
-              to="/articles"
-              className="flex items-center px-3 py-2 rounded-lg hover:bg-blue-600 text-white hover:text-yellow-400 transition-all duration-300 text-sm xl:text-base"
-            >
-              <FaNewspaper className="mr-2" />
-              <span>Articles</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/contact"
-              className="flex items-center px-3 py-2 rounded-lg hover:bg-blue-600 text-white hover:text-yellow-400 transition-all duration-300 text-sm xl:text-base"
-            >
-              <FaEnvelope className="mr-2" />
-              <span>Contact</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/education"
-              className="flex items-center px-3 py-2 rounded-lg hover:bg-blue-600 text-white hover:text-yellow-400 transition-all duration-300 text-sm xl:text-base"
-            >
-              <FaGraduationCap className="mr-2" />
-              <span>Education</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/sport"
-              className="flex items-center px-3 py-2 rounded-lg hover:bg-blue-600 text-white hover:text-yellow-400 transition-all duration-300 text-sm xl:text-base"
-            >
-              <FaFutbol className="mr-2" />
-              <span>Sport</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/administration"
-              className="flex items-center px-3 py-2 rounded-lg hover:bg-blue-600 text-white hover:text-yellow-400 transition-all duration-300 text-sm xl:text-base"
-            >
-              <FaFileAlt className="mr-2" />
-              <span>Administration</span>
-            </Link>
-          </li>
-        </ul>
+        /* ── Root ── */
+        .nb-root {
+          position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+          font-family: 'DM Sans', sans-serif;
+          transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-        {/* Location (Desktop) */}
-        <div className="hidden lg:flex items-center space-x-2 text-white">
-          <FaLocationCrosshairs className="text-red-400" />
-          <span className="text-sm xl:text-base">Mamou, Guinea</span>
-        </div>
+        /* Top accent stripe */
+        .nb-stripe {
+          height: 3px;
+          background: linear-gradient(90deg, #1d4ed8 0%, #3b82f6 35%, #fbbf24 50%, #3b82f6 65%, #1d4ed8 100%);
+        }
 
-        {/* Social Media and Location (Mobile/Tablet) */}
-        <div className="lg:hidden flex items-center space-x-4">
-          <div className="flex space-x-3">
-            <a
-              href="https://www.facebook.com/share/16XspHxKcv/?mibextid=wwXIfr"
-              aria-label="Facebook"
-              className="w-8 h-8 flex items-center justify-center rounded-full border border-white/50 bg-white/10 backdrop-blur-sm transition-all duration-300 hover:bg-white hover:text-blue-600"
-            >
-              <FaFacebookF className="text-sm" />
-            </a>
-            <a
-              href="https://wa.me/224620150481"
-              aria-label="WhatsApp"
-              className="w-8 h-8 flex items-center justify-center rounded-full border border-white/50 bg-white/10 backdrop-blur-sm transition-all duration-300 hover:bg-white hover:text-green-600"
-            >
-              <FaWhatsapp className="text-sm" />
-            </a>
-          </div>
-          <div className="text-white text-xs">
-            <span>Mamou, Guinea</span>
-          </div>
-        </div>
+        /* Main bar */
+        .nb-bar {
+          background: #1e50c8;
+          box-shadow: 0 2px 0 rgba(0,0,0,0.12);
+          transition: background 0.35s ease, box-shadow 0.35s ease;
+        }
+        .nb-root.scrolled .nb-bar {
+          background: #1740a8;
+          box-shadow: 0 4px 24px rgba(15,40,130,0.25);
+        }
 
-        {/* Mobile Menu Button */}
-        <button
-          className="lg:hidden text-2xl text-white focus:outline-none ml-2"
-          onClick={() => setIsOpen(!isOpen)}
-          aria-label={isOpen ? "Close menu" : "Open menu"}
-        >
-          <motion.div initial={false} animate={isOpen ? "open" : "closed"}>
-            {isOpen ? <FaTimes /> : <FaBars />}
-          </motion.div>
-        </button>
-      </div>
+        .nb-inner {
+          max-width: 1280px; margin: 0 auto;
+          padding: 0 20px;
+          display: flex; align-items: center; justify-content: space-between;
+          height: 60px;
+          transition: height 0.3s ease;
+        }
+        .nb-root.scrolled .nb-inner { height: 54px; }
 
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            variants={mobileMenuVariants}
-            className="lg:hidden bg-blue-800 overflow-hidden"
-          >
-            <div className="container mx-auto px-4 py-2">
-              {/* Search on Mobile */}
-              <div className="relative mb-4 mt-2">
-                <input
-                  type="text"
-                  placeholder="Rechercher..."
-                  className="bg-blue-700 text-white rounded-full py-2 px-4 pl-10 w-full focus:outline-none focus:ring-2 focus:ring-yellow-400 placeholder-blue-300"
-                />
-                <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-300" />
+        /* ── Logo ── */
+        .nb-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; flex-shrink: 0; }
+        .nb-logo-img {
+          width: 42px; height: 42px; border-radius: 50%; object-fit: contain;
+          border: 2px solid rgba(251,191,36,0.5);
+          box-shadow: 0 0 0 3px rgba(251,191,36,0.12);
+          transition: all 0.3s ease;
+        }
+        .nb-root.scrolled .nb-logo-img { width: 38px; height: 38px; }
+        .nb-logo-name { color: #fff; font-weight: 800; font-size: 15px; letter-spacing: 0.02em; line-height: 1.15; }
+        .nb-logo-sub  { color: #fbbf24; font-size: 9.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
+
+        /* ── Desktop links ── */
+        .nb-links { display: none; align-items: center; gap: 1px; list-style: none; margin: 0; padding: 0; }
+        @media (min-width: 1024px) { .nb-links { display: flex !important; } }
+
+        .nb-link {
+          display: flex; align-items: center; gap: 5px;
+          padding: 6px 10px; border-radius: 8px;
+          font-size: 13px; font-weight: 600;
+          color: rgba(255,255,255,0.85);
+          text-decoration: none; white-space: nowrap;
+          border: 1px solid transparent;
+          background: transparent; cursor: pointer;
+          transition: background 0.18s, color 0.18s, border-color 0.18s;
+          position: relative;
+        }
+        .nb-link:hover {
+          background: rgba(255,255,255,0.12);
+          color: #fff;
+        }
+        .nb-link.active {
+          background: rgba(255,255,255,0.18);
+          border-color: rgba(255,255,255,0.3);
+          color: #fff;
+        }
+        /* Gold underline pill */
+        .nb-link.active::after {
+          content: '';
+          position: absolute; bottom: 3px; left: 50%;
+          transform: translateX(-50%);
+          width: 16px; height: 2px; border-radius: 2px;
+          background: #fbbf24;
+        }
+
+        /* ── Dropdown ── */
+        .nb-dd-wrap { position: relative; }
+        .nb-dd {
+          position: absolute; top: calc(100% + 8px); left: 0;
+          background: #fff;
+          border-radius: 14px;
+          box-shadow: 0 16px 48px rgba(10,30,100,0.2), 0 0 0 1px rgba(0,0,0,0.04);
+          padding: 8px; min-width: 204px;
+          border-top: 3px solid #fbbf24;
+          list-style: none; margin: 0; z-index: 400;
+        }
+        .nb-dd-item {
+          display: flex; align-items: center; gap: 10px;
+          padding: 9px 12px; border-radius: 8px;
+          color: #1e293b; text-decoration: none;
+          font-size: 13.5px; font-weight: 600;
+          transition: background 0.14s, color 0.14s;
+        }
+        .nb-dd-item:hover, .nb-dd-item.active { background: #eff6ff; color: #1d4ed8; }
+        .nb-dd-emoji {
+          width: 28px; height: 28px; background: #f1f5f9;
+          border-radius: 7px; display: flex; align-items: center;
+          justify-content: center; font-size: 14px; flex-shrink: 0;
+        }
+
+        /* ── Location chip ── */
+        .nb-loc {
+          display: none; align-items: center; gap: 6px;
+          background: rgba(255,255,255,0.12);
+          border: 1px solid rgba(255,255,255,0.2);
+          border-radius: 999px; padding: 5px 13px;
+          color: rgba(255,255,255,0.82); font-size: 12px; font-weight: 500;
+          white-space: nowrap; flex-shrink: 0;
+        }
+        @media (min-width: 1024px) { .nb-loc { display: flex !important; } }
+
+        /* ── Hamburger ── */
+        .nb-hamburger {
+          display: flex; align-items: center; justify-content: center;
+          width: 38px; height: 38px;
+          background: rgba(255,255,255,0.12);
+          border: 1px solid rgba(255,255,255,0.22);
+          border-radius: 10px; color: #fff; cursor: pointer;
+          transition: all 0.2s;
+        }
+        .nb-hamburger:hover { background: rgba(255,255,255,0.2); }
+        .nb-hamburger.open  { background: rgba(251,191,36,0.2); border-color: rgba(251,191,36,0.45); }
+        .nb-mob-ctrl { display: flex; align-items: center; }
+        @media (min-width: 1024px) { .nb-mob-ctrl { display: none !important; } }
+
+        /* ── Mobile panel ── */
+        .nb-panel {
+          background: #163daa;
+          border-top: 1px solid rgba(255,255,255,0.1);
+          overflow: hidden;
+        }
+        .nb-panel-inner {
+          max-width: 1280px; margin: 0 auto;
+          padding: 16px 20px 28px;
+          max-height: 82vh; overflow-y: auto;
+        }
+        .nb-panel-inner::-webkit-scrollbar { display: none; }
+
+        /* Search */
+        .nb-search { position: relative; margin-bottom: 14px; }
+        .nb-search input {
+          width: 100%;
+          background: rgba(255,255,255,0.09);
+          border: 1px solid rgba(255,255,255,0.15);
+          border-radius: 11px; color: #fff;
+          padding: 10px 14px 10px 38px;
+          font-size: 14px; outline: none;
+          font-family: 'DM Sans', sans-serif;
+          transition: border-color 0.2s;
+        }
+        .nb-search input:focus   { border-color: rgba(251,191,36,0.5); }
+        .nb-search input::placeholder { color: rgba(255,255,255,0.3); }
+        .nb-search-ico {
+          position: absolute; left: 13px; top: 50%;
+          transform: translateY(-50%); color: rgba(255,255,255,0.3);
+          pointer-events: none;
+        }
+
+        /* Section label */
+        .nb-sec-lbl {
+          color: rgba(255,255,255,0.3); font-size: 10px;
+          font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
+          padding: 0 4px; margin: 12px 0 6px;
+        }
+
+        /* Mobile link */
+        .nb-mob-link {
+          display: flex; align-items: center; gap: 11px;
+          padding: 10px 12px; border-radius: 12px;
+          color: rgba(255,255,255,0.82); text-decoration: none;
+          font-size: 14px; font-weight: 600;
+          border: 1px solid transparent;
+          transition: all 0.15s ease; background: transparent;
+          font-family: 'DM Sans', sans-serif; cursor: pointer; width: 100%;
+        }
+        .nb-mob-link:hover { background: rgba(255,255,255,0.07); color: #fff; }
+        .nb-mob-link.active {
+          background: rgba(251,191,36,0.11);
+          border-color: rgba(251,191,36,0.28);
+          color: #fbbf24;
+        }
+        .nb-mob-ico {
+          width: 32px; height: 32px; border-radius: 9px; flex-shrink: 0;
+          display: flex; align-items: center; justify-content: center;
+          background: rgba(255,255,255,0.07);
+          transition: background 0.15s;
+        }
+        .nb-mob-link.active .nb-mob-ico { background: rgba(251,191,36,0.14); }
+        .nb-mob-dot { width: 6px; height: 6px; border-radius: 50%; background: #fbbf24; margin-left: auto; flex-shrink: 0; }
+        .nb-mob-chev { margin-left: auto; color: rgba(255,255,255,0.28); transition: transform 0.22s ease; }
+
+        /* Explore sub-links */
+        .nb-sub { padding-left: 54px; display: flex; flex-direction: column; gap: 2px; overflow: hidden; }
+        .nb-sub a {
+          display: flex; align-items: center; gap: 8px;
+          padding: 8px 12px; border-radius: 9px;
+          color: rgba(255,255,255,0.6); text-decoration: none;
+          font-size: 13.5px; font-weight: 600; transition: all 0.14s;
+        }
+        .nb-sub a:hover  { color: #fff; background: rgba(255,255,255,0.06); }
+        .nb-sub a.active { color: #fbbf24; background: rgba(251,191,36,0.08); }
+
+        /* Footer row */
+        .nb-mob-footer {
+          margin-top: 18px; padding-top: 16px;
+          border-top: 1px solid rgba(255,255,255,0.08);
+          display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+        }
+        .nb-mob-loc { display: flex; align-items: center; gap: 6px; color: rgba(255,255,255,0.45); font-size: 12px; }
+        .nb-socials { display: flex; gap: 7px; }
+        .nb-soc {
+          width: 33px; height: 33px; border-radius: 8px;
+          display: flex; align-items: center; justify-content: center;
+          background: rgba(255,255,255,0.08);
+          border: 1px solid rgba(255,255,255,0.12);
+          color: #fff; text-decoration: none; transition: all 0.18s;
+        }
+        .nb-soc.fb:hover { background: #1877f2; border-color: #1877f2; }
+        .nb-soc.wa:hover { background: #25d366; border-color: #25d366; }
+      `}</style>
+
+      <nav className={`nb-root ${isScrolled ? "scrolled" : ""}`}>
+        {/* Gold accent stripe */}
+        <div className="nb-stripe" />
+
+        <div className="nb-bar">
+          <div className="nb-inner">
+
+            {/* Logo */}
+            <Link to="/" className="nb-logo">
+              <img src={LogoImage} alt="Mamou Ville" className="nb-logo-img" />
+              <div>
+                <div className="nb-logo-name">MamouVille</div>
+                <div className="nb-logo-sub">Guinée · Officiel</div>
               </div>
+            </Link>
 
-              <motion.div variants={itemVariants} className="py-2 border-b border-blue-700">
-                <Link
-                  to="/"
-                  className="flex items-center py-2 px-3 text-white hover:text-yellow-400 transition-colors"
-                  onClick={closeMenu}
-                >
-                  <FaHome className="mr-3" />
-                  <span>Home</span>
-                </Link>
-              </motion.div>
+            {/* Desktop links */}
+            <ul className="nb-links">
+              {navLinks.map(({ to, icon: Icon, label }) => (
+                <li key={to}>
+                  <Link to={to} className={`nb-link ${isActive(to) ? "active" : ""}`}>
+                    <Icon size={11} />
+                    {label}
+                  </Link>
+                </li>
+              ))}
 
-              <motion.div variants={itemVariants} className="py-2 border-b border-blue-700">
-                <Link
-                  to="/about"
-                  className="flex items-center py-2 px-3 text-white hover:text-yellow-400 transition-colors"
-                  onClick={closeMenu}
-                >
-                  <FaInfoCircle className="mr-3" />
-                  <span>À propos</span>
-                </Link>
-              </motion.div>
-
-              <motion.div variants={itemVariants} className="py-2 border-b border-blue-700">
+              {/* Explore */}
+              <li className="nb-dd-wrap">
                 <button
-                  className="flex items-center justify-between w-full py-2 px-3 text-white hover:text-yellow-400 transition-colors"
-                  onClick={() => handleDropdownToggle("explore")}
+                  className={`nb-link ${isExploreActive ? "active" : ""}`}
+                  style={{ border: "none" }}
+                  onMouseEnter={() => openDropdown("explore")}
+                  onMouseLeave={closeDropdown}
                 >
-                  <div className="flex items-center">
-                    <FaCompass className="mr-3" />
-                    <span>Explore</span>
-                  </div>
+                  <FaCompass size={11} />
+                  Explorer
                   <FaChevronDown
-                    className={`transition-transform duration-300 ${activeDropdown === "explore" ? "rotate-180" : ""}`}
+                    size={8}
+                    style={{
+                      opacity: 0.65,
+                      transition: "transform 0.22s",
+                      transform: activeDropdown === "explore" ? "rotate(180deg)" : "none",
+                    }}
                   />
                 </button>
+
                 <AnimatePresence>
                   {activeDropdown === "explore" && (
-                    <motion.div
-                      initial="hidden"
-                      animate="visible"
-                      exit="exit"
-                      variants={dropdownVariants}
-                      className="pl-10 mt-2 space-y-2"
+                    <motion.ul
+                      className="nb-dd"
+                      initial={{ opacity: 0, y: -6, scale: 0.97 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -6, scale: 0.97 }}
+                      transition={{ duration: 0.15 }}
+                      onMouseEnter={() => openDropdown("explore")}
+                      onMouseLeave={closeDropdown}
                     >
-                      <div>
-                        <Link
-                          to="/nourriture"
-                          className="block py-2 text-blue-200 hover:text-yellow-400 transition-colors"
-                          onClick={closeMenu}
-                        >
-                          Nourriture
-                        </Link>
-                      </div>
-                      <div>
-                        <Link
-                          to="/hotel"
-                          className="block py-2 text-blue-200 hover:text-yellow-400 transition-colors"
-                          onClick={closeMenu}
-                        >
-                          Hotels
-                        </Link>
-                      </div>
-                      <div>
-                        <Link
-                          to="/place"
-                          className="block py-2 text-blue-200 hover:text-yellow-400 transition-colors"
-                          onClick={closeMenu}
-                        >
-                          Places à visiter
-                        </Link>
-                      </div>
-                    </motion.div>
+                      {exploreLinks.map(({ to, emoji, label }) => (
+                        <li key={to}>
+                          <Link
+                            to={to}
+                            onClick={closeMenu}
+                            className={`nb-dd-item ${isActive(to) ? "active" : ""}`}
+                          >
+                            <span className="nb-dd-emoji">{emoji}</span>
+                            {label}
+                          </Link>
+                        </li>
+                      ))}
+                    </motion.ul>
                   )}
                 </AnimatePresence>
-              </motion.div>
+              </li>
+            </ul>
 
-              <motion.div variants={itemVariants} className="py-2 border-b border-blue-700">
-                <Link
-                  to="/articles"
-                  className="flex items-center py-2 px-3 text-white hover:text-yellow-400 transition-colors"
-                  onClick={closeMenu}
-                >
-                  <FaNewspaper className="mr-3" />
-                  <span>Articles</span>
-                </Link>
-              </motion.div>
-
-              <motion.div variants={itemVariants} className="py-2 border-b border-blue-700">
-                <Link
-                  to="/contact"
-                  className="flex items-center py-2 px-3 text-white hover:text-yellow-400 transition-colors"
-                  onClick={closeMenu}
-                >
-                  <FaEnvelope className="mr-3" />
-                  <span>Contact</span>
-                </Link>
-              </motion.div>
-
-              <motion.div variants={itemVariants} className="py-2 border-b border-blue-700">
-                <Link
-                  to="/education"
-                  className="flex items-center py-2 px-3 text-white hover:text-yellow-400 transition-colors"
-                  onClick={closeMenu}
-                >
-                  <FaGraduationCap className="mr-3" />
-                  <span>Education</span>
-                </Link>
-              </motion.div>
-
-              <motion.div variants={itemVariants} className="py-2 border-b border-blue-700">
-                <Link
-                  to="/sport"
-                  className="flex items-center py-2 px-3 text-white hover:text-yellow-400 transition-colors"
-                  onClick={closeMenu}
-                >
-                  <FaFutbol className="mr-3" />
-                  <span>Sport</span>
-                </Link>
-              </motion.div>
-
-              <motion.div variants={itemVariants} className="py-2 border-b border-blue-700">
-                <Link
-                  to="/administration"
-                  className="flex items-center py-2 px-3 text-white hover:text-yellow-400 transition-colors"
-                  onClick={closeMenu}
-                >
-                  <FaFileAlt className="mr-3" />
-                  <span>Administration</span>
-                </Link>
-              </motion.div>
-
-              <motion.div variants={itemVariants} className="py-4 flex items-center text-blue-200">
-                <FaMapMarkedAlt className="mr-3 text-yellow-400" />
-                <span>Mamou, République de Guinée</span>
-              </motion.div>
+            {/* Location chip */}
+            <div className="nb-loc">
+              <FaLocationCrosshairs size={11} style={{ color: "#fbbf24" }} />
+              Mamou, Guinée
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </nav>
+
+            {/* Mobile hamburger */}
+            <div className="nb-mob-ctrl">
+              <button
+                className={`nb-hamburger ${isOpen ? "open" : ""}`}
+                onClick={() => setIsOpen(!isOpen)}
+                aria-label={isOpen ? "Fermer" : "Menu"}
+              >
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={isOpen ? "x" : "b"}
+                    initial={{ rotate: -80, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: 80, opacity: 0 }}
+                    transition={{ duration: 0.16 }}
+                    style={{ display: "flex" }}
+                  >
+                    {isOpen ? <FaTimes size={15} /> : <FaBars size={15} />}
+                  </motion.span>
+                </AnimatePresence>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Mobile panel ── */}
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              className="nb-panel"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.26, ease: [0.4, 0, 0.2, 1] }}
+            >
+              <div className="nb-panel-inner">
+
+                {/* Search */}
+                <div className="nb-search">
+                  <FaSearch size={13} className="nb-search-ico" />
+                  <input
+                    type="text"
+                    placeholder="Rechercher..."
+                    value={searchValue}
+                    onChange={e => setSearchValue(e.target.value)}
+                  />
+                </div>
+
+                <p className="nb-sec-lbl">Navigation</p>
+
+                <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                  {navLinks.map(({ to, icon: Icon, label }) => (
+                    <Link
+                      key={to}
+                      to={to}
+                      onClick={closeMenu}
+                      className={`nb-mob-link ${isActive(to) ? "active" : ""}`}
+                    >
+                      <span className="nb-mob-ico">
+                        <Icon size={13} style={{ color: isActive(to) ? "#fbbf24" : "rgba(255,255,255,0.55)" }} />
+                      </span>
+                      {label}
+                      {isActive(to) && <span className="nb-mob-dot" />}
+                    </Link>
+                  ))}
+
+                  {/* Explore accordion */}
+                  <button
+                    onClick={() => toggleDropdown("explore")}
+                    className={`nb-mob-link ${isExploreActive ? "active" : ""}`}
+                  >
+                    <span className="nb-mob-ico">
+                      <FaCompass size={13} style={{ color: isExploreActive ? "#fbbf24" : "rgba(255,255,255,0.55)" }} />
+                    </span>
+                    Explorer
+                    <FaChevronDown
+                      size={11}
+                      className="nb-mob-chev"
+                      style={{ transform: activeDropdown === "explore" ? "rotate(180deg)" : "none" }}
+                    />
+                  </button>
+
+                  <AnimatePresence>
+                    {activeDropdown === "explore" && (
+                      <motion.div
+                        className="nb-sub"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        {exploreLinks.map(({ to, emoji, label }) => (
+                          <Link
+                            key={to}
+                            to={to}
+                            onClick={closeMenu}
+                            className={isActive(to) ? "active" : ""}
+                          >
+                            <span style={{ fontSize: "15px" }}>{emoji}</span>
+                            {label}
+                          </Link>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                {/* Footer */}
+                <div className="nb-mob-footer">
+                  <div className="nb-mob-loc">
+                    <FaLocationCrosshairs size={11} style={{ color: "#fbbf24" }} />
+                    Mamou, République de Guinée
+                  </div>
+                  <div className="nb-socials">
+                    <a href="https://www.facebook.com/share/16XspHxKcv/?mibextid=wwXIfr"
+                      target="_blank" rel="noopener noreferrer"
+                      aria-label="Facebook" className="nb-soc fb">
+                      <FaFacebookF size={12} />
+                    </a>
+                    <a href="https://wa.me/224620150481"
+                      target="_blank" rel="noopener noreferrer"
+                      aria-label="WhatsApp" className="nb-soc wa">
+                      <FaWhatsapp size={12} />
+                    </a>
+                  </div>
+                </div>
+
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </nav>
+    </>
   )
 }
 
