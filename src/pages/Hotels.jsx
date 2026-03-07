@@ -1,6 +1,7 @@
 "use client"
 
 import { Mail, MapPin, Phone, Users, Star } from "lucide-react"
+import { Helmet } from "react-helmet-async"
 import Footer from "../components/Footer"
 import NavBar from "../components/NavBar"
 
@@ -34,6 +35,13 @@ function Hotels({ hotels = [] }) {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Helmet>
+        <title>Hôtels à Mamou | Ville de Mamou</title>
+        <meta
+          name="description"
+          content="Trouvez les hôtels et hébergements à Mamou avec informations de contact, localisation, services et prix moyens."
+        />
+      </Helmet>
       <NavBar />
 
       {/* Hero Section with Background Image and Gradient */}

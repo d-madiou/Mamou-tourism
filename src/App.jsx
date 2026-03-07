@@ -116,18 +116,19 @@ function App() {
         <div style={{ flex: 1 }}>
           <Routes>
             <Route path="/" element={<Home activities={activities} galleryData={galleryData} policeData={policeData}/>} />
+            <Route path="/tourism" element={<Home activities={activities} galleryData={galleryData} policeData={policeData}/>} />
             <Route path="/mairie" element={<Mairie />} />
             <Route path="/administration" element={<Administration documents={documents} officials={official} />} />
-            <Route path="/articles" element={<Articles data={articles} loading={blogsLoading} error={blogsError} />} />
+            <Route path="/articles" element={<Articles data={articles} loading={blogsLoading} error={blogsError} isStandalonePage/>} />
             <Route path="/nourriture" element={<Nouriture restaurant={restaurants}/>} />
             <Route path="/sport" element={<Sport matchs={matchs} news={news} />} />
             <Route path="/hotel" element={<Hotels hotels={hotels}  />} />
             <Route path="/place" element={<PlaceVisite places={places} />} />
             <Route path="/contact" element={<Contact />} />
-            <Route path="/activitepopulaire" element={<PopularActivity activities={activities} />} />
+            <Route path="/activitepopulaire" element={<PopularActivity activities={activities} isStandalonePage />} />
             <Route path="/cultures" element={<Culture events={events} />} />
-            <Route path="/galerie" element={<Gallery galleryData={galleryData} />} />
-            <Route path="/police" element={<Police policeData={policeData} />} />
+            <Route path="/galerie" element={<Gallery galleryData={galleryData} isStandalonePage />} />
+            <Route path="/police" element={<Police policeData={policeData} isStandalonePage />} />
             <Route
               path="/education"
               element={<Education loading={educationLoading} error={educationError} data={educations} schools={schools} statistiqueEdu={statistiqueEdu} />}

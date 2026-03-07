@@ -3,6 +3,7 @@
 import { Calendar, Share2 } from "lucide-react"
 import { useState } from "react"
 import { FaCalendarAlt, FaClock, FaHome, FaMapMarkerAlt, FaTicketAlt } from "react-icons/fa"
+import { Helmet } from "react-helmet-async"
 import EventImage from "../assets/images/Event1.png"
 import NavBar from "../components/NavBar"
 
@@ -61,6 +62,13 @@ const Culture = ({ events = [] }) => {
 
   return (
     <div style={{ fontFamily: "Poppins" }} className="min-h-screen bg-gray-50 ">
+      <Helmet>
+        <title>Culture et Événements | Ville de Mamou</title>
+        <meta
+          name="description"
+          content="Consultez les événements culturels de Mamou: festivals, programmes, dates, lieux et informations pratiques."
+        />
+      </Helmet>
       {/* Hero section */}
       <div
   className="relative h-72 md:h-[500px] bg-center bg-cover bg-fixed"
@@ -85,7 +93,7 @@ const Culture = ({ events = [] }) => {
 
       <div className="flex items-center text-xs sm:text-sm md:text-lg text-gray-300 gap-2 sm:gap-4 pt-4">
         <FaHome className="text-white" />
-        <span className="text-white">Home / Events</span>
+        <span className="text-white">Accueil de Mamou / Événements culturels</span>
       </div>
 
       <div className="mt-2 flex flex-col md:flex-wrap md:flex-row gap-2">

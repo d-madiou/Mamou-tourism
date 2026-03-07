@@ -106,7 +106,7 @@ function AboutSection() {
           <div className="mt-24 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
             <div>
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-blue-900 leading-tight">
-                presentation de Mamou
+                Présentation de Mamou
                 <span className="text-yellow-500"> ville </span>
               </h2>
 

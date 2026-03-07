@@ -4,6 +4,7 @@ import { motion } from "framer-motion"
 import { CheckCircle, ChevronRight, Clock, Facebook, Instagram, Mail, MapPin, Phone, Send, Twitter } from "lucide-react"
 import { useState } from "react"
 import { FaHome, FaWhatsapp } from "react-icons/fa"
+import { Helmet } from "react-helmet-async"
 import NavBar from "../components/NavBar"
 
 function Contact() {
@@ -49,6 +50,13 @@ function Contact() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Helmet>
+        <title>Contact | Ville de Mamou</title>
+        <meta
+          name="description"
+          content="Contactez la Ville de Mamou pour vos demandes générales, informations touristiques, horaires administratifs et coordonnées utiles."
+        />
+      </Helmet>
       <NavBar />
 
       {/* Hero Section */}

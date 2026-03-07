@@ -413,62 +413,66 @@ const NavBar = () => {
 
                 <p className="nb-sec-lbl">Navigation</p>
 
-                <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-                  {navLinks.map(({ to, icon: Icon, label }) => (
-                    <Link
-                      key={to}
-                      to={to}
-                      onClick={closeMenu}
-                      className={`nb-mob-link ${isActive(to) ? "active" : ""}`}
-                    >
-                      <span className="nb-mob-ico">
-                        <Icon size={13} style={{ color: isActive(to) ? "#fbbf24" : "rgba(255,255,255,0.55)" }} />
-                      </span>
-                      {label}
-                      {isActive(to) && <span className="nb-mob-dot" />}
-                    </Link>
-                  ))}
-
-                  {/* Explore accordion */}
-                  <button
-                    onClick={() => toggleDropdown("explore")}
-                    className={`nb-mob-link ${isExploreActive ? "active" : ""}`}
-                  >
-                    <span className="nb-mob-ico">
-                      <FaCompass size={13} style={{ color: isExploreActive ? "#fbbf24" : "rgba(255,255,255,0.55)" }} />
-                    </span>
-                    Explorer
-                    <FaChevronDown
-                      size={11}
-                      className="nb-mob-chev"
-                      style={{ transform: activeDropdown === "explore" ? "rotate(180deg)" : "none" }}
-                    />
-                  </button>
-
-                  <AnimatePresence>
-                    {activeDropdown === "explore" && (
-                      <motion.div
-                        className="nb-sub"
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.2 }}
+                <nav aria-label="Navigation mobile principale">
+                  <ul style={{ display: "flex", flexDirection: "column", gap: "2px", margin: 0, padding: 0, listStyle: "none" }}>
+                    {navLinks.map(({ to, icon: Icon, label }) => (
+                      <li key={to}>
+                        <Link
+                          to={to}
+                          onClick={closeMenu}
+                          className={`nb-mob-link ${isActive(to) ? "active" : ""}`}
+                        >
+                          <span className="nb-mob-ico">
+                            <Icon size={13} style={{ color: isActive(to) ? "#fbbf24" : "rgba(255,255,255,0.55)" }} />
+                          </span>
+                          {label}
+                          {isActive(to) && <span className="nb-mob-dot" />}
+                        </Link>
+                      </li>
+                    ))}
+                    <li>
+                      <button
+                        onClick={() => toggleDropdown("explore")}
+                        className={`nb-mob-link ${isExploreActive ? "active" : ""}`}
                       >
-                        {exploreLinks.map(({ to, emoji, label }) => (
-                          <Link
-                            key={to}
-                            to={to}
-                            onClick={closeMenu}
-                            className={isActive(to) ? "active" : ""}
+                        <span className="nb-mob-ico">
+                          <FaCompass size={13} style={{ color: isExploreActive ? "#fbbf24" : "rgba(255,255,255,0.55)" }} />
+                        </span>
+                        Explorer
+                        <FaChevronDown
+                          size={11}
+                          className="nb-mob-chev"
+                          style={{ transform: activeDropdown === "explore" ? "rotate(180deg)" : "none" }}
+                        />
+                      </button>
+                      <AnimatePresence>
+                        {activeDropdown === "explore" && (
+                          <motion.ul
+                            className="nb-sub"
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            style={{ listStyle: "none", margin: 0 }}
                           >
-                            <span style={{ fontSize: "15px" }}>{emoji}</span>
-                            {label}
-                          </Link>
-                        ))}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
+                            {exploreLinks.map(({ to, emoji, label }) => (
+                              <li key={to}>
+                                <Link
+                                  to={to}
+                                  onClick={closeMenu}
+                                  className={isActive(to) ? "active" : ""}
+                                >
+                                  <span style={{ fontSize: "15px" }}>{emoji}</span>
+                                  {label}
+                                </Link>
+                              </li>
+                            ))}
+                          </motion.ul>
+                        )}
+                      </AnimatePresence>
+                    </li>
+                  </ul>
+                </nav>
 
                 {/* Footer */}
                 <div className="nb-mob-footer">

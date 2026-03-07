@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { Helmet } from "react-helmet-async"
 import {
   Calendar,
   MapPin,
@@ -168,6 +169,13 @@ function Mairie() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Helmet>
+        <title>Mairie et Projets | Ville de Mamou</title>
+        <meta
+          name="description"
+          content="Suivez les projets municipaux de la Mairie de Mamou: infrastructures, santé, éducation, environnement et avancement des travaux."
+        />
+      </Helmet>
       <NavBar />
 
       {/* Hero Section */}

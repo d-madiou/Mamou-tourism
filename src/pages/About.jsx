@@ -2,6 +2,8 @@
 import { ArrowRight, Calendar, ChevronLeft, ChevronRight, ChevronUp, ChevronDown, ExternalLink, Facebook, Globe, Instagram, MapPin, Share2, TrendingUp, Twitter, Users, Play, Pause } from "lucide-react"
 import { useEffect, useState } from "react"
 import { ThreeDot } from "react-loading-indicators"
+import { Helmet } from "react-helmet-async"
+import { Link } from "react-router-dom"
 import NavBar from "../components/NavBar"
 import SousPrefectures from "../components/SousPrefectures"
 
@@ -212,6 +214,13 @@ const About = ({ loading, error, abouts, sousPrefectures }) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 font-[poppins] text-white">
+      <Helmet>
+        <title>À Propos de Mamou | Ville de Mamou</title>
+        <meta
+          name="description"
+          content="Explorez l'histoire, la culture, l'économie et les sous-préfectures de Mamou avec des informations locales fiables."
+        />
+      </Helmet>
       <NavBar />
      
       {/* Hero Section with Carousel */}
@@ -295,9 +304,9 @@ const About = ({ loading, error, abouts, sousPrefectures }) => {
               {abouts[0]?.aboutTitle || "À propos"}
             </h1>
             <div className="flex items-center justify-center text-white/80 mb-8">
-              <a href="/" className="hover:text-yellow-300 transition-colors">Accueil</a>
+              <Link to="/" className="hover:text-yellow-300 transition-colors">Retour à l'accueil de Mamou</Link>
               <ChevronRight className="mx-2 h-4 w-4" />
-              <a href="/about" className="hover:text-yellow-300 transition-colors">À propos</a>
+              <Link to="/about" className="hover:text-yellow-300 transition-colors">Page À propos</Link>
               <ChevronRight className="mx-2 h-4 w-4" />
               <span className="text-yellow-200">Découverte</span>
             </div>

@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { Calendar, ChevronRight, ChevronLeft, Share2, Newspaper, ChevronUp, HomeIcon } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import NavBar from "../components/NavBar";
 import { FaFutbol, FaMapPin, FaMoneyBill, FaRunning, FaTrophy, FaWhatsapp, FaFacebook, FaLink } from "react-icons/fa";
 import { FaBasketball, FaVolleyball } from "react-icons/fa6";
@@ -460,6 +461,13 @@ const Sport = ({ matchs = [], news = [] }) => {
 
   return (
     <div className="min-h-screen bg-gray-50 text-white font-[poppins]">
+      <Helmet>
+        <title>Sport à Mamou | Ville de Mamou</title>
+        <meta
+          name="description"
+          content="Suivez les matchs, résultats et actualités sportives de Mamou avec les informations clés sur les équipes et événements locaux."
+        />
+      </Helmet>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&display=swap');
         @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.5; } }
@@ -487,11 +495,11 @@ const Sport = ({ matchs = [], news = [] }) => {
           <div className="max-w-3xl">
             <div className="flex items-center text-sm mb-4 text-gray-300">
               <HomeIcon className="mr-2 h-4 w-4" />
-              <span>Accueil</span>
+              <span>Accueil de Mamou</span>
               <ChevronRight className="mx-2 h-3 w-3" />
               <span className="font-semibold text-white">Sport</span>
             </div>
-            <h3 className="text-4xl md:text-6xl font-extrabold mb-4 tracking-tight">{activeNews?.titleSport}</h3>
+            <h1 className="text-4xl md:text-6xl font-extrabold mb-4 tracking-tight">Actualités et Matchs Sportifs à Mamou</h1>
             <p className="text-lg md:text-xl text-gray-200 mb-8 max-w-2xl">
               Suivez les résultats, les actualités et les événements sportifs de votre ville.
             </p>

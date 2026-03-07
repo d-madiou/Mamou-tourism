@@ -1,6 +1,7 @@
 "use client"
 
 import { Calendar, MapPin, Camera, Info, ChevronRight, Compass, ArrowRight } from "lucide-react"
+import { Helmet } from "react-helmet-async"
 import Footer from "../components/Footer"
 import NavBar from "../components/NavBar"
 
@@ -39,6 +40,13 @@ function PlaceVisite({ places = [] }) {
 
   return (
     <div style={{ minHeight: "100vh", background: "#f8fafc", fontFamily: "'DM Sans', sans-serif", overflowX: "hidden" }}>
+      <Helmet>
+        <title>Lieux à Visiter | Ville de Mamou</title>
+        <meta
+          name="description"
+          content="Explorez les lieux touristiques de Mamou: destinations naturelles, sites culturels et conseils de visite."
+        />
+      </Helmet>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap');
         

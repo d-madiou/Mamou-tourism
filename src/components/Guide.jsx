@@ -2,9 +2,11 @@
 
 import { motion } from "framer-motion"
 import { FaPhone, FaMapPin, FaShieldAlt, FaUser } from "react-icons/fa"
+import { Helmet } from "react-helmet-async"
 import { toMediaUrl } from "../config/api"
 
-function Police({ policeData = [] }) {
+function Police({ policeData = [], isStandalonePage = false }) {
+  const HeadingTag = isStandalonePage ? "h1" : "h2"
   // Helper function to get image URL
   const getImageUrl = (imageArray) => {
     if (!imageArray || !imageArray.length) return "/placeholder.svg?height=300&width=400";
@@ -25,11 +27,18 @@ function Police({ policeData = [] }) {
 
   return (
     <div className="py-20 px-4 bg-gradient-to-b from-blue-50 to-white">
+      {isStandalonePage && (
+        <Helmet>
+          <title>Postes de Police | Ville de Mamou</title>
+          <meta
+            name="description"
+            content="Retrouvez les postes de police à Mamou, responsables, localisations et contacts d'urgence."
+          />
+        </Helmet>
+      )}
       <div className="container mx-auto">
         <div className="text-center mb-16">
-          <h1 className="text-4xl font-bold mb-4">
-            Forces de <span className="text-blue-700">l'Ordre à Mamou</span>
-          </h1>
+          <HeadingTag className="text-4xl font-bold mb-4">Forces de <span className="text-blue-700">l'Ordre à Mamou</span></HeadingTag>
           <div className="flex items-center justify-center space-x-4 w-full max-w-sm mx-auto mt-2">
             <hr className="flex-1 border-t-2 border-blue-200" />
             <div className="w-3 h-3 rounded-full bg-blue-700"></div>

@@ -1,6 +1,7 @@
 "use client"
 
 import { Clock, Mail, MapPin, Phone } from "lucide-react"
+import { Helmet } from "react-helmet-async"
 import Footer from "../components/Footer"
 import NavBar from "../components/NavBar"
 
@@ -41,6 +42,13 @@ function Nouriture({ restaurant = [] }) {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Helmet>
+        <title>Restaurants à Mamou | Ville de Mamou</title>
+        <meta
+          name="description"
+          content="Découvrez les restaurants de Mamou, leurs spécialités, horaires, contacts et informations pratiques pour votre visite."
+        />
+      </Helmet>
       <NavBar />
 
       {/* Simple Header */}

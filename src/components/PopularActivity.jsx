@@ -3,10 +3,12 @@
 import { useState } from "react"
 import { FaCalendarAlt, FaChevronLeft, FaChevronRight, FaInfoCircle, FaMapMarkerAlt } from "react-icons/fa"
 import { FaLightbulb } from "react-icons/fa6"
+import { Helmet } from "react-helmet-async"
 import { Link } from "react-router-dom"
 
-function PopularActivity({ activities = [] }) {
+function PopularActivity({ activities = [], isStandalonePage = false }) {
   const [currentIndex, setCurrentIndex] = useState(0)
+  const HeadingTag = isStandalonePage ? "h1" : "h2"
   
 
   // Helper function to get image URL
@@ -57,10 +59,17 @@ function PopularActivity({ activities = [] }) {
   if (activities.length === 0) {
     return (
       <div className="py-20 px-4 bg-gradient-to-b from-white to-blue-50">
+        {isStandalonePage && (
+          <Helmet>
+            <title>Activités Populaires | Ville de Mamou</title>
+            <meta
+              name="description"
+              content="Découvrez les activités populaires de Mamou, les événements appréciés et les expériences locales à ne pas manquer."
+            />
+          </Helmet>
+        )}
         <div className="flex flex-col items-center">
-          <h1 className="text-4xl font-bold mb-4 text-center">
-            Activités <span className="text-blue-700">Populaires</span>
-          </h1>
+          <HeadingTag className="text-4xl font-bold mb-4 text-center">Activités <span className="text-blue-700">Populaires</span></HeadingTag>
           <div className="flex items-center space-x-4 w-full max-w-sm mt-2">
             <hr className="flex-1 border-t-2 border-blue-200" />
             <FaLightbulb className="text-2xl text-yellow-500" />
@@ -76,11 +85,18 @@ function PopularActivity({ activities = [] }) {
 
   return (
     <div className="py-20 px-4 bg-gradient-to-b from-white to-blue-50">
+      {isStandalonePage && (
+        <Helmet>
+          <title>Activités Populaires | Ville de Mamou</title>
+          <meta
+            name="description"
+            content="Découvrez les activités populaires de Mamou, les événements appréciés et les expériences locales à ne pas manquer."
+          />
+        </Helmet>
+      )}
       {/* Header Section */}
       <div className="flex flex-col items-center mb-16">
-        <h1 className="text-4xl font-bold mb-4 text-center">
-          Activités <span className="text-blue-700">Populaires</span>
-        </h1>
+        <HeadingTag className="text-4xl font-bold mb-4 text-center">Activités <span className="text-blue-700">Populaires</span></HeadingTag>
         <div className="flex items-center space-x-4 w-full max-w-sm mt-2">
           <hr className="flex-1 border-t-2 border-blue-200" />
           <FaLightbulb className="text-2xl text-yellow-500" />
@@ -142,7 +158,7 @@ function PopularActivity({ activities = [] }) {
                     to={`/blog/${activity.type}/${activity.id}`} 
                     className="flex items-center text-blue-700 cursor-pointer group hover:text-blue-800"
                   >
-                    <span className="font-semibold text-sm mr-2">Voir Plus</span>
+                    <span className="font-semibold text-sm mr-2">Voir les détails de l'activité</span>
                     <FaInfoCircle className="transition-transform group-hover:scale-110" />
                   </Link>
 

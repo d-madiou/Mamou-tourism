@@ -19,6 +19,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import NavBar from "../components/NavBar";
 import { toMediaUrl } from "../config/api";
 
@@ -126,6 +127,13 @@ const Education = ({ data = [], loading = false, error = null, schools = [], sta
 
   return (
     <div className="min-h-screen text-white bg-gray-50 font-[poppins]">
+      <Helmet>
+        <title>Éducation à Mamou | Ville de Mamou</title>
+        <meta
+          name="description"
+          content="Découvrez les écoles, statistiques et contenus éducatifs de Mamou pour élèves, parents et acteurs du secteur."
+        />
+      </Helmet>
       <NavBar />
 
       {/* Hero Section (adapted from EducationPage) */}
@@ -147,7 +155,7 @@ const Education = ({ data = [], loading = false, error = null, schools = [], sta
           <div className="max-w-3xl">
             <div className="flex items-center text-sm mb-4 text-gray-300">
               <Home className="mr-2 h-4 w-4" />
-              <Link to="/" className="hover:text-blue-400 transition-colors">Accueil</Link>
+              <Link to="/" className="hover:text-blue-400 transition-colors">Retour à l'accueil de Mamou</Link>
               <ChevronRight className="mx-2 h-3 w-3" />
               <span className="font-semibold text-white">Éducation</span>
             </div>

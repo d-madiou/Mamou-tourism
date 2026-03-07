@@ -8,38 +8,51 @@ import {
   Search,
   User,
   MapPin,
-  Filter,
+  Filter, 
   Grid,
   List
 } from "lucide-react"
 import { useState } from "react"
 import { Link } from "react-router-dom"
+import { Helmet } from "react-helmet-async"
 import ImageMamou from "../assets/images/MamouHero2.jpg"
 import NavBar from "../components/NavBar"
+import { toMediaUrl } from "../config/api" 
 
 const Articles = ({ data = [], loading = false, error = null }) => {
   const [searchQuery, setSearchQuery] = useState("")
   const [activeCategory, setActiveCategory] = useState("Tous")
   const [viewMode, setViewMode] = useState("grid") 
 
-  
   const categories = ["Tous", "actualites", "politique", "economie", "social", "culture", "sport", "sante"]
 
-  // Helper function to get image URL
   const getImageUrl = (image) => {
     if (!image) return "/placeholder.svg?height=400&width=800";
-    return image.url.startsWith('http') ? image.url : `https://cozy-sparkle-24ced58ec1.strapiapp.com${image.url}`;
+    
+    if (Array.isArray(image) && image.length > 0) {
+      const firstImage = image[0];
+      return firstImage?.url ? toMediaUrl(firstImage.url) : "/placeholder.svg?height=400&width=800";
+    }
+    
+    if (image?.url) return toMediaUrl(image.url);
+    
+    return "/placeholder.svg?height=400&width=800";
   };
 
-  // Helper function to extract text from blocks
   const getTextFromBlocks = (blocks) => {
     if (!blocks || !Array.isArray(blocks)) return "Description non disponible";
     
     let text = "";
     blocks.forEach(block => {
+      if (block.type === 'image') return;
+      
       if (block.children && Array.isArray(block.children)) {
         block.children.forEach(child => {
-          if (child.text) {
+          if (child.type === 'link') {
+            child.children?.forEach(linkChild => {
+              if (linkChild.text) text += linkChild.text + " ";
+            });
+          } else if (child.text) {
             text += child.text + " ";
           }
         });
@@ -48,14 +61,19 @@ const Articles = ({ data = [], loading = false, error = null }) => {
     return text.trim() || "Description non disponible";
   };
 
-  // Filter data based on search query and category
-  const filteredData = data.filter((item) => {
+  // NEW: Sort data from newest to oldest based on datePublication (or fallback to createdAt)
+  const sortedData = [...data].sort((a, b) => {
+    const dateA = new Date(a.datePublication || a.createdAt || 0);
+    const dateB = new Date(b.datePublication || b.createdAt || 0);
+    return dateB - dateA; // Descending order
+  });
+
+  // UPDATED: Filter the sortedData instead of the raw data
+  const filteredData = sortedData.filter((item) => {
     const matchesSearch = item.Titre?.toLowerCase().includes(searchQuery.toLowerCase())
     const matchesCategory = activeCategory === "Tous" || item.categorie === activeCategory
     return matchesSearch && matchesCategory
   })
-
-  console.log("Articles data:", data);
 
   if (loading)
     return (
@@ -84,6 +102,13 @@ const Articles = ({ data = [], loading = false, error = null }) => {
 
   return (
     <div className="font-sans bg-gradient-to-b from-blue-50 to-white min-h-screen">
+      <Helmet>
+        <title>Articles et Actualités | Ville de Mamou</title>
+        <meta
+          name="description"
+          content="Consultez les articles et actualités de Mamou: informations municipales, initiatives locales, culture, sport et vie citoyenne."
+        />
+      </Helmet>
       {/* Hero Section */}
       <div className="relative text-white">
         <NavBar />
@@ -105,11 +130,11 @@ const Articles = ({ data = [], loading = false, error = null }) => {
                 </p>
                 <div className="flex items-center text-sm text-gray-300 pt-4">
                   <Link to="/" className="hover:text-yellow-400 transition-colors duration-300">
-                    MamouVille
+                    Accueil de Mamou
                   </Link>
                   <span className="mx-2">/</span>
-                  <Link to="/" className="hover:text-yellow-400 transition-colors duration-300">
-                    Home
+                  <Link to="/articles" className="hover:text-yellow-400 transition-colors duration-300">
+                    Rubrique Articles
                   </Link>
                   <span className="mx-2">/</span>
                   <span className="text-yellow-400">Articles</span>

@@ -3,9 +3,10 @@
 import { AnimatePresence, motion } from "framer-motion"
 import { ArrowLeft, ArrowRight, X } from "lucide-react"
 import { useCallback, useEffect, useState } from "react"
+import { Helmet } from "react-helmet-async"
 import { toMediaUrl } from "../config/api"
 
-const Gallery = ({ galleryData = [] }) => {
+const Gallery = ({ galleryData = [], isStandalonePage = false }) => {
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
@@ -20,6 +21,7 @@ const Gallery = ({ galleryData = [] }) => {
   };
 
   const categories = getCategories();
+  const HeadingTag = isStandalonePage ? "h1" : "h2";
 
   // Helper function to get image URL
   const getImageUrl = (imageArray) => {
@@ -100,6 +102,15 @@ const Gallery = ({ galleryData = [] }) => {
 
   return (
     <section id="gallery" className="py-20 bg-gradient-to-b from-blue-50 to-white">
+      {isStandalonePage && (
+        <Helmet>
+          <title>Galerie Photos | Ville de Mamou</title>
+          <meta
+            name="description"
+            content="Parcourez la galerie photo de Mamou et découvrez ses paysages, sa culture et ses moments marquants."
+          />
+        </Helmet>
+      )}
       <div className="container mx-auto px-4">
         <motion.div
           className="text-center mb-16"
@@ -108,9 +119,9 @@ const Gallery = ({ galleryData = [] }) => {
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
         >
-          <h2 className="text-4xl md:text-5xl font-bold text-blue-900 mb-4">
+          <HeadingTag className="text-4xl md:text-5xl font-bold text-blue-900 mb-4">
             Explorez la Beauté de <span className="text-blue-700">Mamou</span>
-          </h2>
+          </HeadingTag>
           <div className="flex items-center justify-center space-x-4 w-full max-w-sm mx-auto mt-2 mb-6">
             <hr className="flex-1 border-t-2 border-blue-200" />
             <div className="w-3 h-3 rounded-full bg-blue-700"></div>

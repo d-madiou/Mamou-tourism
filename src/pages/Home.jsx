@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import { FaFacebookF, FaInfoCircle, FaLinkedinIn, FaMapMarkerAlt, FaWhatsapp } from "react-icons/fa"
+import { Helmet } from "react-helmet-async"
 import ImageMamou from "../assets/images/Mamou1.png"
 import ImageMamou3 from "../assets/images/Mamou3.png"
 import MamouHero from "../assets/images/MamouHero.jpg"
@@ -32,12 +33,15 @@ function Home({ activities = [], galleryData = [], policeData = [] }) {
     };
   }, [images.length]); // The dependency array should be images.length to re-run if the array size changes
 
-  useEffect(() => {
-    document.title = "Mamou - Découvrez la beauté et la nature de notre ville";
-  }, []);
-
   return (
     <>
+      <Helmet>
+        <title>Accueil | Ville de Mamou</title>
+        <meta
+          name="description"
+          content="Découvrez la ville de Mamou, ses activités populaires, ses lieux emblématiques, sa culture et ses informations touristiques officielles."
+        />
+      </Helmet>
       <div className="w-full overflow-hidden">
         <div style={{ fontFamily: "var(--font)" }} className="relative">
           {/* Hero Section - With Zoom Effect */}

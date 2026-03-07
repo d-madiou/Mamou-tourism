@@ -35,18 +35,21 @@ const  Footer = ()=>{
             <div className="flex space-x-3">
               <a
                 href="https://www.facebook.com/share/16XspHxKcv/?mibextid=wwXIfr"
+                aria-label="Page Facebook officielle de Mamou"
                 className="rounded-full bg-blue-800 p-2 text-white transition-colors hover:bg-blue-700"
               >
                 <Facebook className="h-4 w-4" />
               </a>
               <a
                 href="https://www.facebook.com/share/16XspHxKcv/?mibextid=wwXIfr"
+                aria-label="Compte X/Twitter de Mamou"
                 className="rounded-full bg-blue-800 p-2 text-white transition-colors hover:bg-blue-700"
               >
                 <Twitter className="h-4 w-4" />
               </a>
               <a
                 href="https://www.facebook.com/share/16XspHxKcv/?mibextid=wwXIfr"
+                aria-label="Compte Instagram de Mamou"
                 className="rounded-full bg-blue-800 p-2 text-white transition-colors hover:bg-blue-700"
               >
                 <Instagram className="h-4 w-4" />
@@ -57,19 +60,21 @@ const  Footer = ()=>{
           {/* Quick Links - Only visible on desktop */}
           <div className="hidden md:block">
             <h3 className="mb-4 text-lg font-bold text-yellow-400">Liens rapides</h3>
-            <ul className="space-y-2">
-              {quickLinks.map((link, index) => (
-                <li key={index}>
-                  <Link
-                    to={link.path}
-                    className="flex items-center text-blue-200 transition-colors hover:text-yellow-300 group"
-                  >
-                    <ArrowRight className="mr-2 h-3 w-3 group-hover:translate-x-1 transition-transform" />
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            <nav aria-label="Liens rapides du pied de page">
+              <ul className="space-y-2">
+                {quickLinks.map((link, index) => (
+                  <li key={index}>
+                    <Link
+                      to={link.path}
+                      className="flex items-center text-blue-200 transition-colors hover:text-yellow-300 group"
+                    >
+                      <ArrowRight className="mr-2 h-3 w-3 group-hover:translate-x-1 transition-transform" />
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
           </div>
 
           {/* Contact Section - Simplified */}
