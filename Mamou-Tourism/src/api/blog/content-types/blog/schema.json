@@ -10,6 +10,7 @@
   "options": {
     "draftAndPublish": true
   },
+  "pluginOptions": {},
   "attributes": {
     "Titre": {
       "type": "string"
@@ -38,12 +39,14 @@
     "categorie": {
       "type": "enumeration",
       "enum": [
-        "education",
-        "sports_actualites",
-        "activites_populaires",
-        "sante",
-        "economie",
-        "culture"
+        "éducation",
+        "sports",
+        "activités",
+        "santé",
+        "économie",
+        "culture",
+        "politique",
+        "citoyen"
       ]
     },
     "datePublication": {
