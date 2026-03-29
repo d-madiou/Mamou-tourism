@@ -19,6 +19,7 @@ import PopularActivity from "./components/PopularActivity";
 import Articles from "./pages/Articles";
 import Gallery from "./components/Galley";
 import Police from "./components/Guide";
+import EmergencyAlertModal from "./components/EmergencyAlertModal";
 import { STRAPI_API_URL } from "./config/api";
 
 function ScrollToTop() {
@@ -37,16 +38,22 @@ function App() {
     useFetch(withPopulate("ecoles"));
   const { loading: educationLoading, data: educationData, error: educationError } =
     useFetch(withPopulate("ecoles"));
-  const { data: aboutData } =
-    useFetch(withPopulate("abouts"));
+  const {
+    loading: aboutLoading,
+    data: aboutData,
+    error: aboutError,
+  } = useFetch(withPopulate("abouts"));
   const { data: eventData } =
     useFetch(withPopulate("events"));
   const { data: matchData } =
     useFetch(withPopulate("matchs-sportifs"));
   const { data: newsData } =
     useFetch(withPopulate("sportnews"));
-  const { data: spData } = 
-    useFetch(withPopulate("sous-prefectures"))
+  const {
+    loading: sousPrefecturesLoading,
+    data: spData,
+    error: sousPrefecturesError,
+  } = useFetch(withPopulate("sous-prefectures"))
   const { data: restaurant } =
     useFetch(withPopulate("restaurants"))
   const { data: officials} =
@@ -112,6 +119,7 @@ function App() {
   return (
     <>
       <ScrollToTop />
+      <EmergencyAlertModal />
       <div style={{ display: "flex" }}>
         <div style={{ flex: 1 }}>
           <Routes>
@@ -135,7 +143,14 @@ function App() {
             />
             <Route
               path="/about"
-              element={<About abouts={aboutData?.data || []} sousPrefectures={sousP} />}
+              element={
+                <About
+                  loading={aboutLoading || sousPrefecturesLoading}
+                  error={aboutError || sousPrefecturesError}
+                  abouts={aboutData?.data || []}
+                  sousPrefectures={sousP}
+                />
+              }
             />
             <Route path="/blog/education/:id" element={<BlogPost contentTypes={['ecoles']} ecolesData={educationData} />} />
             <Route path="/blog/school/:id" element={<BlogPost contentTypes={['ecoles']} ecolesData={schoolsData} />} />

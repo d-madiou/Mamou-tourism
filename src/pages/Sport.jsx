@@ -64,7 +64,7 @@ const SharePopup = ({ match, onClose }) => {
         <div style={{ marginBottom: "20px" }}>
           <p style={{ color: "#94a3b8", fontSize: "11px", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "6px" }}>Partager le match</p>
           <h3 style={{ color: "#fff", fontWeight: 800, fontSize: "18px", lineHeight: 1.3 }}>
-            {match.equipeDomicile} <span style={{ color: "#3b82f6" }}>vs</span> {match.equipeVisiteuse}
+            {match.equipeDomicile} <span style={{ color: "#0992c2" }}>vs</span> {match.equipeVisiteuse}
           </h3>
           <p style={{ color: "#64748b", fontSize: "13px", marginTop: "4px" }}>{match.dateMatch} · {match.lieu}</p>
         </div>
@@ -185,7 +185,7 @@ const MatchCard = ({ match, getStatusBadgeStyle }) => {
             ? "linear-gradient(90deg, #ef4444, #f97316)"
             : isScheduled
             ? "linear-gradient(90deg, #eab308, #f59e0b)"
-            : "linear-gradient(90deg, #3b82f6, #06b6d4)",
+            : "linear-gradient(90deg, #0992c2, #43bfd8)",
         }} />
 
         {/* Header row: date + status + share */}
@@ -338,7 +338,7 @@ const MatchCard = ({ match, getStatusBadgeStyle }) => {
           alignItems: "center",
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "#64748b", fontSize: "12px", fontWeight: 600 }}>
-            <FaMapPin size={11} style={{ color: "#3b82f6" }} />
+            <FaMapPin size={11} style={{ color: "#0992c2" }} />
             <span style={{ color: "#94a3b8" }}>{match.lieu}</span>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "12px", fontWeight: 700 }}>

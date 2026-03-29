@@ -141,7 +141,7 @@ const BlogPost = ({
       if (child.type === "link") {
         return (
           <a key={i} href={child.url} target="_blank" rel="noopener noreferrer"
-            style={{ color: "#2563eb", textDecoration: "underline" }}>
+            style={{ color: "#0992c2", textDecoration: "underline" }}>
             {renderInlineChildren(child.children || [])}
           </a>
         )
@@ -195,7 +195,7 @@ const BlogPost = ({
 
       case "quote":
         return (
-          <blockquote key={idx} style={{ borderLeft: "4px solid #2563eb", paddingLeft: "1.25rem", margin: "1.75rem 0", color: "#475569", fontStyle: "italic", fontSize: "1.08rem", lineHeight: 1.75 }}>
+          <blockquote key={idx} style={{ borderLeft: "4px solid #0992c2", paddingLeft: "1.25rem", margin: "1.75rem 0", color: "#475569", fontStyle: "italic", fontSize: "1.08rem", lineHeight: 1.75 }}>
             {renderInlineChildren(block.children)}
           </blockquote>
         )

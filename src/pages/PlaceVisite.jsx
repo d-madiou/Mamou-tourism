@@ -9,7 +9,7 @@ function PlaceVisite({ places = [] }) {
   const getImageUrl = (imageArray) => {
     if (!imageArray || !imageArray.length) return "/placeholder.svg?height=400&width=600";
     const image = imageArray[0];
-    return image.url.startsWith('http') ? image.url : `https://cozy-sparkle-24ced58ec1.strapiapp.com${image.url}`;
+    return image.url.startsWith('http') ? image.url : `https://api.villedemamou.org${image.url}`;
   };
 
   const getDescriptionText = (descriptionArray) => {
@@ -24,7 +24,7 @@ function PlaceVisite({ places = [] }) {
   const getTypeStyle = (type) => {
     const styles = {
       'agriculture': { bg: '#ecfdf5', color: '#059669', border: '#d1fae5' },
-      'tourism':     { bg: '#eff6ff', color: '#2563eb', border: '#dbeafe' },
+      'tourism':     { bg: '#eef9fc', color: '#0992c2', border: '#afe5f2' },
       'culture':     { bg: '#fffbeb', color: '#d97706', border: '#fef3c7' },
       'nature':      { bg: '#f0fdf4', color: '#16a34a', border: '#dcfce7' },
       'default':     { bg: '#f8fafc', color: '#64748b', border: '#e2e8f0' },
@@ -51,8 +51,8 @@ function PlaceVisite({ places = [] }) {
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap');
         
         :root {
-          --primary: #2563eb;
-          --primary-dark: #1d4ed8;
+          --primary: #0992c2;
+          --primary-dark: #086a8b;
           --text-main: #0f172a;
           --text-muted: #64748b;
           --accent: #fbbf24;
@@ -272,7 +272,7 @@ function PlaceVisite({ places = [] }) {
 
                   <div style={{ padding: "clamp(30px, 5vw, 60px)", display: "flex", flexDirection: "column", justifyContent: "center" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "#64748b", fontSize: "13px", marginBottom: "16px", fontWeight: 500 }}>
-                      <Calendar size={14} style={{ color: "#2563eb" }} />
+                      <Calendar size={14} style={{ color: "#0992c2" }} />
                       {featured.date ? new Date(featured.date).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' }) : "Date inconnue"}
                     </div>
                     
@@ -288,7 +288,7 @@ function PlaceVisite({ places = [] }) {
                     </h2>
                     
                     <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "#64748b", fontSize: "14px", marginBottom: "24px" }}>
-                      <MapPin size={16} style={{ color: "#2563eb" }} />
+                      <MapPin size={16} style={{ color: "#0992c2" }} />
                       {featured.localisation || "Région de Mamou"}
                     </div>
 
@@ -374,7 +374,7 @@ function PlaceVisite({ places = [] }) {
                           <div style={{ borderTop: "1px solid #f1f5f9", paddingTop: "20px", marginTop: "auto" }}>
                             <button style={{
                               background: "transparent", border: "none", padding: 0,
-                              color: "#2563eb", fontWeight: 700, fontSize: "14px",
+                              color: "#0992c2", fontWeight: 700, fontSize: "14px",
                               display: "flex", alignItems: "center", gap: "6px", cursor: "pointer"
                             }}>
                               En savoir plus
@@ -418,7 +418,7 @@ function PlaceVisite({ places = [] }) {
                 textAlign: "center"
               }}>
                 <div style={{
-                  width: "48px", height: "48px", background: "rgba(37,99,235,0.2)", color: "#60a5fa",
+                  width: "48px", height: "48px", background: "rgba(9,146,194,0.18)", color: "#43bfd8",
                   borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center",
                   margin: "0 auto 16px"
                 }}>

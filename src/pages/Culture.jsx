@@ -195,7 +195,7 @@ const Culture = ({ events = [] }) => {
                   <div className="md:w-40 h-52 md:h-44 rounded-lg overflow-hidden">
                     {event.Image ? (
                       <img
-                        src={`https://cozy-sparkle-24ced58ec1.strapiapp.com${event.Image.url}`}
+                        src={`https://api.villedemamou.org${event.Image.url}`}
                         alt={event.eventTitle}
                         className="w-full h-full object-cover"
                       />

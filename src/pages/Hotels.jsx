@@ -10,7 +10,7 @@ function Hotels({ hotels = [] }) {
   const getImageUrl = (imageArray) => {
     if (!imageArray || !imageArray.length) return "/placeholder.svg?height=400&width=600";
     const image = imageArray[0];
-    return image.url.startsWith('http') ? image.url : `https://cozy-sparkle-24ced58ec1.strapiapp.com${image.url}`;
+    return image.url.startsWith('http') ? image.url : `https://api.villedemamou.org${image.url}`;
   };
 
   // Helper function to get description text

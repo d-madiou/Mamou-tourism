@@ -1,2 +1,79 @@
 @import "tailwindcss";
 @plugin "tailwindcss-motion";
+
+:root {
+  --brand-50: #eef9fc;
+  --brand-100: #d7f2f9;
+  --brand-200: #afe5f2;
+  --brand-300: #7dd5e8;
+  --brand-400: #43bfd8;
+  --brand-500: #0992c2;
+  --brand-600: #087ea7;
+  --brand-700: #086a8b;
+  --brand-800: #07556f;
+  --brand-900: #053f53;
+  --brand-950: #032836;
+}
+
+.bg-blue-50 { background-color: var(--brand-50) !important; }
+.bg-blue-100 { background-color: var(--brand-100) !important; }
+.bg-blue-600 { background-color: var(--brand-600) !important; }
+.bg-blue-700 { background-color: var(--brand-700) !important; }
+.bg-blue-800 { background-color: var(--brand-800) !important; }
+.bg-blue-900 { background-color: var(--brand-900) !important; }
+.bg-blue-950 { background-color: var(--brand-950) !important; }
+
+.text-blue-100 { color: var(--brand-100) !important; }
+.text-blue-200 { color: #bde8f3 !important; }
+.text-blue-300 { color: #8fd9e9 !important; }
+.text-blue-400 { color: var(--brand-400) !important; }
+.text-blue-500 { color: var(--brand-500) !important; }
+.text-blue-600 { color: var(--brand-600) !important; }
+.text-blue-700 { color: var(--brand-700) !important; }
+.text-blue-800 { color: var(--brand-800) !important; }
+.text-blue-900 { color: var(--brand-900) !important; }
+
+.border-blue-100 { border-color: var(--brand-100) !important; }
+.border-blue-200 { border-color: var(--brand-200) !important; }
+.border-blue-300 { border-color: var(--brand-300) !important; }
+.border-blue-400 { border-color: var(--brand-400) !important; }
+.border-blue-500 { border-color: var(--brand-500) !important; }
+.border-blue-600 { border-color: var(--brand-600) !important; }
+.border-blue-700 { border-color: var(--brand-700) !important; }
+.border-blue-800 { border-color: var(--brand-800) !important; }
+
+.ring-blue-400 { --tw-ring-color: var(--brand-400) !important; }
+.ring-blue-500 { --tw-ring-color: var(--brand-500) !important; }
+.ring-blue-600 { --tw-ring-color: var(--brand-600) !important; }
+
+.from-blue-50 { --tw-gradient-from: var(--brand-50) var(--tw-gradient-from-position) !important; --tw-gradient-to: rgb(238 249 252 / 0) var(--tw-gradient-to-position) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+.from-blue-600 { --tw-gradient-from: var(--brand-600) var(--tw-gradient-from-position) !important; --tw-gradient-to: rgb(8 126 167 / 0) var(--tw-gradient-to-position) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+.from-blue-700 { --tw-gradient-from: var(--brand-700) var(--tw-gradient-from-position) !important; --tw-gradient-to: rgb(8 106 139 / 0) var(--tw-gradient-to-position) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+.from-blue-900 { --tw-gradient-from: var(--brand-900) var(--tw-gradient-from-position) !important; --tw-gradient-to: rgb(5 63 83 / 0) var(--tw-gradient-to-position) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+.to-blue-50 { --tw-gradient-to: var(--brand-50) var(--tw-gradient-to-position) !important; }
+.to-blue-600 { --tw-gradient-to: var(--brand-600) var(--tw-gradient-to-position) !important; }
+.to-blue-700 { --tw-gradient-to: var(--brand-700) var(--tw-gradient-to-position) !important; }
+.to-blue-800 { --tw-gradient-to: var(--brand-800) var(--tw-gradient-to-position) !important; }
+.to-blue-900 { --tw-gradient-to: var(--brand-900) var(--tw-gradient-to-position) !important; }
+.via-blue-600 { --tw-gradient-via: var(--brand-600) var(--tw-gradient-via-position) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-via), var(--tw-gradient-to) !important; }
+.via-blue-800 { --tw-gradient-via: var(--brand-800) var(--tw-gradient-via-position) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-via), var(--tw-gradient-to) !important; }
+
+.hover\:bg-blue-50:hover { background-color: var(--brand-50) !important; }
+.hover\:bg-blue-600:hover { background-color: var(--brand-600) !important; }
+.hover\:bg-blue-700:hover { background-color: var(--brand-700) !important; }
+.hover\:bg-blue-800:hover { background-color: var(--brand-800) !important; }
+.hover\:text-blue-600:hover { color: var(--brand-600) !important; }
+.hover\:text-blue-700:hover { color: var(--brand-700) !important; }
+.hover\:text-blue-800:hover { color: var(--brand-800) !important; }
+.hover\:text-blue-900:hover { color: var(--brand-900) !important; }
+.hover\:border-blue-300:hover { border-color: var(--brand-300) !important; }
+.hover\:border-blue-400:hover { border-color: var(--brand-400) !important; }
+
+.focus\:ring-blue-500:focus { --tw-ring-color: var(--brand-500) !important; }
+.focus\:ring-blue-600:focus { --tw-ring-color: var(--brand-600) !important; }
+.focus\:border-blue-500:focus { border-color: var(--brand-500) !important; }
+
+.group:hover .group-hover\:text-blue-600 { color: var(--brand-600) !important; }
+.group:hover .group-hover\:text-blue-700 { color: var(--brand-700) !important; }
+.group:hover .group-hover\:bg-blue-50 { background-color: var(--brand-50) !important; }
+.group:hover .group-hover\:animate-bounce { animation: bounce 1s infinite; }

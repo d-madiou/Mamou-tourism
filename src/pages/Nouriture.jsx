@@ -11,7 +11,7 @@ function Nouriture({ restaurant = [] }) {
     if (!imageArray || !imageArray.length) return "/placeholder.svg?height=300&width=500";
     const image = imageArray[0];
     // Handle both full URLs and relative paths
-    return image.url.startsWith('http') ? image.url : `https://cozy-sparkle-24ced58ec1.strapiapp.com${image.url}`;
+    return image.url.startsWith('http') ? image.url : `https://api.villedemamou.org${image.url}`;
   };
 
   // Helper function to get description text

@@ -68,18 +68,18 @@ const NavBar = () => {
         /* Top accent stripe */
         .nb-stripe {
           height: 3px;
-          background: linear-gradient(90deg, #1d4ed8 0%, #3b82f6 35%, #fbbf24 50%, #3b82f6 65%, #1d4ed8 100%);
+          background: linear-gradient(90deg, #087ea7 0%, #0992c2 35%, #fbbf24 50%, #0992c2 65%, #087ea7 100%);
         }
 
         /* Main bar */
         .nb-bar {
-          background: #1e50c8;
+          background: #0992c2;
           box-shadow: 0 2px 0 rgba(0,0,0,0.12);
           transition: background 0.35s ease, box-shadow 0.35s ease;
         }
         .nb-root.scrolled .nb-bar {
-          background: #1740a8;
-          box-shadow: 0 4px 24px rgba(15,40,130,0.25);
+          background: #086a8b;
+          box-shadow: 0 4px 24px rgba(8, 106, 139, 0.25);
         }
 
         .nb-inner {
@@ -154,7 +154,7 @@ const NavBar = () => {
           font-size: 13.5px; font-weight: 600;
           transition: background 0.14s, color 0.14s;
         }
-        .nb-dd-item:hover, .nb-dd-item.active { background: #eff6ff; color: #1d4ed8; }
+        .nb-dd-item:hover, .nb-dd-item.active { background: #eef9fc; color: #086a8b; }
         .nb-dd-emoji {
           width: 28px; height: 28px; background: #f1f5f9;
           border-radius: 7px; display: flex; align-items: center;
@@ -188,8 +188,8 @@ const NavBar = () => {
 
         /* ── Mobile panel ── */
         .nb-panel {
-          background: #163daa;
-          border-top: 1px solid rgba(255,255,255,0.1);
+          background: linear-gradient(180deg, #086a8b 0%, #053f53 100%);
+          border-top: 1px solid rgba(215,242,249,0.18);
           overflow: hidden;
         }
         .nb-panel-inner {
@@ -203,19 +203,19 @@ const NavBar = () => {
         .nb-search { position: relative; margin-bottom: 14px; }
         .nb-search input {
           width: 100%;
-          background: rgba(255,255,255,0.09);
-          border: 1px solid rgba(255,255,255,0.15);
+          background: rgba(255,255,255,0.1);
+          border: 1px solid rgba(215,242,249,0.18);
           border-radius: 11px; color: #fff;
           padding: 10px 14px 10px 38px;
           font-size: 14px; outline: none;
           font-family: 'DM Sans', sans-serif;
           transition: border-color 0.2s;
         }
-        .nb-search input:focus   { border-color: rgba(251,191,36,0.5); }
-        .nb-search input::placeholder { color: rgba(255,255,255,0.3); }
+        .nb-search input:focus   { border-color: rgba(153,227,246,0.72); }
+        .nb-search input::placeholder { color: rgba(223,247,253,0.55); }
         .nb-search-ico {
           position: absolute; left: 13px; top: 50%;
-          transform: translateY(-50%); color: rgba(255,255,255,0.3);
+          transform: translateY(-50%); color: rgba(223,247,253,0.55);
           pointer-events: none;
         }
 
@@ -238,18 +238,18 @@ const NavBar = () => {
         }
         .nb-mob-link:hover { background: rgba(255,255,255,0.07); color: #fff; }
         .nb-mob-link.active {
-          background: rgba(251,191,36,0.11);
-          border-color: rgba(251,191,36,0.28);
-          color: #fbbf24;
+          background: rgba(9,146,194,0.2);
+          border-color: rgba(153,227,246,0.3);
+          color: #dff7fd;
         }
         .nb-mob-ico {
           width: 32px; height: 32px; border-radius: 9px; flex-shrink: 0;
           display: flex; align-items: center; justify-content: center;
-          background: rgba(255,255,255,0.07);
+          background: rgba(255,255,255,0.08);
           transition: background 0.15s;
         }
-        .nb-mob-link.active .nb-mob-ico { background: rgba(251,191,36,0.14); }
-        .nb-mob-dot { width: 6px; height: 6px; border-radius: 50%; background: #fbbf24; margin-left: auto; flex-shrink: 0; }
+        .nb-mob-link.active .nb-mob-ico { background: rgba(153,227,246,0.16); }
+        .nb-mob-dot { width: 6px; height: 6px; border-radius: 50%; background: #99e3f6; margin-left: auto; flex-shrink: 0; }
         .nb-mob-chev { margin-left: auto; color: rgba(255,255,255,0.28); transition: transform 0.22s ease; }
 
         /* Explore sub-links */
@@ -261,21 +261,21 @@ const NavBar = () => {
           font-size: 13.5px; font-weight: 600; transition: all 0.14s;
         }
         .nb-sub a:hover  { color: #fff; background: rgba(255,255,255,0.06); }
-        .nb-sub a.active { color: #fbbf24; background: rgba(251,191,36,0.08); }
+        .nb-sub a.active { color: #dff7fd; background: rgba(153,227,246,0.12); }
 
         /* Footer row */
         .nb-mob-footer {
           margin-top: 18px; padding-top: 16px;
-          border-top: 1px solid rgba(255,255,255,0.08);
+          border-top: 1px solid rgba(215,242,249,0.12);
           display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
         }
-        .nb-mob-loc { display: flex; align-items: center; gap: 6px; color: rgba(255,255,255,0.45); font-size: 12px; }
+        .nb-mob-loc { display: flex; align-items: center; gap: 6px; color: rgba(223,247,253,0.7); font-size: 12px; }
         .nb-socials { display: flex; gap: 7px; }
         .nb-soc {
           width: 33px; height: 33px; border-radius: 8px;
           display: flex; align-items: center; justify-content: center;
           background: rgba(255,255,255,0.08);
-          border: 1px solid rgba(255,255,255,0.12);
+          border: 1px solid rgba(215,242,249,0.14);
           color: #fff; text-decoration: none; transition: all 0.18s;
         }
         .nb-soc.fb:hover { background: #1877f2; border-color: #1877f2; }

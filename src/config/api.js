@@ -1,5 +1,5 @@
 const rawBaseUrl =
-  import.meta.env.VITE_STRAPI_URL || "https://cozy-sparkle-24ced58ec1.strapiapp.com";
+  import.meta.env.VITE_STRAPI_URL || "https://api.villedemamou.org";
 
 export const STRAPI_BASE_URL = rawBaseUrl.replace(/\/+$/, "");
 export const STRAPI_API_URL = `${STRAPI_BASE_URL}/api`;
