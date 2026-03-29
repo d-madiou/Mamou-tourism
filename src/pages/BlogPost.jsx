@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Calendar,
@@ -6,474 +6,495 @@ import {
   MessageSquare,
   Share2,
   User,
-} from "lucide-react"
-import { useEffect, useState } from "react"
-import { Helmet } from "react-helmet-async"
-import { Link, useLocation, useParams } from "react-router-dom"
-import NavBar from "../components/NavBar"
-import { toMediaUrl } from "../config/api"
+  ArrowLeft,
+  MapPin,
+  Building,
+  Mail,
+  Phone,
+  BookOpen,
+  AlertCircle
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
+import { Link, useLocation, useParams } from "react-router-dom";
+import { motion } from "framer-motion";
+import NavBar from "../components/NavBar";
+import { toMediaUrl } from "../config/api";
 
-const BlogPost = ({
+/* ─── Premium Easing ─────────────────────────────────────────────────── */
+const easeOutExpo = [0.16, 1, 0.3, 1];
+
+export default function BlogPost({
   blogsData,
   schoolsData,
   ecolesData,
   newsData,
   activitePopularData,
   contentTypes = ["blogs", "ecoles", "news"],
-}) => {
-  const [currentPost, setCurrentPost]   = useState(null)
-  const [isLoading, setIsLoading]       = useState(true)
-  const [relatedPosts, setRelatedPosts] = useState([])
-  const params   = useParams()
-  const location = useLocation()
+}) {
+  const [currentPost, setCurrentPost] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [relatedPosts, setRelatedPosts] = useState([]);
+  const params = useParams();
+  const location = useLocation();
 
-  /* ── Helpers ───────────────────────────────────── */
+  /* ── Helpers (Unchanged Logic) ───────────────────────────────────────── */
 
   const getTextFromBlocks = (blocks) => {
-    if (!blocks || !Array.isArray(blocks)) return "Contenu non disponible"
-    let text = ""
+    if (!blocks || !Array.isArray(blocks)) return "Contenu non disponible";
+    let text = "";
     blocks.forEach(block => {
       if (block.children && Array.isArray(block.children))
-        block.children.forEach(child => { if (child.text) text += child.text + " " })
-    })
-    return text.trim()
-  }
+        block.children.forEach(child => { if (child.text) text += child.text + " "; });
+    });
+    return text.trim();
+  };
 
   const getImageUrl = (image) => {
-    if (!image) return "https://via.placeholder.com/1200x600?text=Image+non+disponible"
+    if (!image) return "/placeholder.svg?height=600&width=1200";
     if (Array.isArray(image) && image.length > 0) {
-      const first = image[0]
-      return first?.url ? toMediaUrl(first.url) : "https://via.placeholder.com/1200x600?text=Image+non+disponible"
+      const first = image[0];
+      return first?.url ? toMediaUrl(first.url) : "/placeholder.svg?height=600&width=1200";
     }
-    if (image?.url) return toMediaUrl(image.url)
-    return "https://via.placeholder.com/1200x600?text=Image+non+disponible"
-  }
+    if (image?.url) return toMediaUrl(image.url);
+    return "/placeholder.svg?height=600&width=1200";
+  };
 
-  /* ── useEffect ─────────────────────────────────── */
+  /* ── useEffect ───────────────────────────────────────────────────────── */
 
   useEffect(() => {
-    setIsLoading(true)
-    if (!params.id) { setIsLoading(false); return }
+    setIsLoading(true);
+    if (!params.id) { setIsLoading(false); return; }
 
     const sourceByType = {
-      blogs:                 blogsData?.data || [],
-      ecoles:                ecolesData?.data || schoolsData?.data || [],
-      schools:               schoolsData?.data || [],
-      news:                  newsData?.data || [],
+      blogs: blogsData?.data || [],
+      ecoles: ecolesData?.data || schoolsData?.data || [],
+      schools: schoolsData?.data || [],
+      news: newsData?.data || [],
       "activite-populaires": activitePopularData?.data || [],
-    }
+    };
 
-    let post = null, allPosts = []
+    let post = null, allPosts = [];
     for (const type of contentTypes) {
-      const source = sourceByType[type] || []
-      const found  = source.find(item => item.id == params.id)
-      if (found) { post = found; allPosts = source; break }
+      const source = sourceByType[type] || [];
+      const found = source.find(item => item.id == params.id);
+      if (found) { post = found; allPosts = source; break; }
     }
 
     if (post) {
-      setCurrentPost(post)
-      setRelatedPosts(allPosts.filter(item => item.id !== post.id).slice(0, 3))
+      setCurrentPost(post);
+      setRelatedPosts(allPosts.filter(item => item.id !== post.id).slice(0, 3));
     }
-    setIsLoading(false)
-  }, [params.id, contentTypes, blogsData, schoolsData, ecolesData, newsData, activitePopularData])
+    setIsLoading(false);
+  }, [params.id, contentTypes, blogsData, schoolsData, ecolesData, newsData, activitePopularData]);
 
-  /* ── Getters ───────────────────────────────────── */
+  /* ── Getters ─────────────────────────────────────────────────────────── */
 
-  const getPostTitle       = () => currentPost?.Titre || currentPost?.nom || currentPost?.titleSport || "Article sans titre"
+  const getPostTitle = () => currentPost?.Titre || currentPost?.nom || currentPost?.titleSport || "Article sans titre";
   const getPostDescription = () => {
-    if (currentPost?.contentSport) return getTextFromBlocks(currentPost.contentSport)
-    if (currentPost?.description)  return getTextFromBlocks(currentPost.description)
-    if (currentPost?.contenu)      return getTextFromBlocks(currentPost.contenu)
-    return "Description non disponible"
-  }
+    if (currentPost?.contentSport) return getTextFromBlocks(currentPost.contentSport);
+    if (currentPost?.description) return getTextFromBlocks(currentPost.description);
+    if (currentPost?.contenu) return getTextFromBlocks(currentPost.contenu);
+    return "Description non disponible";
+  };
   const getPostImage = () => {
-    if (currentPost?.imageSport) return getImageUrl(currentPost.imageSport)
-    if (currentPost?.Image)      return getImageUrl(currentPost.Image)
-    if (currentPost?.image)      return getImageUrl(currentPost.image)
-    return "https://via.placeholder.com/1200x600?text=Image+non+disponible"
-  }
-  const getPostDate     = () => currentPost?.datePublication || currentPost?.dateSport || currentPost?.date || currentPost?.createdAt || new Date().toISOString()
+    if (currentPost?.imageSport) return getImageUrl(currentPost.imageSport);
+    if (currentPost?.Image) return getImageUrl(currentPost.Image);
+    if (currentPost?.image) return getImageUrl(currentPost.image);
+    return "/placeholder.svg?height=600&width=1200";
+  };
+  const getPostDate = () => currentPost?.datePublication || currentPost?.dateSport || currentPost?.date || currentPost?.createdAt || new Date().toISOString();
   const getPostCategory = () => {
-    if (currentPost?.type)      return currentPost.type.replace("_", " ").toUpperCase()
-    if (currentPost?.categorie) return currentPost.categorie.replace("_", " ").toUpperCase()
-    if (currentPost?.typeEcole) return currentPost.typeEcole.toUpperCase()
-    return "ARTICLE"
-  }
-  const getAuthor = () => currentPost?.auteur || currentPost?.nomDuDirecteur || "Équipe éditoriale"
+    if (currentPost?.type) return currentPost.type.replace("_", " ").toUpperCase();
+    if (currentPost?.categorie) return currentPost.categorie.replace("_", " ").toUpperCase();
+    if (currentPost?.typeEcole) return currentPost.typeEcole.toUpperCase();
+    return "ARTICLE";
+  };
+  const getAuthor = () => currentPost?.auteur || currentPost?.nomDuDirecteur || "Équipe éditoriale";
 
-  const currentType  = location.pathname.split("/")[2] || "article"
-  const fallbackPath = { education: "/education", school: "/education", sport: "/sport", article: "/articles" }[currentType] || "/articles"
-  const seoTitle = currentPost ? `${getPostTitle()} | Ville de Mamou` : "Article | Ville de Mamou"
+  const currentType = location.pathname.split("/")[2] || "article";
+  const fallbackPath = { education: "/education", school: "/education", sport: "/sport", article: "/articles" }[currentType] || "/articles";
+  const seoTitle = currentPost ? `${getPostTitle()} | Ville de Mamou` : "Article | Ville de Mamou";
   const seoDescription = currentPost
     ? getPostDescription().slice(0, 160)
-    : "Consultez les articles, actualités et contenus thématiques de la Ville de Mamou."
+    : "Consultez les articles, actualités et contenus thématiques de la Ville de Mamou.";
 
   const timeReading = () => {
-    const c = getPostDescription()
-    return c && c !== "Description non disponible" ? Math.ceil(c.split(" ").length / 200) : 5
-  }
+    const c = getPostDescription();
+    return c && c !== "Description non disponible" ? Math.ceil(c.split(" ").length / 200) : 5;
+  };
 
   const formatDate = (dateString) => {
-    try { return new Date(dateString).toLocaleDateString("fr-FR", { year: "numeric", month: "long", day: "numeric" }) }
-    catch { return "Date non disponible" }
-  }
+    try { return new Date(dateString).toLocaleDateString("fr-FR", { year: "numeric", month: "long", day: "numeric" }); }
+    catch { return "Date non disponible"; }
+  };
 
-  /* ── Rich-text renderer ────────────────────────────────────────────────────
-   *
-   *  Strapi v4/v5 stores rich text as an array of block nodes.
-   *  Supported block types:
-   *
-   *    paragraph        → <p>
-   *    heading          → <h1>–<h6>
-   *    list             → <ul> or <ol>
-   *    quote            → <blockquote>
-   *    code             → <pre><code>
-   *    image            → <img>  ← was missing, this is the root fix
-   *    thematic-break   → <hr>
-   *
-   *  Inline children support: bold, italic, underline, strikethrough, code, link
-   *
-   ─────────────────────────────────────────────────────────────────────────── */
+  /* ── Rich-text renderer (Styled with Tailwind) ───────────────────────── */
 
   const renderInlineChildren = (children = []) =>
     children.map((child, i) => {
-      // Link node
       if (child.type === "link") {
         return (
-          <a key={i} href={child.url} target="_blank" rel="noopener noreferrer"
-            style={{ color: "#0992c2", textDecoration: "underline" }}>
+          <a key={i} href={child.url} target="_blank" rel="noopener noreferrer" className="font-medium text-blue-600 underline decoration-blue-300 underline-offset-4 transition-colors hover:text-blue-700 hover:decoration-blue-500">
             {renderInlineChildren(child.children || [])}
           </a>
-        )
+        );
       }
-      // Text node with inline marks
-      let el = <>{child.text}</>
-      if (child.bold)          el = <strong>{el}</strong>
-      if (child.italic)        el = <em>{el}</em>
-      if (child.underline)     el = <u>{el}</u>
-      if (child.strikethrough) el = <s>{el}</s>
-      if (child.code)          el = (
-        <code style={{ background: "#f1f5f9", borderRadius: "4px", padding: "1px 6px", fontFamily: "monospace", fontSize: "0.88em" }}>
+      let el = <>{child.text}</>;
+      if (child.bold) el = <strong className="font-semibold text-blue-950">{el}</strong>;
+      if (child.italic) el = <em className="italic text-blue-800">{el}</em>;
+      if (child.underline) el = <u className="underline underline-offset-4">{el}</u>;
+      if (child.strikethrough) el = <s className="text-blue-400">{el}</s>;
+      if (child.code) el = (
+        <code className="rounded-md bg-blue-50 px-1.5 py-0.5 font-mono text-[0.85em] text-blue-700">
           {el}
         </code>
-      )
-      return <span key={i}>{el}</span>
-    })
+      );
+      return <span key={i}>{el}</span>;
+    });
 
   const renderBlock = (block, idx) => {
     switch (block.type) {
-
       case "paragraph":
         return (
-          <p key={idx} style={{ marginBottom: "1.3rem", color: "#374151", lineHeight: 1.85, fontSize: "17px" }}>
+          <p key={idx} className="mb-6 font-sans text-lg font-normal leading-relaxed text-blue-800 md:text-[1.15rem]">
             {renderInlineChildren(block.children)}
           </p>
-        )
+        );
 
       case "heading": {
-        const sizes = { 1: "2rem", 2: "1.7rem", 3: "1.45rem", 4: "1.25rem", 5: "1.1rem", 6: "1rem" }
+        const sizeClasses = {
+          1: "text-4xl md:text-5xl",
+          2: "text-3xl md:text-4xl",
+          3: "text-2xl md:text-3xl",
+          4: "text-xl md:text-2xl",
+          5: "text-lg md:text-xl",
+          6: "text-base md:text-lg"
+        };
         return (
-          <h2 key={idx} style={{ fontSize: sizes[block.level] || "1.3rem", fontWeight: 800, color: "#0f172a", marginTop: "2.2rem", marginBottom: "0.75rem", lineHeight: 1.25 }}>
+          <h2 key={idx} className={`mt-12 mb-6 font-semibold leading-tight tracking-tight text-blue-950 ${sizeClasses[block.level] || sizeClasses[2]}`}>
             {renderInlineChildren(block.children)}
           </h2>
-        )
+        );
       }
 
       case "list": {
-        const Tag       = block.format === "ordered" ? "ol" : "ul"
-        const listStyle = block.format === "ordered" ? "decimal" : "disc"
+        const Tag = block.format === "ordered" ? "ol" : "ul";
+        const listClass = block.format === "ordered" ? "list-decimal" : "list-disc";
         return (
-          <Tag key={idx} style={{ paddingLeft: "1.6rem", marginBottom: "1.3rem", listStyleType: listStyle }}>
+          <Tag key={idx} className={`mb-8 ml-6 space-y-3 font-sans text-lg font-normal text-blue-800 md:text-[1.15rem] ${listClass}`}>
             {block.children?.map((item, ii) => (
-              <li key={ii} style={{ color: "#374151", lineHeight: 1.8, marginBottom: "5px" }}>
+              <li key={ii} className="pl-2 leading-relaxed tracking-wide">
                 {renderInlineChildren(item.children)}
               </li>
             ))}
           </Tag>
-        )
+        );
       }
 
       case "quote":
         return (
-          <blockquote key={idx} style={{ borderLeft: "4px solid #0992c2", paddingLeft: "1.25rem", margin: "1.75rem 0", color: "#475569", fontStyle: "italic", fontSize: "1.08rem", lineHeight: 1.75 }}>
+          <blockquote key={idx} className="my-10 rounded-r-2xl border-l-4 border-blue-500 bg-gradient-to-r from-blue-50/70 to-transparent py-6 pl-8 pr-6 text-xl font-normal italic leading-relaxed text-blue-900">
             {renderInlineChildren(block.children)}
           </blockquote>
-        )
+        );
 
       case "code":
         return (
-          <pre key={idx} style={{ background: "#0f172a", color: "#e2e8f0", borderRadius: "12px", padding: "20px 24px", overflowX: "auto", marginBottom: "1.3rem", fontSize: "14px", lineHeight: 1.7 }}>
+          <pre key={idx} className="my-8 overflow-x-auto rounded-2xl bg-blue-950 p-6 text-[15px] leading-relaxed text-blue-100 shadow-inner">
             <code>{renderInlineChildren(block.children)}</code>
           </pre>
-        )
+        );
 
-      /* ── IMAGE block ────────────────────────────────────────────────────────
-       *
-       *  Strapi sends:
-       *  {
-       *    type: "image",
-       *    image: {
-       *      url: "/uploads/photo.jpg",      ← relative or absolute
-       *      alternativeText: "...",
-       *      width: 1200,
-       *      height: 800,
-       *      caption: "optional caption"     ← sometimes top-level on block
-       *    }
-       *  }
-       *
-       *  We call toMediaUrl() to prepend the Strapi base URL when relative.
-       ─────────────────────────────────────────────────────────────────────── */
       case "image": {
-        const img = block.image
-        if (!img) return null
-
-        const src     = img.url ? toMediaUrl(img.url) : null
-        if (!src) return null
-
-        const alt     = img.alternativeText || getPostTitle()
-        const caption = img.caption || block.caption   // Strapi sometimes puts it on the block itself
+        const img = block.image;
+        if (!img) return null;
+        const src = img.url ? toMediaUrl(img.url) : null;
+        if (!src) return null;
+        const alt = img.alternativeText || getPostTitle();
+        const caption = img.caption || block.caption;
 
         return (
-          <figure key={idx} style={{ margin: "2.25rem 0", textAlign: "center" }}>
+          <figure key={idx} className="my-12 text-center">
             <img
               src={src}
               alt={alt}
-              style={{
-                maxWidth: "100%",
-                borderRadius: "14px",
-                boxShadow: "0 8px 32px rgba(0,0,0,0.13)",
-                display: "inline-block",
-              }}
-              onError={e => { e.target.src = "https://via.placeholder.com/800x450?text=Image+non+disponible" }}
+              className="mx-auto w-full rounded-[2rem] object-cover shadow-xl shadow-blue-100/70 ring-1 ring-blue-100"
+              onError={e => { e.target.src = "/placeholder.svg?height=600&width=1200"; }}
             />
             {caption && (
-              <figcaption style={{ marginTop: "10px", fontSize: "13px", color: "#94a3b8", fontStyle: "italic" }}>
+              <figcaption className="mt-4 font-sans text-sm font-medium italic text-blue-500">
                 {caption}
               </figcaption>
             )}
           </figure>
-        )
+        );
       }
 
       case "thematic-break":
       case "divider":
-        return <hr key={idx} style={{ border: "none", borderTop: "1px solid #e2e8f0", margin: "2rem 0" }} />
+        return <hr key={idx} className="my-12 border-t border-blue-100" />;
 
       default:
-        // Unknown block — try to render children as plain text so nothing is silently lost
         if (block.children?.length) {
           return (
-            <p key={idx} style={{ marginBottom: "1.3rem", color: "#374151", lineHeight: 1.85 }}>
+            <p key={idx} className="mb-6 font-sans text-lg font-normal leading-relaxed text-blue-800">
               {renderInlineChildren(block.children)}
             </p>
-          )
+          );
         }
-        return null
+        return null;
     }
-  }
+  };
 
   const renderContent = () => {
-    // Try all known Strapi field names for body content
     const content =
       currentPost?.contenu ||
       currentPost?.description ||
       currentPost?.contentSport ||
       currentPost?.content ||
-      currentPost?.body
+      currentPost?.body;
 
     if (!content || !Array.isArray(content))
-      return <p style={{ color: "#6b7280" }}>Contenu non disponible.</p>
+      return <p className="font-normal text-blue-700">Contenu non disponible.</p>;
 
-    return content.map((block, idx) => renderBlock(block, idx))
-  }
+    return content.map((block, idx) => renderBlock(block, idx));
+  };
 
   const handleShare = () => {
     if (navigator.share) {
-      navigator.share({ title: getPostTitle(), text: "Découvrez cet article intéressant", url: window.location.href })
+      navigator.share({ title: getPostTitle(), text: "Découvrez cet article intéressant", url: window.location.href });
     } else {
-      navigator.clipboard.writeText(window.location.href)
-      alert("Lien copié dans le presse-papier!")
+      navigator.clipboard.writeText(window.location.href);
+      alert("Lien copié dans le presse-papier !");
     }
-  }
+  };
 
-  /* ── Loading / not found ───────────────────────── */
+  /* ── States ──────────────────────────────────────────────────────────── */
 
   if (isLoading) {
     return (
-      <div className="font-sans bg-gray-50 min-h-screen">
-        <Helmet>
-          <title>{seoTitle}</title>
-          <meta name="description" content={seoDescription} />
-        </Helmet>
+      <div className="flex min-h-screen items-center justify-center bg-blue-50 font-sans" style={{ fontFamily: "'Poppins', sans-serif" }}>
+        <Helmet><title>{seoTitle}</title><meta name="description" content={seoDescription} /></Helmet>
         <NavBar />
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-blue-600 text-lg">Chargement de l'article...</div>
+        <div className="mt-20 flex max-w-md flex-col items-center rounded-[2rem] bg-white p-12 text-center shadow-xl shadow-blue-100/70 ring-1 ring-blue-100">
+          <motion.div animate={{ rotateY: 360 }} transition={{ duration: 2, repeat: Infinity, ease: "linear" }}>
+            <BookOpen size={48} className="mb-6 text-blue-600" />
+          </motion.div>
+          <h2 className="mb-2 text-2xl font-semibold tracking-tight text-blue-950">Chargement...</h2>
+          <p className="text-sm text-blue-700">Ouverture de l'article en cours.</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (!currentPost) {
     return (
-      <div className="font-sans bg-gray-50 min-h-screen">
-        <Helmet>
-          <title>{seoTitle}</title>
-          <meta name="description" content={seoDescription} />
-        </Helmet>
+      <div className="flex min-h-screen items-center justify-center bg-blue-50 font-sans" style={{ fontFamily: "'Poppins', sans-serif" }}>
+        <Helmet><title>{seoTitle}</title><meta name="description" content={seoDescription} /></Helmet>
         <NavBar />
-        <div className="flex flex-col items-center justify-center min-h-[60vh] px-4">
-          <div className="bg-white p-8 rounded-xl shadow-sm text-center max-w-md">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Article non trouvé</h2>
-            <p className="text-gray-600 mb-6">L'article que vous recherchez n'existe pas ou a été supprimé.</p>
-            <Link to={fallbackPath} className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors duration-200">
-              Retour aux articles
-            </Link>
-          </div>
+        <div className="mt-20 flex max-w-md flex-col items-center rounded-[2rem] bg-white p-12 text-center shadow-xl shadow-blue-100/70 ring-1 ring-blue-100">
+          <AlertCircle size={48} className="mb-6 text-blue-600" />
+          <h2 className="mb-2 text-2xl font-semibold tracking-tight text-blue-950">Article non trouvé</h2>
+          <p className="mb-8 text-sm text-blue-700">L'article que vous recherchez n'existe pas ou a été supprimé.</p>
+          <Link to={fallbackPath} className="rounded-full bg-blue-900 px-8 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-800">
+            Retour aux articles
+          </Link>
         </div>
       </div>
-    )
+    );
   }
 
-  /* ── Main render ───────────────────────────────── */
+  /* ── Main Render ─────────────────────────────────────────────────────── */
 
   return (
-    <div className="font-sans bg-gray-50 min-h-screen">
+    <div className="min-h-screen bg-blue-50 font-sans text-blue-950 selection:bg-blue-200 selection:text-blue-950" style={{ fontFamily: "'Poppins', sans-serif" }}>
       <Helmet>
         <title>{seoTitle}</title>
         <meta name="description" content={seoDescription} />
       </Helmet>
-      <NavBar />
+      
+      <div className="fixed top-0 left-0 right-0 z-50">
+        <NavBar />
+      </div>
 
-      {/* Header */}
-      <header className="bg-white border-b shadow-sm">
-        <div className="container mx-auto px-4 py-8">
-          <div className="max-w-4xl mx-auto">
-            <div className="flex items-center space-x-2 text-sm text-gray-500 mb-4">
-              <Link to={fallbackPath} className="hover:text-blue-600 transition-colors duration-200">
-                Retour à la section
-              </Link>
-              <span>/</span>
-              <span className="text-gray-700">Article</span>
-            </div>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-gray-800 leading-tight">
+      <main className="pt-32 pb-20 md:pt-40">
+        <article className="mx-auto max-w-4xl px-6">
+          
+          {/* Back Navigation & Category */}
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: easeOutExpo }}
+            className="mb-8 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between"
+          >
+            <Link 
+              to={fallbackPath} 
+              className="group flex w-fit items-center gap-2 rounded-full border border-blue-100 bg-white py-2 pl-3 pr-5 text-sm font-medium text-blue-600 shadow-sm transition-all hover:border-blue-300 hover:text-blue-950 hover:shadow-md"
+            >
+              <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-1" />
+              Retour
+            </Link>
+            <span className="w-fit rounded-full bg-blue-900 px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest text-blue-200 shadow-sm">
+              {getPostCategory()}
+            </span>
+          </motion.div>
+
+          {/* Title Area */}
+          <motion.header 
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.1, ease: easeOutExpo }}
+            className="mb-12"
+          >
+            <h1 className="mb-8 text-4xl font-semibold leading-[1.15] tracking-tight text-blue-950 md:text-6xl lg:text-[4rem]">
               {getPostTitle()}
             </h1>
-            <div className="flex flex-wrap items-center text-gray-600 gap-4 md:gap-6 mb-6">
-              <div className="flex items-center">
-                <Calendar className="h-4 w-4 mr-2 text-blue-600" />
-                <span className="text-sm">{formatDate(getPostDate())}</span>
-              </div>
-              <div className="flex items-center">
-                <Clock className="h-4 w-4 mr-2 text-blue-600" />
-                <span className="text-sm">{timeReading()} min de lecture</span>
-              </div>
-              <div className="flex items-center">
-                <MessageSquare className="h-4 w-4 mr-2 text-blue-600" />
-                <span className="text-sm">0 commentaires</span>
-              </div>
-              <div className="flex items-center">
-                <span className="bg-blue-600 text-white text-xs px-3 py-1 rounded-full font-medium">
-                  {getPostCategory()}
-                </span>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4 mb-6">
-              <div className="flex items-center">
-                <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden mr-3">
-                  <User className="h-6 w-6 text-gray-500" />
+
+            {/* Meta Row */}
+            <div className="flex flex-wrap items-center gap-x-8 gap-y-4 border-y border-blue-100 py-6 text-sm text-blue-600">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 text-blue-500">
+                  <User size={18} />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-900">Par {getAuthor()}</p>
-                  <p className="text-xs text-gray-500">{currentPost?.localisation || "Mamou, Guinée"}</p>
+                  <p className="font-semibold text-blue-950">{getAuthor()}</p>
+                  <p className="text-xs">{currentPost?.localisation || "Mamou, Guinée"}</p>
                 </div>
               </div>
+              <div className="hidden h-8 w-px bg-blue-100 sm:block" />
+              <div className="flex items-center gap-2">
+                <Calendar size={16} className="text-blue-600" />
+                <span>{formatDate(getPostDate())}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Clock size={16} className="text-blue-600" />
+                <span>{timeReading()} min de lecture</span>
+              </div>
+              
+              {/* Share Button (Desktop) */}
+              <button onClick={handleShare} className="ml-auto hidden sm:flex items-center gap-2 rounded-full border border-blue-100 bg-white px-4 py-2 font-medium text-blue-600 shadow-sm transition-all hover:border-blue-300 hover:text-blue-950">
+                <Share2 size={16} />
+                Partager
+              </button>
             </div>
-          </div>
-        </div>
-      </header>
+          </motion.header>
 
-      {/* Main */}
-      <main className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
-
-          {/* Hero image */}
-          <div className="mb-8 rounded-xl overflow-hidden shadow-lg bg-white">
+          {/* Hero Image */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, delay: 0.2, ease: easeOutExpo }}
+            className="relative mb-16 overflow-hidden rounded-[2rem] bg-blue-100 shadow-2xl shadow-blue-100/70 ring-1 ring-blue-100"
+          >
             <img
               src={getPostImage()}
               alt={getPostTitle()}
-              className="w-full h-auto object-cover max-h-[500px]"
-              onError={e => { e.target.src = "https://via.placeholder.com/1200x600?text=Image+non+disponible" }}
+              className="w-full max-h-[600px] object-cover object-center"
+              onError={e => { e.target.src = "/placeholder.svg?height=600&width=1200"; }}
             />
-          </div>
+          </motion.div>
 
-          {/* Share button */}
-          <div className="flex justify-end mb-8">
-            <button onClick={handleShare} className="flex items-center bg-blue-500 space-x-2 px-4 py-2 rounded-full border border-gray-200 text-white hover:bg-blue-600 transition-colors duration-200">
-              <Share2 className="h-5 w-5" />
-              <span>Partager</span>
-            </button>
-          </div>
+          {/* Main Content */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3, ease: easeOutExpo }}
+          >
+            {renderContent()}
 
-          {/* Article body */}
-          <article className="prose prose-lg max-w-none mb-12 bg-white p-8 rounded-xl shadow-sm">
-            <div style={{ fontSize: "17px", lineHeight: 1.85, color: "#374151" }}>
-              {renderContent()}
-            </div>
-
-            {/* School extra info */}
+            {/* School / Institution Extra Info */}
             {currentPost?.typeEcole && (
-              <div className="mt-8 pt-6 border-t border-gray-200">
-                <h3 className="text-xl font-bold mb-4">Informations supplémentaires</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {currentPost.anneeFondation && <div><strong>Année de fondation:</strong> {currentPost.anneeFondation}</div>}
-                  {currentPost.capaciteEleves  && <div><strong>Capacité:</strong> {currentPost.capaciteEleves} élèves</div>}
-                  {currentPost.telephone       && <div><strong>Téléphone:</strong> {currentPost.telephone}</div>}
-                  {currentPost.email           && <div><strong>Email:</strong> {currentPost.email}</div>}
+              <div className="mt-16 overflow-hidden rounded-[2rem] border border-blue-100 bg-white shadow-xl shadow-blue-100/60">
+                <div className="bg-blue-900 px-8 py-6">
+                  <h3 className="flex items-center gap-3 text-2xl font-semibold text-white">
+                    <Building className="text-blue-300" /> Informations de l'établissement
+                  </h3>
+                </div>
+                <div className="grid gap-6 p-8 md:grid-cols-2">
+                  {currentPost.anneeFondation && (
+                    <div className="flex flex-col">
+                      <span className="text-xs font-bold uppercase tracking-widest text-blue-500">Fondation</span>
+                      <span className="mt-1 text-lg font-medium text-blue-950">{currentPost.anneeFondation}</span>
+                    </div>
+                  )}
+                  {currentPost.capaciteEleves && (
+                    <div className="flex flex-col">
+                      <span className="text-xs font-bold uppercase tracking-widest text-blue-500">Capacité</span>
+                      <span className="mt-1 text-lg font-medium text-blue-950">{currentPost.capaciteEleves} élèves</span>
+                    </div>
+                  )}
+                  {currentPost.telephone && (
+                    <div className="flex flex-col">
+                      <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-blue-500"><Phone size={14}/> Téléphone</span>
+                      <a href={`tel:${currentPost.telephone}`} className="mt-1 text-lg font-medium text-blue-600 transition-colors hover:text-blue-700">{currentPost.telephone}</a>
+                    </div>
+                  )}
+                  {currentPost.email && (
+                    <div className="flex flex-col">
+                      <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-blue-500"><Mail size={14}/> Email</span>
+                      <a href={`mailto:${currentPost.email}`} className="mt-1 text-lg font-medium text-blue-600 transition-colors hover:text-blue-700">{currentPost.email}</a>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
-          </article>
-        </div>
+            
+            {/* Share Button (Mobile) */}
+            <div className="mt-12 flex justify-center border-t border-blue-100 pt-8 sm:hidden">
+              <button onClick={handleShare} className="flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-900 px-6 py-4 font-semibold text-white shadow-lg transition-colors hover:bg-blue-800">
+                <Share2 size={18} />
+                Partager cet article
+              </button>
+            </div>
+          </motion.div>
+        </article>
       </main>
 
-      {/* Related posts */}
+      {/* ════ RELATED POSTS ════ */}
       {relatedPosts.length > 0 && (
-        <footer className="bg-white border-t py-8">
-          <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto text-center">
-              <h3 className="text-xl font-bold mb-6 text-gray-800">Articles similaires</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {relatedPosts.map((item, index) => (
-                  <Link to={`/blog/${currentType}/${item.id}`} key={item.id || index}
-                    className="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200">
-                    <div className="h-40 bg-gray-200">
-                      <img
-                        src={getImageUrl(item.Image || item.image)}
-                        alt={item.Titre || item.nom || `Article ${index + 1}`}
-                        className="w-full h-full object-cover"
-                        onError={e => { e.target.src = "/placeholder.svg?height=160&width=320" }}
-                      />
-                    </div>
-                    <div className="p-4">
-                      <p className="text-xs text-blue-600 mb-2">
-                        {item.categorie?.replace("_", " ").toUpperCase() || item.typeEcole || "ARTICLE"}
-                      </p>
-                      <h4 className="font-bold text-gray-800 mb-2 line-clamp-2">
-                        {item.Titre || item.nom || `Article ${index + 1}`}
-                      </h4>
-                      <p className="text-sm text-gray-500 line-clamp-3">
-                        {getTextFromBlocks(item.description || item.contentSport).substring(0, 100)}...
-                      </p>
-                    </div>
-                  </Link>
-                ))}
+        <section className="relative overflow-hidden bg-blue-950 py-24 text-white">
+          {/* Subtle Background Pattern */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:24px_24px]" />
+          <div className="absolute left-0 right-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-400/50 to-transparent" />
+          
+          <div className="relative z-10 mx-auto max-w-7xl px-6">
+            <div className="mb-12 flex flex-col md:flex-row md:items-end md:justify-between">
+              <div>
+                <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-blue-300">À découvrir</p>
+                <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">
+                  Articles <span className="italic text-blue-300">Similaires</span>
+                </h2>
               </div>
             </div>
+
+            <div className="grid gap-6 md:grid-cols-3">
+              {relatedPosts.map((item, index) => (
+                <Link 
+                  to={`/blog/${currentType}/${item.id}`} 
+                  key={item.id || index}
+                  className="group flex flex-col overflow-hidden rounded-[2rem] bg-white/5 ring-1 ring-white/10 transition-all hover:-translate-y-1 hover:bg-white/10 hover:ring-blue-300/50"
+                >
+                  <div className="relative h-48 shrink-0 overflow-hidden bg-blue-900/30">
+                    <img
+                      src={getImageUrl(item.Image || item.image)}
+                      alt={item.Titre || item.nom || `Article ${index + 1}`}
+                      className="h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                      onError={e => { e.target.src = "/placeholder.svg?height=400&width=800"; }}
+                    />
+                  </div>
+                  <div className="flex flex-1 flex-col p-6 text-blue-100">
+                    <p className="mb-3 text-[10px] font-bold uppercase tracking-widest text-blue-300">
+                      {item.categorie?.replace("_", " ") || item.typeEcole || "ARTICLE"}
+                    </p>
+                    <h4 className="mb-3 text-xl font-semibold leading-snug text-white transition-colors group-hover:text-blue-300 line-clamp-2">
+                      {item.Titre || item.nom || `Article ${index + 1}`}
+                    </h4>
+                    <p className="mb-6 flex-1 text-sm font-normal leading-relaxed text-blue-100/75 line-clamp-3">
+                      {getTextFromBlocks(item.description || item.contentSport)}
+                    </p>
+                    <span className="mt-auto w-fit border-b border-blue-300/30 pb-1 text-[10px] font-bold uppercase tracking-widest text-blue-300 transition-colors group-hover:border-blue-300">
+                      Lire la suite
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
           </div>
-        </footer>
+        </section>
       )}
     </div>
-  )
+  );
 }
-
-export default BlogPost

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   AlertCircle,
@@ -8,50 +8,50 @@ import {
   Search,
   User,
   MapPin,
-  Filter, 
+  Filter,
   Grid,
-  List
-} from "lucide-react"
-import { useState } from "react"
-import { Link } from "react-router-dom"
-import { Helmet } from "react-helmet-async"
-import ImageMamou from "../assets/images/MamouHero2.jpg"
-import NavBar from "../components/NavBar"
-import { toMediaUrl } from "../config/api" 
+  List,
+  ChevronRight,
+  HomeIcon,
+} from "lucide-react";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
+import { motion, AnimatePresence } from "framer-motion";
+import ImageMamou from "../assets/images/MamouHero2.jpg";
+import NavBar from "../components/NavBar";
+import { toMediaUrl } from "../config/api";
 
-const Articles = ({ data = [], loading = false, error = null }) => {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [activeCategory, setActiveCategory] = useState("Tous")
-  const [viewMode, setViewMode] = useState("grid") 
+/* ─── Premium Easing ─────────────────────────────────────────────────── */
+const easeOutExpo = [0.16, 1, 0.3, 1];
 
-  const categories = ["Tous", "actualites", "politique", "economie", "social", "culture", "sport", "sante"]
+export default function Articles({ data = [], loading = false, error = null }) {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeCategory, setActiveCategory] = useState("Tous");
+  const [viewMode, setViewMode] = useState("grid");
 
+  const categories = ["Tous", "actualites", "politique", "economie", "social", "culture", "sport", "sante"];
+
+  /* ── Helpers (Unchanged Logic) ───────────────────────────────────────── */
   const getImageUrl = (image) => {
     if (!image) return "/placeholder.svg?height=400&width=800";
-    
     if (Array.isArray(image) && image.length > 0) {
-      const firstImage = image[0];
-      return firstImage?.url ? toMediaUrl(firstImage.url) : "/placeholder.svg?height=400&width=800";
+      const first = image[0];
+      return first?.url ? toMediaUrl(first.url) : "/placeholder.svg?height=400&width=800";
     }
-    
     if (image?.url) return toMediaUrl(image.url);
-    
     return "/placeholder.svg?height=400&width=800";
   };
 
   const getTextFromBlocks = (blocks) => {
     if (!blocks || !Array.isArray(blocks)) return "Description non disponible";
-    
     let text = "";
     blocks.forEach(block => {
-      if (block.type === 'image') return;
-      
+      if (block.type === "image") return;
       if (block.children && Array.isArray(block.children)) {
         block.children.forEach(child => {
-          if (child.type === 'link') {
-            child.children?.forEach(linkChild => {
-              if (linkChild.text) text += linkChild.text + " ";
-            });
+          if (child.type === "link") {
+            child.children?.forEach(lc => { if (lc.text) text += lc.text + " "; });
           } else if (child.text) {
             text += child.text + " ";
           }
@@ -61,361 +61,308 @@ const Articles = ({ data = [], loading = false, error = null }) => {
     return text.trim() || "Description non disponible";
   };
 
-  // NEW: Sort data from newest to oldest based on datePublication (or fallback to createdAt)
   const sortedData = [...data].sort((a, b) => {
-    const dateA = new Date(a.datePublication || a.createdAt || 0);
-    const dateB = new Date(b.datePublication || b.createdAt || 0);
-    return dateB - dateA; // Descending order
+    const dA = new Date(a.datePublication || a.createdAt || 0);
+    const dB = new Date(b.datePublication || b.createdAt || 0);
+    return dB - dA;
   });
 
-  // UPDATED: Filter the sortedData instead of the raw data
-  const filteredData = sortedData.filter((item) => {
-    const matchesSearch = item.Titre?.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesCategory = activeCategory === "Tous" || item.categorie === activeCategory
-    return matchesSearch && matchesCategory
-  })
+  const filteredData = sortedData.filter(item => {
+    const matchesSearch = item.Titre?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = activeCategory === "Tous" || item.categorie === activeCategory;
+    return matchesSearch && matchesCategory;
+  });
 
-  if (loading)
+  const formatDate = (d) => d ? new Date(d).toLocaleDateString("fr-FR", {
+    day: "numeric", month: "long", year: "numeric"
+  }) : "Date inconnue";
+
+  /* ── States ──────────────────────────────────────────────────────────── */
+  if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-blue-50 to-white">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mb-4"></div>
-        <div className="text-blue-600 text-lg">Chargement des articles...</div>
+      <div className="flex min-h-screen items-center justify-center bg-blue-50 font-sans" style={{ fontFamily: "'Poppins', sans-serif" }}>
+        <div className="flex max-w-md flex-col items-center rounded-[2rem] bg-white p-12 text-center shadow-xl shadow-blue-100/70 ring-1 ring-blue-100">
+          <motion.div animate={{ rotateY: 360 }} transition={{ duration: 2, repeat: Infinity, ease: "linear" }}>
+            <BookOpen size={48} className="mb-6 text-blue-600" />
+          </motion.div>
+          <h2 className="mb-2 text-2xl font-semibold tracking-tight text-blue-950">Chargement...</h2>
+          <p className="text-sm text-blue-700">Récupération des articles en cours.</p>
+        </div>
       </div>
-    )
+    );
+  }
 
-  if (error)
+  if (error) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-blue-50 to-white">
-        <div className="bg-red-50 text-red-700 p-8 rounded-xl shadow-lg max-w-md text-center">
-          <AlertCircle className="mx-auto mb-4 h-12 w-12" />
-          <h2 className="text-xl font-bold mb-2">Erreur lors du chargement des articles</h2>
-          <p className="mb-4">Veuillez réessayer plus tard ou contacter l'administrateur du site.</p>
-          <button
+      <div className="flex min-h-screen items-center justify-center bg-blue-50 font-sans" style={{ fontFamily: "'Poppins', sans-serif" }}>
+        <div className="flex max-w-md flex-col items-center rounded-[2rem] bg-white p-12 text-center shadow-xl shadow-blue-100/70 ring-1 ring-blue-100">
+          <AlertCircle size={48} className="mb-6 text-blue-600" />
+          <h2 className="mb-2 text-2xl font-semibold tracking-tight text-blue-950">Erreur de chargement</h2>
+          <p className="mb-8 text-sm text-blue-700">Veuillez réessayer plus tard ou contacter l'administrateur du site.</p>
+          <button 
             onClick={() => window.location.reload()}
-            className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full transition-colors duration-300"
+            className="rounded-full bg-blue-900 px-8 py-3 text-sm font-semibold text-white transition-colors hover:bg-blue-800"
           >
             Réessayer
           </button>
         </div>
       </div>
-    )
+    );
+  }
 
+  /* ── Main Render ─────────────────────────────────────────────────────── */
   return (
-    <div className="font-sans bg-gradient-to-b from-blue-50 to-white min-h-screen">
+    <div className="min-h-screen bg-blue-50 font-sans text-blue-950" style={{ fontFamily: "'Poppins', sans-serif" }}>
       <Helmet>
         <title>Articles et Actualités | Ville de Mamou</title>
-        <meta
-          name="description"
-          content="Consultez les articles et actualités de Mamou: informations municipales, initiatives locales, culture, sport et vie citoyenne."
-        />
+        <meta name="description" content="Consultez les articles et actualités de Mamou: informations municipales, initiatives locales, culture, sport et vie citoyenne." />
       </Helmet>
-      {/* Hero Section */}
-      <div className="relative text-white">
-        <NavBar />
-        <div
-          className="relative h-72 md:h-[500px] bg-cover bg-center"
-          style={{
-            backgroundImage: `url(${ImageMamou})`,
-          }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-transparent">
-            <div className="container mx-auto h-full flex flex-col justify-center px-6 md:px-8">
-              <div className="max-w-2xl space-y-4">
-                <div className="flex items-center gap-3 text-xl md:text-3xl font-bold">
-                  <BookOpen className="text-yellow-400" />
-                  <h1 className="text-2xl md:text-5xl font-bold tracking-tight">Articles & Actualités</h1>
-                </div>
-                <p className="text-base md:text-2xl text-white/90 leading-relaxed">
-                  Restez informés des dernières actualités et événements de Mamou
-                </p>
-                <div className="flex items-center text-sm text-gray-300 pt-4">
-                  <Link to="/" className="hover:text-yellow-400 transition-colors duration-300">
-                    Accueil de Mamou
-                  </Link>
-                  <span className="mx-2">/</span>
-                  <Link to="/articles" className="hover:text-yellow-400 transition-colors duration-300">
-                    Rubrique Articles
-                  </Link>
-                  <span className="mx-2">/</span>
-                  <span className="text-yellow-400">Articles</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      {/* Search and Filter Section */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="bg-white rounded-xl shadow-lg p-6 -mt-12 relative z-10 mb-12">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+      {/* ════ HERO ════ */}
+      <header className="relative flex min-h-[60vh] items-center justify-center overflow-hidden pt-20">
+        <div className="absolute inset-0 z-50">
+          <NavBar />
+        </div>
+        
+        <div className="absolute inset-0 bg-blue-950">
+          <img 
+            src={ImageMamou} 
+            alt="Mamou" 
+            className="h-full w-full object-cover opacity-80 mix-blend-overlay transition-transform duration-[20s] ease-out hover:scale-105" 
+          />
+        </div>
+        
+        {/* Cinematic Vignette */}
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-950/35 via-blue-900/55 to-blue-950/90" />
+
+        <div className="relative z-10 w-full max-w-7xl px-6 pb-24 pt-32 text-center text-white">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: easeOutExpo }}
+            className="mx-auto flex max-w-3xl flex-col items-center"
+          >
+            <div className="mb-6 flex items-center space-x-2 text-xs font-semibold tracking-widest text-blue-100 uppercase">
+              <HomeIcon className="h-3 w-3" />
+              <span>Ville de Mamou</span>
+              <ChevronRight className="h-3 w-3 text-blue-300/70" />
+              <span className="text-blue-300">Actualités</span>
+            </div>
+            
+            <h1 className="mb-6 text-5xl font-semibold leading-tight tracking-tight md:text-7xl">
+              Articles &amp; <span className="italic text-blue-300">Actualités</span>
+            </h1>
+            
+            <p className="max-w-xl text-base font-normal leading-relaxed text-blue-100/85 md:text-lg">
+              Restez informés des dernières nouvelles, événements et initiatives de notre ville.
+            </p>
+          </motion.div>
+        </div>
+      </header>
+
+      {/* ════ SEARCH PANEL ════ */}
+      <div className="relative z-20 mx-auto -mt-12 max-w-5xl px-6">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2, ease: easeOutExpo }}
+          className="rounded-[2rem] bg-white p-6 shadow-xl shadow-blue-100/70 ring-1 ring-blue-100 md:p-8"
+        >
+          <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center">
+            {/* Search Input */}
+            <div className="group flex flex-1 items-center gap-3 rounded-2xl border border-blue-100 bg-blue-50 px-5 py-3.5 transition-colors focus-within:border-blue-400 focus-within:bg-white">
+              <Search size={18} className="text-blue-400 group-focus-within:text-blue-600" />
               <input
                 type="text"
                 placeholder="Rechercher des articles..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={e => setSearchQuery(e.target.value)}
+                className="w-full bg-transparent text-sm text-blue-950 outline-none placeholder:text-blue-400"
               />
             </div>
-            <div className="flex items-center gap-2">
-              {/* View Mode Toggle */}
-              <div className="flex bg-gray-100 rounded-lg p-1">
+            
+            {/* View Toggles */}
+            <div className="flex shrink-0 items-center overflow-hidden rounded-2xl border border-blue-100 bg-blue-50 p-1">
+              {[{ mode: "grid", Icon: Grid }, { mode: "list", Icon: List }].map(({ mode, Icon }) => (
                 <button
-                  onClick={() => setViewMode("grid")}
-                  className={`p-2 rounded-md transition-all ${
-                    viewMode === "grid" ? "bg-white shadow-sm text-blue-600" : "text-gray-500"
+                  key={mode}
+                  onClick={() => setViewMode(mode)}
+                  className={`flex h-10 w-12 items-center justify-center rounded-xl transition-all ${
+                    viewMode === mode 
+                      ? "bg-blue-900 text-white shadow-md" 
+                      : "text-blue-500 hover:text-blue-800"
                   }`}
+                  aria-label={`Vue en ${mode}`}
                 >
-                  <Grid className="h-4 w-4" />
+                  <Icon size={16} />
                 </button>
-                <button
-                  onClick={() => setViewMode("list")}
-                  className={`p-2 rounded-md transition-all ${
-                    viewMode === "list" ? "bg-white shadow-sm text-blue-600" : "text-gray-500"
-                  }`}
-                >
-                  <List className="h-4 w-4" />
-                </button>
-              </div>
+              ))}
             </div>
           </div>
-          
-          {/* Category Filters */}
-          <div className="flex flex-wrap gap-2 mt-4">
-            {categories.map((category) => (
+
+          {/* Categories */}
+          <div className="flex flex-wrap items-center gap-2">
+            <Filter size={14} className="mr-2 hidden text-blue-400 md:block" />
+            {categories.map(cat => (
               <button
-                key={category}
-                onClick={() => setActiveCategory(category)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                  activeCategory === category
-                    ? "bg-blue-700 text-white"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`rounded-full px-4 py-2 text-xs font-semibold tracking-wide uppercase transition-all duration-300 ${
+                  activeCategory === cat
+                    ? "bg-blue-100 text-blue-700 ring-1 ring-blue-200/70"
+                    : "bg-transparent text-blue-700 hover:bg-blue-50 hover:text-blue-900"
                 }`}
               >
-                {category === "Tous" ? "Tous" : category.charAt(0).toUpperCase() + category.slice(1)}
+                {cat === "Tous" ? "Tous" : cat.charAt(0).toUpperCase() + cat.slice(1)}
               </button>
             ))}
           </div>
-        </div>
+        </motion.div>
       </div>
 
-      {/* Articles Section */}
-      <div className="container mx-auto px-4 py-12">
-        <div className="flex flex-col items-center mb-10">
-          <h2 className="text-3xl font-bold text-gray-800">
-            Tous les <span className="text-blue-700">Articles</span>
-          </h2>
-          <div className="flex items-center space-x-4 w-full max-w-sm mt-3">
-            <hr className="flex-1 border-t-2 border-gray-300" />
-            <BookOpen className="text-blue-700" />
-            <hr className="flex-1 border-t-2 border-gray-300" />
+      {/* ════ MAIN ARTICLES SECTION ════ */}
+      <main className="mx-auto max-w-7xl px-6 py-20">
+        <div className="mb-12 flex flex-col md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-blue-600">Presse & Information</p>
+            <h2 className="text-3xl font-semibold tracking-tight text-blue-950 md:text-4xl">
+              Tous les <span className="italic text-blue-600">Articles</span>
+            </h2>
           </div>
-          <p className="text-lg mt-3 text-center text-gray-600 max-w-lg">
-            {filteredData.length} article{filteredData.length !== 1 ? 's' : ''} trouvé{filteredData.length !== 1 ? 's' : ''}
-            {activeCategory !== "Tous" && ` dans la catégorie "${activeCategory}"`}
+          <p className="mt-4 text-sm font-medium text-blue-500 md:mt-0">
+            {filteredData.length} article{filteredData.length !== 1 ? "s" : ""} trouvé{filteredData.length !== 1 ? "s" : ""}
           </p>
         </div>
 
         {filteredData.length === 0 ? (
-          <div className="text-center py-16">
-            <div className="bg-blue-50 inline-block p-6 rounded-full mb-4">
-              <Search className="h-12 w-12 text-blue-700" />
-            </div>
-            <h3 className="text-2xl font-bold text-gray-800 mb-2">Aucun article trouvé</h3>
-            <p className="text-gray-600 max-w-md mx-auto">
-              Aucun article ne correspond à votre recherche. Essayez d'autres termes ou catégories.
-            </p>
-            <button
-              onClick={() => {
-                setSearchQuery("")
-                setActiveCategory("Tous")
-              }}
-              className="mt-6 bg-blue-700 text-white px-6 py-2 rounded-full hover:bg-blue-800 transition-colors duration-300"
+          <div className="flex flex-col items-center justify-center rounded-[2rem] border border-blue-100 bg-white py-24 shadow-sm">
+            <Search size={48} className="mb-6 text-blue-200" />
+            <h3 className="mb-2 text-xl font-medium text-blue-900">Aucun article trouvé</h3>
+            <p className="mb-6 text-sm text-blue-700">Aucun article ne correspond à votre recherche. Essayez d'autres termes.</p>
+            <button 
+              onClick={() => { setSearchQuery(""); setActiveCategory("Tous"); }}
+              className="rounded-full bg-blue-900 px-6 py-2.5 text-xs font-semibold uppercase tracking-wider text-white transition-colors hover:bg-blue-800"
             >
-              Réinitialiser la recherche
+              Réinitialiser
             </button>
           </div>
         ) : (
-          <div className={viewMode === "grid" 
-            ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-            : "space-y-6"
-          }>
-            {filteredData.map((item, index) => (
-              <div key={item.id || index} className={`group ${viewMode === "list" ? "bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden" : ""}`}>
-                <Link to={`/blog/article/${item.id}`}>
-                  {viewMode === "grid" ? (
-                    // Grid View
-                    <div className="bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden">
-                      <div className="h-48 overflow-hidden">
-                        <img
-                          src={getImageUrl(item?.Image)}
-                          alt={item.Titre}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          onError={(e) => {
-                            e.target.src = "/placeholder.svg?height=400&width=800";
-                          }}
-                        />
-                      </div>
-                      <div className="p-6">
-                        <div className="flex items-center gap-3 mb-3">
-                          <span className="text-xs px-3 py-1 font-bold rounded-full bg-blue-600 text-white">
-                            {item.categorie?.toUpperCase() || "ARTICLE"}
-                          </span>
-                          <span className="text-xs text-gray-500 flex items-center">
-                            <Calendar className="h-3 w-3 mr-1" />
-                            {item.datePublication ? new Date(item.datePublication).toLocaleDateString("fr-FR") : "Date inconnue"}
-                          </span>
-                        </div>
-                        <h3 className="font-bold text-lg text-gray-800 mb-2 group-hover:text-blue-700 transition-colors duration-300">
-                          {item.Titre || `Article ${index + 1}`}
-                        </h3>
-                        <p className="text-gray-600 text-sm line-clamp-3 mb-4">
-                          {getTextFromBlocks(item.description)}
-                        </p>
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center text-gray-500 text-xs">
-                            <MapPin className="h-3 w-3 mr-1" />
-                            <span>{item.localisation || "Mamou"}</span>
-                          </div>
-                          <div className="text-blue-600 text-sm font-medium">
-                            Lire plus →
-                          </div>
-                        </div>
-                        {item.auteur && (
-                          <div className="mt-3 pt-3 border-t border-gray-100">
-                            <div className="flex items-center text-xs text-gray-500">
-                              <User className="h-3 w-3 mr-1" />
-                              <span>Par {item.auteur}</span>
-                            </div>
-                          </div>
-                        )}
-                      </div>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={viewMode}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.4, ease: easeOutExpo }}
+              className={viewMode === "grid" ? "grid gap-8 md:grid-cols-2 lg:grid-cols-3" : "flex flex-col gap-6"}
+            >
+              {filteredData.map((item, idx) => (
+                <Link 
+                  key={item.id || idx} 
+                  to={`/blog/article/${item.id}`} 
+                  className={`group relative flex overflow-hidden rounded-[2rem] bg-white shadow-md shadow-blue-100/70 ring-1 ring-blue-100 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-200/80 hover:ring-blue-200 ${
+                    viewMode === "grid" ? "flex-col" : "flex-col sm:flex-row sm:h-[220px]"
+                  }`}
+                >
+                  {/* Image Container */}
+                  <div className={`relative shrink-0 overflow-hidden bg-blue-100 ${viewMode === "grid" ? "h-56 w-full" : "h-56 w-full sm:h-full sm:w-72"}`}>
+                    <img
+                      src={getImageUrl(item?.Image)}
+                      alt={item.Titre}
+                      onError={e => { e.target.src = "/placeholder.svg?height=400&width=800"; }}
+                      className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-blue-950/45 via-blue-900/10 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                    
+                    <span className="absolute bottom-4 left-4 rounded-full bg-blue-900/85 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white backdrop-blur-md">
+                      {item.categorie || "ARTICLE"}
+                    </span>
+                  </div>
+
+                  {/* Content Container */}
+                  <div className="flex flex-1 flex-col p-6 sm:p-8">
+                    <div className="mb-4 flex flex-wrap items-center gap-4 text-xs font-medium text-blue-500">
+                      <span className="flex items-center gap-1.5"><Calendar size={14} /> {formatDate(item.datePublication)}</span>
+                      {item.auteur && <span className="flex items-center gap-1.5"><User size={14} /> {item.auteur}</span>}
                     </div>
-                  ) : (
-                    // List View
-                    <div className="flex gap-6 p-6 hover:bg-gray-50 transition-colors duration-300">
-                      <div className="w-48 h-32 flex-shrink-0 overflow-hidden rounded-lg">
-                        <img
-                          src={getImageUrl(item?.Image)}
-                          alt={item.Titre}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          onError={(e) => {
-                            e.target.src = "/placeholder.svg?height=400&width=800";
-                          }}
-                        />
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <span className="text-xs px-3 py-1 font-bold rounded-full bg-blue-600 text-white">
-                            {item.categorie?.toUpperCase() || "ARTICLE"}
-                          </span>
-                          <span className="text-xs text-gray-500 flex items-center">
-                            <Calendar className="h-3 w-3 mr-1" />
-                            {item.datePublication ? new Date(item.datePublication).toLocaleDateString("fr-FR") : "Date inconnue"}
-                          </span>
-                        </div>
-                        <h3 className="font-bold text-xl text-gray-800 mb-2 group-hover:text-blue-700 transition-colors duration-300">
-                          {item.Titre || `Article ${index + 1}`}
-                        </h3>
-                        <p className="text-gray-600 text-sm line-clamp-2 mb-3">
-                          {getTextFromBlocks(item.description)}
-                        </p>
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-4 text-gray-500 text-sm">
-                            <div className="flex items-center">
-                              <MapPin className="h-4 w-4 mr-1" />
-                              <span>{item.localisation || "Mamou"}</span>
-                            </div>
-                            {item.auteur && (
-                              <div className="flex items-center">
-                                <User className="h-4 w-4 mr-1" />
-                                <span>Par {item.auteur}</span>
-                              </div>
-                            )}
-                          </div>
-                          <div className="text-blue-600 text-sm font-medium">
-                            Lire plus →
-                          </div>
-                        </div>
-                      </div>
+                    
+                    <h3 className="mb-3 text-xl font-semibold leading-snug text-blue-950 transition-colors group-hover:text-blue-600 line-clamp-2">
+                      {item.Titre || `Article ${idx + 1}`}
+                    </h3>
+                    
+                    <p className="mb-6 flex-1 text-sm leading-relaxed text-blue-700 line-clamp-2">
+                      {getTextFromBlocks(item.description)}
+                    </p>
+                    
+                    <div className="mt-auto flex items-center justify-between border-t border-blue-100 pt-4">
+                      <span className="flex items-center gap-1.5 text-xs font-medium text-blue-500">
+                        <MapPin size={14} /> {item.localisation || "Mamou"}
+                      </span>
+                      <span className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-blue-600 transition-transform group-hover:translate-x-1">
+                        Lire plus <ChevronRight size={14} />
+                      </span>
                     </div>
-                  )}
+                  </div>
                 </Link>
-              </div>
-            ))}
-          </div>
+              ))}
+            </motion.div>
+          </AnimatePresence>
         )}
-      </div>
+      </main>
 
-      {/* Featured Articles Section */}
+      {/* ════ RECENT STRIP ════ */}
       {filteredData.length > 0 && (
-        <div className="py-16 bg-gradient-to-b from-white to-blue-50">
-          <div className="container mx-auto px-4">
-            <div className="flex flex-col items-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-800">
-                Articles <span className="text-blue-700">Récents</span>
+        <section className="relative overflow-hidden bg-blue-950 py-24">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:24px_24px]" />
+          <div className="absolute left-0 right-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-400/50 to-transparent" />
+          
+          <div className="relative z-10 mx-auto max-w-7xl px-6">
+            <div className="mb-12">
+              <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-blue-300">Dernières publications</p>
+              <h2 className="text-3xl font-semibold tracking-tight text-white md:text-4xl">
+                Articles <span className="italic text-blue-300">Récents</span>
               </h2>
-              <div className="flex items-center space-x-4 w-full max-w-sm mt-3">
-                <hr className="flex-1 border-t-2 border-gray-300" />
-                <Clock className="text-yellow-500" />
-                <hr className="flex-1 border-t-2 border-gray-300" />
-              </div>
-              <p className="text-lg mt-3 text-center text-gray-600 max-w-lg">
-                Découvrez nos derniers articles publiés
-              </p>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredData.slice(0, 3).map((item, index) => (
-                <div key={item.id || index} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                  <Link to={`/blog/article/${item.id}`}>
-                    <div className="h-48 overflow-hidden">
-                      <img
-                        src={getImageUrl(item?.Image)}
-                        alt={item.Titre}
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                        onError={(e) => {
-                          e.target.src = "/placeholder.svg?height=400&width=800";
-                        }}
-                      />
+            
+            <div className="grid gap-6 md:grid-cols-3">
+              {filteredData.slice(0, 3).map((item, idx) => (
+                <Link 
+                  key={item.id || idx} 
+                  to={`/blog/article/${item.id}`} 
+                  className="group flex flex-col overflow-hidden rounded-[2rem] bg-white/5 ring-1 ring-white/10 transition-all hover:bg-white/10 hover:ring-blue-300/50"
+                >
+                  <div className="relative h-48 shrink-0 overflow-hidden bg-blue-900/30">
+                    <img
+                      src={getImageUrl(item?.Image)}
+                      alt={item.Titre}
+                      onError={e => { e.target.src = "/placeholder.svg?height=400&width=800"; }}
+                      className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                    />
+                    <span className="absolute left-4 top-4 rounded-full bg-blue-400 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-blue-950">
+                      Nouveau
+                    </span>
+                  </div>
+                  
+                  <div className="flex flex-1 flex-col p-6">
+                    <div className="mb-3 flex items-center gap-3 text-xs font-medium text-blue-200">
+                      <Calendar size={14} /> {formatDate(item.datePublication)}
                     </div>
-                    <div className="p-6">
-                      <div className="flex items-center gap-3 mb-3">
-                        <span className="text-xs px-3 py-1 font-bold rounded-full bg-green-600 text-white">
-                          RÉCENT
-                        </span>
-                        <span className="text-xs text-gray-500 flex items-center">
-                          <Calendar className="h-3 w-3 mr-1" />
-                          {item.datePublication ? new Date(item.datePublication).toLocaleDateString("fr-FR") : "Date inconnue"}
-                        </span>
-                      </div>
-                      <h3 className="font-bold text-xl text-gray-800 mb-2">
-                        {item.Titre || `Article récent ${index + 1}`}
-                      </h3>
-                      <p className="text-gray-600 text-sm line-clamp-3 mb-4">
-                        {getTextFromBlocks(item.description)}
-                      </p>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center text-gray-500 text-sm">
-                          <MapPin className="h-4 w-4 mr-1" />
-                          <span>{item.localisation || "Mamou"}</span>
-                        </div>
-                        <div className="text-green-600 text-sm font-medium">
-                          Lire maintenant →
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
-                </div>
+                    <h3 className="mb-3 text-lg font-semibold leading-snug text-white transition-colors group-hover:text-blue-300 line-clamp-2">
+                      {item.Titre || `Article récent ${idx + 1}`}
+                    </h3>
+                    <p className="mb-6 flex-1 text-sm leading-relaxed text-blue-100/75 line-clamp-2">
+                      {getTextFromBlocks(item.description)}
+                    </p>
+                    <span className="mt-auto w-fit border-b border-blue-300/30 pb-1 text-[10px] font-bold uppercase tracking-widest text-blue-300 transition-colors group-hover:border-blue-300">
+                      Lire l'article
+                    </span>
+                  </div>
+                </Link>
               ))}
             </div>
           </div>
-        </div>
+        </section>
       )}
     </div>
-  )
+  );
 }
-
-export default Articles

@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect, useMemo, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Calendar, ChevronRight, ChevronLeft, Share2, Newspaper, ChevronUp, HomeIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
@@ -8,12 +9,14 @@ import { FaFutbol, FaMapPin, FaMoneyBill, FaRunning, FaTrophy, FaWhatsapp, FaFac
 import { FaBasketball, FaVolleyball } from "react-icons/fa6";
 import { toMediaUrl } from "../config/api";
 
+/* ─── Premium Easing ─────────────────────────────────────────────────── */
+const easeOutExpo = [0.16, 1, 0.3, 1];
+
 /* ─── Share Popup Component ──────────────────────────────────────────── */
 const SharePopup = ({ match, onClose }) => {
   const [copied, setCopied] = useState(false);
   const popupRef = useRef(null);
 
-  // Build a shareable game URL
   const gameUrl = `${window.location.origin}/sport`;
   const shareText = `⚽ ${match.equipeDomicile} vs ${match.equipeVisiteuse} — ${match.dateMatch} | ${match.lieu}`;
 
@@ -41,97 +44,64 @@ const SharePopup = ({ match, onClose }) => {
   }, [onClose]);
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-blue-950/65 p-4 backdrop-blur-md">
+      <motion.div
         ref={popupRef}
-        style={{
-          background: "linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%)",
-          border: "1px solid rgba(59,130,246,0.3)",
-          borderRadius: "20px",
-          padding: "32px",
-          width: "100%",
-          maxWidth: "360px",
-          boxShadow: "0 25px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05)",
-          animation: "popIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)",
-        }}
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        transition={{ duration: 0.5, ease: easeOutExpo }}
+        className="relative w-full max-w-sm overflow-hidden rounded-[2rem] bg-blue-950 p-8 shadow-2xl ring-1 ring-white/10"
       >
-        <style>{`
-          @keyframes popIn {
-            from { opacity: 0; transform: scale(0.85) translateY(10px); }
-            to   { opacity: 1; transform: scale(1) translateY(0); }
-          }
-        `}</style>
-        <div style={{ marginBottom: "20px" }}>
-          <p style={{ color: "#94a3b8", fontSize: "11px", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "6px" }}>Partager le match</p>
-          <h3 style={{ color: "#fff", fontWeight: 800, fontSize: "18px", lineHeight: 1.3 }}>
-            {match.equipeDomicile} <span style={{ color: "#0992c2" }}>vs</span> {match.equipeVisiteuse}
+        <div className="mb-6 text-center">
+          <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-blue-200">
+            Partager l'événement
+          </p>
+          <h3 className="text-xl font-light tracking-tight text-white">
+            {match.equipeDomicile} <span className="italic text-blue-300">&</span> {match.equipeVisiteuse}
           </h3>
-          <p style={{ color: "#64748b", fontSize: "13px", marginTop: "4px" }}>{match.dateMatch} · {match.lieu}</p>
+          <p className="mt-2 text-xs text-blue-200/70">
+            {match.dateMatch} · {match.lieu}
+          </p>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-          {/* WhatsApp */}
+        <div className="flex flex-col gap-3">
           <button
             onClick={shareWhatsApp}
-            style={{
-              display: "flex", alignItems: "center", gap: "14px",
-              background: "rgba(37,211,102,0.12)", border: "1px solid rgba(37,211,102,0.3)",
-              borderRadius: "12px", padding: "14px 18px", cursor: "pointer",
-              color: "#25d366", fontWeight: 700, fontSize: "15px",
-              transition: "all 0.2s", width: "100%",
-            }}
-            onMouseEnter={e => e.currentTarget.style.background = "rgba(37,211,102,0.22)"}
-            onMouseLeave={e => e.currentTarget.style.background = "rgba(37,211,102,0.12)"}
+            className="group flex w-full items-center gap-4 rounded-2xl bg-[#25D366]/10 px-5 py-3.5 text-sm font-medium text-[#25D366] transition-all hover:bg-[#25D366]/20"
           >
-            <FaWhatsapp size={22} />
-            Partager sur WhatsApp
+            <FaWhatsapp size={18} className="transition-transform group-hover:scale-110" />
+            WhatsApp
           </button>
 
-          {/* Facebook */}
           <button
             onClick={shareFacebook}
-            style={{
-              display: "flex", alignItems: "center", gap: "14px",
-              background: "rgba(24,119,242,0.12)", border: "1px solid rgba(24,119,242,0.3)",
-              borderRadius: "12px", padding: "14px 18px", cursor: "pointer",
-              color: "#1877f2", fontWeight: 700, fontSize: "15px",
-              transition: "all 0.2s", width: "100%",
-            }}
-            onMouseEnter={e => e.currentTarget.style.background = "rgba(24,119,242,0.22)"}
-            onMouseLeave={e => e.currentTarget.style.background = "rgba(24,119,242,0.12)"}
+            className="group flex w-full items-center gap-4 rounded-2xl bg-[#1877F2]/10 px-5 py-3.5 text-sm font-medium text-[#1877F2] transition-all hover:bg-[#1877F2]/20"
           >
-            <FaFacebook size={22} />
-            Partager sur Facebook
+            <FaFacebook size={18} className="transition-transform group-hover:scale-110" />
+            Facebook
           </button>
 
-          {/* Copy Link */}
           <button
             onClick={copyLink}
-            style={{
-              display: "flex", alignItems: "center", gap: "14px",
-              background: copied ? "rgba(99,102,241,0.2)" : "rgba(255,255,255,0.06)",
-              border: copied ? "1px solid rgba(99,102,241,0.5)" : "1px solid rgba(255,255,255,0.1)",
-              borderRadius: "12px", padding: "14px 18px", cursor: "pointer",
-              color: copied ? "#818cf8" : "#94a3b8", fontWeight: 700, fontSize: "15px",
-              transition: "all 0.2s", width: "100%",
-            }}
+            className={`group flex w-full items-center gap-4 rounded-2xl px-5 py-3.5 text-sm font-medium transition-all ${
+              copied
+                ? "bg-blue-400/15 text-blue-200"
+                : "bg-white/5 text-blue-100 hover:bg-white/10"
+            }`}
           >
-            <FaLink size={18} />
+            <FaLink size={16} className={copied ? "" : "transition-transform group-hover:scale-110"} />
             {copied ? "Lien copié ✓" : "Copier le lien"}
           </button>
         </div>
 
         <button
           onClick={onClose}
-          style={{
-            marginTop: "20px", width: "100%", background: "transparent",
-            border: "none", color: "#475569", fontSize: "14px",
-            cursor: "pointer", padding: "8px",
-          }}
+          className="mt-6 w-full text-xs font-medium uppercase tracking-wider text-blue-200/70 transition-colors hover:text-blue-100"
         >
-          Annuler
+          Fermer
         </button>
-      </div>
+      </motion.div>
     </div>
   );
 };
@@ -140,213 +110,106 @@ const SharePopup = ({ match, onClose }) => {
 const MatchCard = ({ match, getStatusBadgeStyle }) => {
   const [shareOpen, setShareOpen] = useState(false);
   
-  // Normalize status for comparison (handles "En cours", "en_cours", "en cours")
   const statusLower = match.statut?.toLowerCase().replace(" ", "_") || "";
   const isLive = statusLower === "en_cours";
   const isScheduled = statusLower === "programme" || statusLower === "programmé";
-  
-  // Use the original status for display, or formatted
   const displayStatus = match.statut;
 
   return (
     <>
-      {shareOpen && <SharePopup match={match} onClose={() => setShareOpen(false)} />}
+      <AnimatePresence>
+        {shareOpen && <SharePopup match={match} onClose={() => setShareOpen(false)} />}
+      </AnimatePresence>
 
-      <div
-        style={{
-          background: "linear-gradient(145deg, #0f172a 0%, #1a2d4a 60%, #0f2340 100%)",
-          borderRadius: "20px",
-          overflow: "hidden",
-          border: "1px solid rgba(59,130,246,0.15)",
-          boxShadow: isLive
-            ? "0 8px 32px rgba(239,68,68,0.15), 0 2px 8px rgba(0,0,0,0.4)"
-            : "0 8px 32px rgba(0,0,0,0.3)",
-          transition: "transform 0.3s ease, box-shadow 0.3s ease",
-          position: "relative",
-          fontFamily: "'Barlow Condensed', sans-serif",
-        }}
-        onMouseEnter={e => {
-          e.currentTarget.style.transform = "translateY(-6px)";
-          e.currentTarget.style.boxShadow = isLive
-            ? "0 20px 48px rgba(239,68,68,0.2), 0 4px 16px rgba(0,0,0,0.5)"
-            : "0 20px 48px rgba(59,130,246,0.2), 0 4px 16px rgba(0,0,0,0.5)";
-        }}
-        onMouseLeave={e => {
-          e.currentTarget.style.transform = "translateY(0)";
-          e.currentTarget.style.boxShadow = isLive
-            ? "0 8px 32px rgba(239,68,68,0.15), 0 2px 8px rgba(0,0,0,0.4)"
-            : "0 8px 32px rgba(0,0,0,0.3)";
-        }}
+      <motion.div
+        whileHover={{ y: -6 }}
+        transition={{ duration: 0.4, ease: easeOutExpo }}
+        className="group relative flex flex-col overflow-hidden rounded-[2rem] bg-white shadow-lg shadow-blue-100/70 ring-1 ring-blue-100 transition-shadow hover:shadow-xl hover:shadow-blue-200/80"
       >
-        {/* Top accent line */}
-        <div style={{
-          height: "3px",
-          background: isLive
-            ? "linear-gradient(90deg, #ef4444, #f97316)"
-            : isScheduled
-            ? "linear-gradient(90deg, #eab308, #f59e0b)"
-            : "linear-gradient(90deg, #0992c2, #43bfd8)",
-        }} />
+        {/* Top Accent Line */}
+        <div className={`h-1 w-full ${
+          isLive ? "bg-gradient-to-r from-blue-700 to-blue-500"
+          : isScheduled ? "bg-gradient-to-r from-blue-400 to-blue-300"
+          : "bg-gradient-to-r from-blue-200 to-blue-100"
+        }`} />
 
-        {/* Header row: date + status + share */}
-        <div style={{
-          display: "flex", justifyContent: "space-between", alignItems: "center",
-          padding: "14px 18px 0",
-        }}>
-          <span style={{ color: "#64748b", fontSize: "12px", fontWeight: 600, letterSpacing: "0.05em" }}>
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 pt-6 pb-2">
+          <span className="text-xs font-semibold tracking-wider text-blue-700 uppercase">
             {match.dateMatch}
           </span>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <span style={{
-              padding: "3px 10px",
-              borderRadius: "999px",
-              fontSize: "11px",
-              fontWeight: 700,
-              letterSpacing: "0.06em",
-              textTransform: "uppercase",
-              ...getStatusBadgeStyle(match.statut),
-              ...(isLive ? { animation: "pulse 1.5s infinite" } : {}),
-            }}>
-              {isLive && <span style={{ marginRight: "4px" }}>●</span>}
+          <div className="flex items-center gap-3">
+            <span 
+              className="flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider"
+              style={getStatusBadgeStyle(match.statut)}
+            >
+              {isLive && <span className="h-1.5 w-1.5 rounded-full bg-blue-600 animate-pulse" />}
               {displayStatus}
             </span>
             <button
               onClick={() => setShareOpen(true)}
-              style={{
-                background: "rgba(59,130,246,0.1)",
-                border: "1px solid rgba(59,130,246,0.25)",
-                borderRadius: "8px",
-                padding: "5px 8px",
-                cursor: "pointer",
-                color: "#60a5fa",
-                display: "flex",
-                alignItems: "center",
-                transition: "all 0.2s",
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.background = "rgba(59,130,246,0.25)";
-                e.currentTarget.style.color = "#93c5fd";
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.background = "rgba(59,130,246,0.1)";
-                e.currentTarget.style.color = "#60a5fa";
-              }}
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-50 text-blue-500 transition-colors hover:bg-blue-100 hover:text-blue-700"
               title="Partager ce match"
             >
-              <Share2 size={13} />
+              <Share2 size={14} />
             </button>
           </div>
         </div>
 
         {/* Teams & Score */}
-        <div style={{ padding: "18px 18px 16px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          {/* Home team */}
-          <div style={{ flex: 1, textAlign: "center" }}>
-            <div style={{
-              width: "48px", height: "48px", borderRadius: "50%",
-              background: "rgba(59,130,246,0.15)",
-              border: "2px solid rgba(59,130,246,0.3)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              margin: "0 auto 10px",
-              fontSize: "20px",
-            }}>
+        <div className="flex flex-1 items-center justify-between px-6 py-6">
+          <div className="flex flex-1 flex-col items-center text-center">
+            <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-blue-50 text-2xl shadow-sm ring-1 ring-blue-100/60">
               🏠
             </div>
-            <h3 style={{
-              color: "#e2e8f0",
-              fontWeight: 800,
-              fontSize: "15px",
-              lineHeight: 1.2,
-              letterSpacing: "0.01em",
-            }}>
+            <h3 className="text-sm font-semibold tracking-tight text-blue-900 line-clamp-2">
               {match.equipeDomicile}
             </h3>
           </div>
 
-          {/* Score / VS */}
-          <div style={{
-            flex: "0 0 auto",
-            textAlign: "center",
-            padding: "0 12px",
-          }}>
+          <div className="flex shrink-0 flex-col items-center justify-center px-4">
             {isScheduled ? (
-              <div style={{
-                background: "rgba(234,179,8,0.1)",
-                border: "2px solid rgba(234,179,8,0.3)",
-                borderRadius: "12px",
-                padding: "10px 16px",
-              }}>
-                <span style={{ color: "#fbbf24", fontWeight: 900, fontSize: "22px", letterSpacing: "0.05em" }}>VS</span>
+              <div className="rounded-2xl border border-blue-100 bg-blue-50 px-4 py-2">
+                <span className="text-sm font-medium italic text-blue-500">vs</span>
               </div>
             ) : (
-              <div style={{
-                background: "#fbbf24",
-                border: "2px solid rgba(59,130,246,0.2)",
-                borderRadius: "14px",
-                padding: "8px 14px",
-                minWidth: "90px",
-              }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "4px" }}>
-                  <span style={{ color: "#000", fontWeight: 900, fontSize: "32px", lineHeight: 1 }}>
-                    {match.scoreDomicile}
-                  </span>
-                  <span style={{ color: "#475569", fontWeight: 700, fontSize: "20px", margin: "0 2px" }}>–</span>
-                  <span style={{ color: "#000", fontWeight: 900, fontSize: "32px", lineHeight: 1 }}>
-                    {match.scoreVisiteur}
-                  </span>
+              <div className="flex flex-col items-center">
+                <div className="flex items-center gap-3 rounded-2xl bg-blue-900 px-5 py-2.5 shadow-md">
+                  <span className="text-2xl font-light text-white">{match.scoreDomicile}</span>
+                  <span className="text-blue-200/70">-</span>
+                  <span className="text-2xl font-light text-white">{match.scoreVisiteur}</span>
                 </div>
                 {isLive && (
-                  <div style={{ textAlign: "center", marginTop: "4px" }}>
-                    <span style={{ color: "#ef4444", fontSize: "10px", fontWeight: 700, letterSpacing: "0.1em" }}>EN DIRECT</span>
-                  </div>
+                  <span className="mt-2 text-[10px] font-bold tracking-[0.2em] text-blue-600 uppercase">
+                    En Direct
+                  </span>
                 )}
               </div>
             )}
           </div>
 
-          {/* Away team */}
-          <div style={{ flex: 1, textAlign: "center" }}>
-            <div style={{
-              width: "48px", height: "48px", borderRadius: "50%",
-              background: "rgba(6,182,212,0.15)",
-              border: "2px solid rgba(6,182,212,0.3)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              margin: "0 auto 10px",
-              fontSize: "20px",
-            }}>
+          <div className="flex flex-1 flex-col items-center text-center">
+            <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-blue-50 text-2xl shadow-sm ring-1 ring-blue-100/60">
               ✈️
             </div>
-            <h3 style={{
-              color: "#e2e8f0",
-              fontWeight: 800,
-              fontSize: "15px",
-              lineHeight: 1.2,
-              letterSpacing: "0.01em",
-            }}>
+            <h3 className="text-sm font-semibold tracking-tight text-blue-900 line-clamp-2">
               {match.equipeVisiteuse}
             </h3>
           </div>
         </div>
 
-        {/* Footer: venue + price */}
-        <div style={{
-          borderTop: "1px solid rgba(255,255,255,0.06)",
-          background: "rgba(0,0,0,0.2)",
-          padding: "10px 18px",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "#64748b", fontSize: "12px", fontWeight: 600 }}>
-            <FaMapPin size={11} style={{ color: "#0992c2" }} />
-            <span style={{ color: "#94a3b8" }}>{match.lieu}</span>
+        {/* Footer */}
+        <div className="mt-auto flex items-center justify-between border-t border-blue-100 bg-blue-50/70 px-6 py-4">
+          <div className="flex items-center gap-2 text-xs font-medium text-blue-700">
+            <FaMapPin className="text-blue-500" />
+            <span className="truncate max-w-[120px]">{match.lieu}</span>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "12px", fontWeight: 700 }}>
-            <FaMoneyBill size={11} style={{ color: "#22c55e" }} />
-            <span style={{ color: "#86efac" }}>{match.fraisEntree}</span>
+          <div className="flex items-center gap-2 text-xs font-semibold text-blue-900">
+            <FaMoneyBill className="text-blue-600" />
+            <span>{match.fraisEntree}</span>
           </div>
         </div>
-      </div>
+      </motion.div>
     </>
   );
 };
@@ -361,10 +224,7 @@ const Sport = ({ matchs = [], news = [] }) => {
   const getCarouselImages = () => {
     const newsImages = news
       .filter(item => item.imageSport && item.imageSport.length > 0)
-      .map(item => {
-        const imageUrl = item.imageSport[0].url;
-        return toMediaUrl(imageUrl);
-      });
+      .map(item => toMediaUrl(item.imageSport[0].url));
     if (newsImages.length > 0) return newsImages.slice(0, 3);
     return [
       "https://images.pexels.com/photos/164332/pexels-photo-164332.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
@@ -379,7 +239,7 @@ const Sport = ({ matchs = [], news = [] }) => {
     if (carouselImages.length > 1) {
       const timer = setInterval(() => {
         setCurrentImageIndex(prev => (prev + 1) % carouselImages.length);
-      }, 10000);
+      }, 8000);
       return () => clearInterval(timer);
     }
   }, [carouselImages.length]);
@@ -424,20 +284,17 @@ const Sport = ({ matchs = [], news = [] }) => {
   const filteredMatches = matchs.filter(match => match.typeSport === activeTab);
 
   const getStatusBadgeStyle = (status) => {
-    // Normalize string to allow matching both "En cours" and "en_cours"
     const s = status?.toLowerCase().replace(" ", "_") || "";
-    
     if (s === "terminé" || s === "terminer") {
-       return { background: "rgba(100,116,139,0.15)", color: "#94a3b8", border: "1px solid rgba(100,116,139,0.3)" };
+       return { background: "var(--brand-50)", color: "var(--brand-700)", border: "1px solid var(--brand-200)" };
     }
     if (s === "en_cours") {
-       return { background: "rgba(239,68,68,0.15)", color: "#fca5a5", border: "1px solid rgba(239,68,68,0.4)" };
+       return { background: "var(--brand-100)", color: "var(--brand-800)", border: "1px solid var(--brand-300)" };
     }
     if (s === "programme" || s === "programmé") {
-       return { background: "rgba(234,179,8,0.12)", color: "#fbbf24", border: "1px solid rgba(234,179,8,0.35)" };
+       return { background: "var(--brand-50)", color: "var(--brand-600)", border: "1px solid var(--brand-200)" };
     }
-    // Default
-    return { background: "rgba(100,116,139,0.15)", color: "#94a3b8", border: "1px solid rgba(100,116,139,0.3)" };
+    return { background: "var(--brand-50)", color: "var(--brand-700)", border: "1px solid var(--brand-200)" };
   };
 
   const getTextFromBlock = (content) => {
@@ -447,8 +304,7 @@ const Sport = ({ matchs = [], news = [] }) => {
 
   const getImageUrl = (imageArray) => {
     if (!imageArray || !imageArray.length) return "/placeholder.svg?height=400&width=600";
-    const imageUrl = imageArray[0].url;
-    return toMediaUrl(imageUrl);
+    return toMediaUrl(imageArray[0].url);
   };
 
   useEffect(() => {
@@ -460,102 +316,115 @@ const Sport = ({ matchs = [], news = [] }) => {
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
   return (
-    <div className="min-h-screen bg-gray-50 text-white font-[poppins]">
+    <div className="min-h-screen bg-blue-50 font-sans text-blue-950" style={{ fontFamily: "'Poppins', sans-serif" }}>
       <Helmet>
         <title>Sport à Mamou | Ville de Mamou</title>
-        <meta
-          name="description"
-          content="Suivez les matchs, résultats et actualités sportives de Mamou avec les informations clés sur les équipes et événements locaux."
-        />
+        <meta name="description" content="Suivez les matchs, résultats et actualités sportives de Mamou avec les informations clés sur les équipes et événements locaux." />
       </Helmet>
+      
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&display=swap');
-        @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.5; } }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>
 
       <NavBar />
 
-      {/* Hero */}
-      <header className="relative min-h-[400px] md:min-h-[600px] flex items-center text-white pt-20">
-        <div className="absolute inset-0 bg-black overflow-hidden">
+      {/* Hero Section */}
+      <header className="relative flex min-h-[70vh] items-center justify-center overflow-hidden pt-20">
+        <div className="absolute inset-0 bg-blue-950">
           {carouselImages.map((src, index) => (
             <img
               key={`${src}-${index}`}
               src={src}
               alt="Sports background"
-              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${index === currentImageIndex ? "opacity-100" : "opacity-0"}`}
+              className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ease-in-out ${index === currentImageIndex ? "opacity-100" : "opacity-0"}`}
               onError={e => { e.target.src = "https://images.pexels.com/photos/164332/pexels-photo-164332.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"; }}
             />
           ))}
         </div>
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-blue-900/40 to-transparent" />
-        <div className="relative container mx-auto px-4 z-10">
-          <div className="max-w-3xl">
-            <div className="flex items-center text-sm mb-4 text-gray-300">
-              <HomeIcon className="mr-2 h-4 w-4" />
-              <span>Accueil de Mamou</span>
-              <ChevronRight className="mx-2 h-3 w-3" />
-              <span className="font-semibold text-white">Sport</span>
+        
+        {/* Cinematic Vignette */}
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-950/35 via-blue-900/55 to-blue-950/90" />
+
+        <div className="relative z-10 w-full max-w-7xl px-6 pb-20 pt-32 text-center text-white">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: easeOutExpo }}
+            className="mx-auto flex max-w-3xl flex-col items-center"
+          >
+            <div className="mb-6 flex items-center space-x-2 text-xs font-semibold tracking-widest text-blue-100 uppercase">
+              <HomeIcon className="h-3 w-3" />
+              <span>Accueil</span>
+              <ChevronRight className="h-3 w-3 text-blue-300/70" />
+              <span className="text-blue-300">Sport</span>
             </div>
-            <h1 className="text-4xl md:text-6xl font-extrabold mb-4 tracking-tight">Actualités et Matchs Sportifs à Mamou</h1>
-            <p className="text-lg md:text-xl text-gray-200 mb-8 max-w-2xl">
-              Suivez les résultats, les actualités et les événements sportifs de votre ville.
+            
+            <h1 className="mb-6 text-5xl font-semibold leading-tight tracking-tight md:text-7xl">
+              Vivez l'Émotion <br /> <span className="italic text-yellow-300">Sportive</span> à Mamou
+            </h1>
+            
+            <p className="mb-10 max-w-xl text-base font-normal leading-relaxed text-blue-100/85 md:text-lg">
+              Suivez les résultats en direct, découvrez les actualités et ne manquez aucun événement de votre ville.
             </p>
-            <div className="flex flex-wrap gap-4">
-              <button className="bg-gradient-to-r from-yellow-600 to-yellow-300 hover:from-yellow-700 hover:to-yellow-700 text-black rounded-full px-6 py-3 font-semibold flex items-center transition-all duration-300 shadow-lg hover:shadow-xl">
-                <Calendar className="mr-2 h-5 w-5" />
+            
+            <div className="flex flex-col sm:flex-row items-center gap-4">
+              <button className="group flex items-center gap-3 rounded-full bg-yellow-500 px-8 py-4 text-sm font-semibold text-black transition-all hover:bg-yellow-600">
+                <Calendar size={18} className="text-white" />
                 Calendrier des matchs
               </button>
-              <button className="bg-white/10 hover:bg-white/20 flex items-center rounded-full font-medium transition-colors backdrop-blur-sm px-6 py-3">
-                <Share2 className="mr-2 h-5 w-5" />
+              <button className="group flex items-center gap-3 rounded-full border border-blue-100/40 bg-white/10 px-8 py-4 text-sm font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/15 hover:border-blue-100/70">
+                <Share2 size={18} className="text-blue-100 group-hover:text-white" />
                 Partager
               </button>
             </div>
-          </div>
+          </motion.div>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-16">
+      <main className="mx-auto max-w-7xl px-6 py-20">
+        
         {/* Sport Tabs */}
         <section className="mb-16">
           {sportTypes.length > 0 ? (
-            <div className="flex items-center border-b border-gray-200 overflow-x-auto pb-2 scrollbar-hide">
-              {sportTypes.map(sport => (
-                <button
-                  key={sport.name}
-                  className={`flex items-center px-5 py-3 rounded-full whitespace-nowrap mr-3 transition-all duration-300 text-base font-semibold ${
-                    activeTab === sport.name
-                      ? "bg-gradient-to-r from-blue-600 to-blue-400 text-white shadow-md"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}
-                  onClick={() => setActiveTab(sport.name)}
-                >
-                  <sport.icon className="mr-2 h-5 w-5" />
-                  {sport.name}
-                </button>
-              ))}
+            <div className="flex items-center justify-start md:justify-center overflow-x-auto pb-4 scrollbar-hide">
+              <div className="flex space-x-2 rounded-full border border-blue-100 bg-white p-1.5 shadow-sm shadow-blue-100/60">
+                {sportTypes.map(sport => (
+                  <button
+                    key={sport.name}
+                    onClick={() => setActiveTab(sport.name)}
+                    className={`flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all duration-300 ${
+                      activeTab === sport.name
+                        ? "bg-blue-900 text-white shadow-md"
+                        : "text-blue-700 hover:bg-blue-50 hover:text-blue-900"
+                    }`}
+                  >
+                    <sport.icon size={16} />
+                    {sport.name}
+                  </button>
+                ))}
+              </div>
             </div>
           ) : (
-            <div className="text-center py-8">
-              <p className="text-gray-500">Aucun sport disponible pour le moment.</p>
-            </div>
+            <div className="py-8 text-center text-blue-700">Aucun sport disponible pour le moment.</div>
           )}
         </section>
 
-        {/* Match Cards */}
+        {/* Match Cards Grid */}
         <section className="mb-24">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-800 mb-8 flex items-center">
-            <FaTrophy className="mr-3 text-yellow-500" />
-            Derniers Résultats
-          </h2>
+          <div className="mb-10 flex items-center gap-4">
+            <h2 className="text-3xl font-semibold tracking-tight text-blue-950">
+              Derniers <span className="italic text-blue-600">Résultats</span>
+            </h2>
+            <div className="h-px flex-1 bg-blue-100" />
+          </div>
+
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {filteredMatches.length === 0 ? (
-              <div className="text-center py-20 bg-white rounded-2xl shadow-sm col-span-full">
-                <FaTrophy className="h-20 w-20 text-gray-300 mx-auto mb-6" />
-                <h3 className="text-2xl font-bold text-gray-600 mb-4">Aucun match trouvé</h3>
-                <p className="text-gray-500 text-lg">
+              <div className="col-span-full flex flex-col items-center justify-center rounded-[2rem] bg-white py-24 shadow-sm ring-1 ring-blue-100">
+                <FaTrophy className="mb-6 text-4xl text-blue-200" />
+                <h3 className="mb-2 text-xl font-medium text-blue-900">Aucun match trouvé</h3>
+                <p className="text-sm text-blue-700">
                   {sportTypes.length === 0
                     ? "Aucun match disponible pour le moment."
                     : "Veuillez sélectionner un autre sport ou vérifier ultérieurement."}
@@ -571,93 +440,117 @@ const Sport = ({ matchs = [], news = [] }) => {
 
         {/* News Section */}
         <section className="mb-16">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-800 mb-8 flex items-center">
-            <Newspaper className="mr-3 text-blue-600" />
-            Actualités Sportives
-          </h2>
+          <div className="mb-10 flex items-center gap-4">
+            <h2 className="text-3xl font-semibold tracking-tight text-blue-950">
+              Actualités <span className="italic text-blue-600">Sportives</span>
+            </h2>
+            <div className="h-px flex-1 bg-blue-100" />
+          </div>
+
           <div className="relative">
             {news.length === 0 ? (
-              <div className="text-center py-20 bg-white rounded-2xl shadow-sm">
-                <Newspaper className="h-20 w-20 text-gray-300 mx-auto mb-6" />
-                <h3 className="text-2xl font-bold text-gray-600 mb-4">Aucune actualité trouvée</h3>
-                <p className="text-gray-500 text-lg">Veuillez vérifier ultérieurement pour les dernières nouvelles.</p>
+              <div className="col-span-full flex flex-col items-center justify-center rounded-[2rem] bg-white py-24 shadow-sm ring-1 ring-blue-100">
+                <Newspaper className="mb-6 h-10 w-10 text-blue-200" />
+                <h3 className="mb-2 text-xl font-medium text-blue-900">Aucune actualité trouvée</h3>
+                <p className="text-sm text-blue-700">Veuillez vérifier ultérieurement pour les dernières nouvelles.</p>
               </div>
             ) : (
-              <>
-                <div className="bg-white rounded-2xl shadow-lg overflow-hidden md:flex items-center border border-gray-100">
-                  <div className="md:w-1/2 lg:w-3/5">
-                    <img
-                      src={getImageUrl(activeNews?.imageSport)}
-                      alt={activeNews?.titleSport || "Actualité sportive"}
-                      className="w-full h-64 md:h-full object-cover"
-                      onError={e => { e.target.src = "/placeholder.svg?height=400&width=600"; }}
-                    />
-                  </div>
-                  <div className="p-6 md:p-8 md:w-1/2 lg:w-2/5">
-                    <div className="flex items-center mb-3">
-                      <span className="bg-blue-100 text-blue-700 text-xs px-3 py-1 rounded-full font-semibold">
-                        {activeNews?.sportTitle || "Sport"}
-                      </span>
-                      <span className="text-gray-500 text-sm ml-4">{activeNews?.dateSport}</span>
-                    </div>
-                    <h3 className="text-2xl font-bold mb-4 text-gray-900">{activeNews?.titleSport}</h3>
-                    <p className="text-gray-600 mb-6">{getTextFromBlock(activeNews?.contentSport)}</p>
-                    
-                    {/* Fixed nested button inside Link issue */}
-                    <Link to={`/blog/sport/${activeNews?.id}`} className="inline-block">
-                      <span className="font-semibold text-blue-600 hover:text-blue-800 transition-colors flex items-center cursor-pointer">
-                        Lire plus
-                        <ChevronRight className="ml-1 h-4 w-4" />
-                      </span>
-                    </Link>
-                    
-                  </div>
+              <div className="group relative overflow-hidden rounded-[2rem] bg-white shadow-xl shadow-blue-100/70 ring-1 ring-blue-100 md:flex md:h-[450px]">
+                
+                {/* Image Side */}
+                <div className="relative md:w-1/2 lg:w-3/5">
+                  <img
+                    src={getImageUrl(activeNews?.imageSport)}
+                    alt={activeNews?.titleSport || "Actualité sportive"}
+                    className="h-72 w-full object-cover transition-transform duration-700 group-hover:scale-105 md:h-full"
+                    onError={e => { e.target.src = "/placeholder.svg?height=400&width=600"; }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-60 md:hidden" />
                 </div>
+
+                {/* Content Side */}
+                <div className="relative flex flex-col justify-center p-8 md:w-1/2 md:p-12 lg:w-2/5">
+                  <div className="mb-4 flex items-center gap-4">
+                    <span className="rounded-full bg-blue-50 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-blue-700">
+                      {activeNews?.sportTitle || "Sport"}
+                    </span>
+                    <span className="text-xs font-medium text-blue-500">{activeNews?.dateSport}</span>
+                  </div>
+                  
+                  <h3 className="mb-4 text-2xl font-semibold leading-snug tracking-tight text-blue-950 md:text-3xl">
+                    {activeNews?.titleSport}
+                  </h3>
+                  
+                  <p className="mb-8 line-clamp-3 text-sm leading-relaxed text-blue-700 md:text-base">
+                    {getTextFromBlock(activeNews?.contentSport)}
+                  </p>
+                  
+                  {/* Fixed nested button inside Link structural issue */}
+                  <Link 
+                    to={`/blog/sport/${activeNews?.id}`} 
+                    className="inline-flex w-fit items-center gap-2 text-sm font-semibold tracking-wide text-blue-900 transition-colors hover:text-blue-600"
+                  >
+                    Lire l'article
+                    <ChevronRight size={16} />
+                  </Link>
+                </div>
+
+                {/* Slider Controls */}
                 {news.length > 1 && (
-                  <>
+                  <div className="absolute bottom-6 right-6 flex items-center gap-2 md:bottom-8 md:right-8">
                     <button
                       onClick={() => navigateNews("prev")}
-                      className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-4 bg-white/80 backdrop-blur-sm rounded-full p-3 shadow-lg text-gray-700 hover:bg-white z-20"
+                      className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-blue-700 shadow-md ring-1 ring-blue-100 transition-transform hover:scale-105"
                       aria-label="Article précédent"
                     >
-                      <ChevronLeft className="h-6 w-6" />
+                      <ChevronLeft size={18} />
                     </button>
                     <button
                       onClick={() => navigateNews("next")}
-                      className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-4 bg-white/80 backdrop-blur-sm rounded-full p-3 shadow-lg text-gray-700 hover:bg-white z-20"
+                      className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-900 text-white shadow-md transition-transform hover:scale-105"
                       aria-label="Article suivant"
                     >
-                      <ChevronRight className="h-6 w-6" />
+                      <ChevronRight size={18} />
                     </button>
-                    <div className="flex justify-center mt-6">
-                      {news.map((_, index) => (
-                        <button
-                          key={index}
-                          onClick={() => setActiveNewsIndex(index)}
-                          className={`w-3 h-3 rounded-full mx-1.5 transition-all duration-300 ${
-                            activeNewsIndex === index ? "bg-blue-600 scale-125" : "bg-gray-300 hover:bg-gray-400"
-                          }`}
-                          aria-label={`Aller à l'article ${index + 1}`}
-                        />
-                      ))}
-                    </div>
-                  </>
+                  </div>
                 )}
-              </>
+              </div>
+            )}
+            
+            {/* Pagination Dots */}
+            {news.length > 1 && (
+              <div className="mt-8 flex justify-center gap-2">
+                {news.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setActiveNewsIndex(index)}
+                    className={`h-1.5 rounded-full transition-all duration-300 ${
+                      activeNewsIndex === index ? "w-6 bg-blue-900" : "w-1.5 bg-blue-200 hover:bg-blue-400"
+                    }`}
+                    aria-label={`Aller à l'article ${index + 1}`}
+                  />
+                ))}
+              </div>
             )}
           </div>
         </section>
       </main>
 
-      {showScrollTop && (
-        <button
-          onClick={scrollToTop}
-          className="fixed bottom-8 right-8 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-2xl transition-all duration-300 hover:scale-110 z-50"
-          aria-label="Retourner en haut"
-        >
-          <ChevronUp className="h-6 w-6" />
-        </button>
-      )}
+      {/* Elegant Scroll to Top */}
+      <AnimatePresence>
+        {showScrollTop && (
+          <motion.button
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            onClick={scrollToTop}
+            className="fixed bottom-8 right-8 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-blue-900 text-white shadow-xl shadow-blue-900/20 transition-transform hover:scale-110 focus:outline-none"
+            aria-label="Retourner en haut"
+          >
+            <ChevronUp size={20} />
+          </motion.button>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

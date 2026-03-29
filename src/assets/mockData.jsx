@@ -1,10 +1,11 @@
 export const Highlight = [
-    "La vie pas chere",
-    "Les hotels aussi",
-    "Les restaurants aussi",
-    "Les transports aussi",
-    "Les activites aussi",
+    "Un coût de la vie abordable",
+    "Des hébergements accessibles",
+    "Une restauration variée et conviviale",
+    "Des transports disponibles et pratiques",
+    "De nombreuses activités à découvrir",
 ]
+import ImageIst from "../assets/images/ist.png"
 export const Logos = [
     {
         id: 1,
@@ -30,6 +31,11 @@ export const Logos = [
         id: 5,
         name: "Espace TV",
         logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSonjYHHVM-VG7PVItShzBDvzBOC6HLS559PA&s'
+    },
+    {
+        id: 6,
+        name: "IST de Mamou",
+        logo: ImageIst
     }
 ]
 export const Activities = [
