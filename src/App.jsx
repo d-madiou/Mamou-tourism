@@ -123,8 +123,8 @@ function App() {
       <div style={{ display: "flex" }}>
         <div style={{ flex: 1 }}>
           <Routes>
-            <Route path="/" element={<Home activities={activities} galleryData={galleryData} policeData={policeData}/>} />
-            <Route path="/tourism" element={<Home activities={activities} galleryData={galleryData} policeData={policeData}/>} />
+            <Route path="/" element={<Home activities={activities} events={events} restaurants={restaurants} hotels={hotels} places={places} galleryData={galleryData} policeData={policeData}/>} />
+            <Route path="/tourism" element={<Home activities={activities} events={events} restaurants={restaurants} hotels={hotels} places={places} galleryData={galleryData} policeData={policeData}/>} />
             <Route path="/mairie" element={<Mairie />} />
             <Route path="/administration" element={<Administration documents={documents} officials={official} />} />
             <Route path="/articles" element={<Articles data={articles} loading={blogsLoading} error={blogsError} isStandalonePage/>} />

@@ -57,6 +57,7 @@ const CSS = `
     background: var(--surface);
     font-family: 'Outfit', system-ui, sans-serif;
     color: var(--ink);
+    overflow-x: hidden;
   }
 
   /* ── Typography helpers ─────────────────────── */
@@ -173,7 +174,7 @@ const CSS = `
     transition: background 0.2s;
     white-space: nowrap;
   }
-  .btn-filter:hover { background: #e0be6b; }
+  .btn-filter:hover { background: #fbbf24; }
   .filter-chips {
     display: flex; flex-wrap: wrap; gap: 7px;
     padding-top: 4px;
@@ -326,7 +327,9 @@ const CSS = `
     font-family: 'Outfit', sans-serif;
     font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
     color: var(--white);
-    white-space: nowrap;
+    white-space: normal;
+    text-align: center;
+    max-width: min(100%, 1000px);
   }
 
   /* ── Document Cards ─────────────────────────── */
@@ -490,6 +493,8 @@ const CSS = `
     .contact-cell:nth-child(odd) { border-right: 1px solid rgba(255,255,255,0.07); }
     .off-grid-lg { grid-template-columns: 1fr 1fr; }
     .doc-grid    { grid-template-columns: 1fr; }
+    .group-banner { gap: 10px; }
+    .group-banner-pill { padding: 10px 14px; font-size: 10px; letter-spacing: 0.08em; }
   }
   @media (max-width: 560px) {
     .contact-strip-inner { grid-template-columns: 1fr; }
@@ -498,6 +503,9 @@ const CSS = `
     .off-grid-sm { grid-template-columns: 1fr 1fr; }
     .search-inner { flex-direction: column; }
     .btn-filter  { justify-content: center; padding: 13px 16px; }
+    .group-banner { align-items: stretch; }
+    .group-banner-rule { display: none; }
+    .group-banner-pill { width: 100%; justify-content: center; }
   }
   @media (max-width: 360px) { .off-grid-sm { grid-template-columns: 1fr; } }
 `;
@@ -735,7 +743,7 @@ const Administration = ({ documents = [], officials = [] }) => {
     { q: "Combien de temps faut-il pour obtenir un document?",          a: "Les délais varient : 2-3 jours pour les certificats simples, 5-7 jours pour les actes d'état civil, jusqu'à 15 jours pour les documents complexes." },
     { q: "Puis-je faire une demande en ligne?",                         a: "Certaines démarches peuvent être initiées en ligne, mais la plupart nécessitent une visite en personne pour la vérification et la signature." },
     { q: "Quels sont les moyens de paiement acceptés?",                 a: "Nous acceptons les paiements en espèces, par chèque, et par mobile money (Orange Money, MTN Money)." },
-    { q: "Comment contacter un élu spécifique?",                        a: "Prenez rendez-vous via notre secrétariat au +224 12 345 6789 ou envoyez un email à admin@mamou.gov.gn." },
+    { q: "Comment contacter un élu spécifique?",                        a: "Prenez rendez-vous via notre secrétariat au +224 620 15 04 81 ou envoyez un email à admin@mamou.gov.gn." },
   ];
 
   /* ─────────────────── RENDER ─────────────────── */
@@ -820,8 +828,8 @@ const Administration = ({ documents = [], officials = [] }) => {
         <div className="contact-strip-inner">
           {[
             { Icon: Clock,  label: "Horaires",  value: "Lun–Ven : 8h–16h",      color: "var(--gold)"    },
-            { Icon: Phone,  label: "Téléphone", value: "+224 12 345 6789",       color: "#4ade80"        },
-            { Icon: Mail,   label: "Email",     value: "admin@mamou.gov.gn",     color: "#60a5fa"        },
+            { Icon: Phone,  label: "Téléphone", value: "+224 620 15 04 81",       color: "#4ade80"        },
+            { Icon: Mail,   label: "Email",     value: "contact@villedemamou.com",     color: "#60a5fa"        },
             { Icon: MapPin, label: "Adresse",   value: "Centre-ville, Mamou",    color: "#fb923c"        },
           ].map(({ Icon, label, value, color }) => (
             <div className="contact-cell" key={label}>
@@ -949,8 +957,8 @@ const Administration = ({ documents = [], officials = [] }) => {
             </div>
           </div>
         </section>
-
       </main>
+      
     </div>
   );
 };

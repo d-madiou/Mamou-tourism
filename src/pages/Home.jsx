@@ -210,7 +210,7 @@ const CSS = `
 /* ─────────────────────────────────────────────────
    COMPONENT
 ───────────────────────────────────────────────── */
-function Home({ activities = [], galleryData = [], policeData = [] }) {
+function Home({ activities = [], events = [], restaurants = [], hotels = [], places = [], galleryData = [], policeData = [] }) {
   const images = [MamouHero, MamouHero2, ImageMamou, ImageMamou3]
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const heroRef = useRef(null)
@@ -330,7 +330,13 @@ function Home({ activities = [], galleryData = [], policeData = [] }) {
           <div id="about-section">
             <AboutSection />
           </div>
-          <PopularActivity activities={activities} />
+          <PopularActivity
+            activities={activities}
+            events={events}
+            restaurants={restaurants}
+            hotels={hotels}
+            places={places}
+          />
           <Banner />
           {/* <Police policeData={policeData} /> */}
           <Gallery galleryData={galleryData} />

@@ -36,7 +36,7 @@ export const Logos = [
         id: 6,
         name: "IST de Mamou",
         logo: ImageIst
-    }
+    },
 ]
 export const Activities = [
      { id: 1, 

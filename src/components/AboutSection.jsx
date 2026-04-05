@@ -1,7 +1,8 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { ChevronLeft, ChevronRight, } from "lucide-react"
+import { Link } from "react-router-dom"
 import {
   FaAward,
   FaCheckSquare,
@@ -576,9 +577,9 @@ function AboutSection() {
                 <div className="as-stat">
                   <div className="as-stat-val">
                     <FaAward className="as-stat-icon" size={16} />
-                    Top 50
+                    Top 3
                   </div>
-                  <p className="as-stat-label">Destination touristique</p>
+                  <p className="as-stat-label">Destination touristique Guinee</p>
                 </div>
                 <div className="as-stat">
                   <div className="as-stars">
@@ -592,10 +593,11 @@ function AboutSection() {
                 </div>
               </div>
 
-              <button className="as-btn">
+              <Link to="/about" className="as-btn">
                 <FaInfoCircle size={12} />
                 En savoir plus
-              </button>
+              </Link>
+
             </div>
 
             <div className="as-photo-col">

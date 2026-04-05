@@ -1,6 +1,12 @@
 @import "tailwindcss";
 @plugin "tailwindcss-motion";
 
+html, body, #root {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 :root {
   --brand-50: #eef9fc;
   --brand-100: #d7f2f9;

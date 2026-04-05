@@ -14,7 +14,7 @@ const  Footer = ()=>{
   ]
 
   return (
-    <footer className="bg-blue-950 pt-8 pb-6 text-white">
+    <footer className="bg-gradient-to-b from-[#086a8b] via-[#053f53] to-[#032836] pt-8 pb-6 text-white">
       <div className="container mx-auto px-4">
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -27,7 +27,7 @@ const  Footer = ()=>{
               className="h-full w-full object-contain rounded-full"
             />
           </div>
-            <p className="mb-4 text-blue-200 text-sm hidden md:block">
+            <p className="mb-4 text-[#d7f2f9] text-sm hidden md:block">
               Mamou est une ville et une préfecture de Guinée, située au centre du pays dans la région de Mamou.
             </p>
 
@@ -36,21 +36,21 @@ const  Footer = ()=>{
               <a
                 href="https://www.facebook.com/share/16XspHxKcv/?mibextid=wwXIfr"
                 aria-label="Page Facebook officielle de Mamou"
-                className="rounded-full bg-blue-800 p-2 text-white transition-colors hover:bg-blue-700"
+                className="rounded-full border border-white/10 bg-white/10 p-2 text-white transition-colors hover:bg-[#0992c2] hover:text-white"
               >
                 <Facebook className="h-4 w-4" />
               </a>
               <a
                 href="https://www.facebook.com/share/16XspHxKcv/?mibextid=wwXIfr"
                 aria-label="Compte X/Twitter de Mamou"
-                className="rounded-full bg-blue-800 p-2 text-white transition-colors hover:bg-blue-700"
+                className="rounded-full border border-white/10 bg-white/10 p-2 text-white transition-colors hover:bg-[#0992c2] hover:text-white"
               >
                 <Twitter className="h-4 w-4" />
               </a>
               <a
                 href="https://www.facebook.com/share/16XspHxKcv/?mibextid=wwXIfr"
                 aria-label="Compte Instagram de Mamou"
-                className="rounded-full bg-blue-800 p-2 text-white transition-colors hover:bg-blue-700"
+                className="rounded-full border border-white/10 bg-white/10 p-2 text-white transition-colors hover:bg-[#0992c2] hover:text-white"
               >
                 <Instagram className="h-4 w-4" />
               </a>
@@ -59,14 +59,14 @@ const  Footer = ()=>{
 
           {/* Quick Links - Only visible on desktop */}
           <div className="hidden md:block">
-            <h3 className="mb-4 text-lg font-bold text-yellow-400">Liens rapides</h3>
+            <h3 className="mb-4 text-lg font-bold text-[#fbbf24]">Liens rapides</h3>
             <nav aria-label="Liens rapides du pied de page">
               <ul className="space-y-2">
                 {quickLinks.map((link, index) => (
                   <li key={index}>
                     <Link
                       to={link.path}
-                      className="flex items-center text-blue-200 transition-colors hover:text-yellow-300 group"
+                      className="flex items-center text-[#d7f2f9] transition-colors hover:text-[#fbbf24] group"
                     >
                       <ArrowRight className="mr-2 h-3 w-3 group-hover:translate-x-1 transition-transform" />
                       {link.label}
@@ -79,24 +79,24 @@ const  Footer = ()=>{
 
           {/* Contact Section - Simplified */}
           <div className="hidden md:block">
-            <h3 className="mb-4 text-lg font-bold text-yellow-400">Contact</h3>
+            <h3 className="mb-4 text-lg font-bold text-[#fbbf24]">Contact</h3>
             <ul className="space-y-2">
               <li className="flex items-start">
-                <MapPin className="mr-2 h-4 w-4 text-yellow-400 flex-shrink-0 mt-0.5" />
-                <span className="text-blue-200 text-sm">Préfecture de Mamou, Guinée</span>
+                <MapPin className="mr-2 h-4 w-4 text-[#fbbf24] flex-shrink-0 mt-0.5" />
+                <span className="text-[#d7f2f9] text-sm">Ville de Mamou, Guinée</span>
               </li>
               <li className="flex items-start">
-                <Mail className="mr-2 h-4 w-4 text-yellow-400 flex-shrink-0 mt-0.5" />
-                <span className="text-blue-200 text-sm">contact@villedemamou.com</span>
+                <Mail className="mr-2 h-4 w-4 text-[#fbbf24] flex-shrink-0 mt-0.5" />
+                <span className="text-[#d7f2f9] text-sm">contact@villedemamou.com</span>
               </li>
             </ul>
           </div>
         </div>
 
         {/* Bottom Section */}
-        <div className="mt-6 border-t border-blue-800 pt-4 text-center">
-          <p className="text-blue-300 text-sm">
-            &copy; {new Date().getFullYear()} Préfecture de Mamou. Tous droits réservés.
+        <div className="mt-6 border-t border-white/10 pt-4 text-center">
+          <p className="text-[#99e3f6] text-sm">
+            &copy; {new Date().getFullYear()} Ville de Mamou. Tous droits réservés.
           </p>
         </div>
       </div>

@@ -35,6 +35,8 @@ const NavBar = () => {
   const navLinks = [
     { label: "Home", path: "/", icon: FaHome },
     { label: "À propos", path: "/about", icon: FaInfoCircle },
+    { label: "Contact", path: "/contact", icon: FaEnvelope },
+    { label: "Administration", path: "/administration", icon: FaFileAlt },
     {
       label: "Explore",
       path: null, // Dropdown parent
@@ -46,11 +48,9 @@ const NavBar = () => {
         { label: "Places à visiter", path: "/place" },
       ],
     },
-    { label: "Articles", path: "/articles", icon: FaNewspaper },
-    { label: "Contact", path: "/contact", icon: FaEnvelope },
     { label: "Education", path: "/education", icon: FaGraduationCap },
     { label: "Sport", path: "/sport", icon: FaFutbol },
-    { label: "Administration", path: "/administration", icon: FaFileAlt },
+    { label: "Articles", path: "/articles", icon: FaNewspaper },
   ];
 
   useEffect(() => {

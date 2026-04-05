@@ -39,11 +39,10 @@ const NavBar = () => {
   const navLinks = [
     { to: "/",               icon: FaHome,          label: "Accueil" },
     { to: "/about",          icon: FaInfoCircle,    label: "À propos" },
-    { to: "/articles",       icon: FaNewspaper,     label: "Articles" },
+    { to: "/administration", icon: FaFileAlt,       label: "Administration" },
     { to: "/education",      icon: FaGraduationCap, label: "Éducation" },
     { to: "/sport",          icon: FaFutbol,        label: "Sport" },
-    { to: "/administration", icon: FaFileAlt,       label: "Administration" },
-    { to: "/contact",        icon: FaEnvelope,      label: "Contact" },
+    { to: "/articles",       icon: FaNewspaper,     label: "Articles" },
   ]
 
   const exploreLinks = [
@@ -309,7 +308,6 @@ const NavBar = () => {
                 </li>
               ))}
 
-              {/* Explore */}
               <li className="nb-dd-wrap">
                 <button
                   className={`nb-link ${isExploreActive ? "active" : ""}`}
@@ -355,6 +353,13 @@ const NavBar = () => {
                     </motion.ul>
                   )}
                 </AnimatePresence>
+              </li>
+
+              <li>
+                <Link to="/contact" className={`nb-link ${isActive("/contact") ? "active" : ""}`}>
+                  <FaEnvelope size={11} />
+                  Contact
+                </Link>
               </li>
             </ul>
 
@@ -470,6 +475,19 @@ const NavBar = () => {
                           </motion.ul>
                         )}
                       </AnimatePresence>
+                    </li>
+                    <li>
+                      <Link
+                        to="/contact"
+                        onClick={closeMenu}
+                        className={`nb-mob-link ${isActive("/contact") ? "active" : ""}`}
+                      >
+                        <span className="nb-mob-ico">
+                          <FaEnvelope size={13} style={{ color: isActive("/contact") ? "#fbbf24" : "rgba(255,255,255,0.55)" }} />
+                        </span>
+                        Contact
+                        {isActive("/contact") && <span className="nb-mob-dot" />}
+                      </Link>
                     </li>
                   </ul>
                 </nav>
